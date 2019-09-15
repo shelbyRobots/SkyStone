@@ -20,8 +20,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.RoRuField;
-import org.firstinspires.ftc.teamcode.field.RrField;
-import org.firstinspires.ftc.teamcode.field.VvField;
 import org.firstinspires.ftc.teamcode.robot.ShelbyBot;
 import org.firstinspires.ftc.teamcode.util.CommonUtil;
 
@@ -149,11 +147,9 @@ public class VuforiaInitializer
         switch(challenge)
         {
             case VV:
-                fld = new VvField();
                 break;
 
             case RR:
-                fld = new RrField();
                 break;
 
             case RoRu:

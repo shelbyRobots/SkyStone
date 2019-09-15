@@ -37,11 +37,6 @@ public class RoRuRoute extends Route
         double fakeDist = 0.05;
         if(alliance == Field.Alliance.BLUE) fakeDist *= -1;
         //"Fake" points to help set initial orientation for zero length seg
-        Point2d RLBs = new Point2d("RLBs", RrField.RLBS.getX() + fakeDist,
-                                           RrField.RLBS.getY());
-
-        Point2d RRBs = new Point2d("RRBs", RrField.RRBS.getX() + fakeDist,
-                                           RrField.RRBS.getY());
 
 //        Point2d tmpPt = new Point2d("TMP", -12.5, 11.5);
         if(startPos == StartPos.START_1) {
@@ -83,7 +78,6 @@ public class RoRuRoute extends Route
                      String robotName)
     {
         super(startPos, alliance);
-        RrField.initField(robotName, 0);
     }
 
     private boolean goForTwo = false;

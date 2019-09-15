@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.GoalOption;
 import org.firstinspires.ftc.teamcode.field.PositionOption;
 import org.firstinspires.ftc.teamcode.field.Route;
-import org.firstinspires.ftc.teamcode.field.VvRoute;
 import org.firstinspires.ftc.teamcode.image.BeaconDetector;
 import org.firstinspires.ftc.teamcode.image.BeaconFinder;
 import org.firstinspires.ftc.teamcode.image.ImageTracker;
@@ -179,14 +178,6 @@ public class FtcAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
 
         doMenus();
 
-        if(team == Team.SNOWMAN)
-        {
-            DEF_SHT_PWR = SHT_PWR_SNOWMAN;
-        }
-        else
-        {
-            DEF_SHT_PWR = SHT_PWR_SONIC;
-        }
 
         if (robot.leftMotor  != null &&
             robot.rightMotor != null &&
@@ -457,13 +448,6 @@ public class FtcAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
         return (curPos != null);
     }
 
-    private void do_beacon_push_integrated()
-    {
-        RobotLog.ii("SJH", "FIND/PUSH");
-        dashboard.displayPrintf(2, "STATE: %s", "BEACON FIND/PUSH");
-        do_findBeaconOrder(true);
-    }
-
     private boolean do_findBeaconOrder(boolean push)
     {
         RobotLog.ii("SJH", "FIND BEACON ORDER!!!");
@@ -610,18 +594,10 @@ public class FtcAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
         //
         // Create the menus.
         //
-        FtcChoiceMenu<PositionOption> startPosMenu =
-                new FtcChoiceMenu<>("START:", null, this);
-        FtcChoiceMenu<GoalOption> pushMenu =
-                new FtcChoiceMenu<>("PUSH:", startPosMenu, this);
-        FtcChoiceMenu<PositionOption> parkMenu   =
-                new FtcChoiceMenu<>("PARK:", pushMenu, this);
         FtcChoiceMenu<Field.Alliance> allianceMenu =
-                new FtcChoiceMenu<>("ALLIANCE:", parkMenu, this);
-        FtcChoiceMenu<Team> teamMenu               =
-                new FtcChoiceMenu<>("TEAM:", allianceMenu, this);
+                new FtcChoiceMenu<>("ALLIANCE:", null, this);
         FtcChoiceMenu<Boolean> testMaxMenu         =
-                new FtcChoiceMenu<>("MAXSPD:", startPosMenu, this);
+                new FtcChoiceMenu<>("MAXSPD:", allianceMenu, this);
         FtcValueMenu  testDistMenu =
                 new FtcValueMenu("DIST:",  testMaxMenu,  this, 0.0, 60.0, 6.0, 48.0,  "%4.1f");
         FtcValueMenu  testPostMenu =
@@ -631,19 +607,8 @@ public class FtcAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
         FtcValueMenu  testKMenu    =
                 new FtcValueMenu("K:",     testSpdMenu,  this, 0.5, 1.5, 0.01, 1.0, "%4.2f");
 
-        pushMenu.addChoice("BOTH", VvRoute.BeaconChoice.BOTH, true, parkMenu);
-        pushMenu.addChoice("NEAR", VvRoute.BeaconChoice.NEAR, false, parkMenu);
-        pushMenu.addChoice("FAR",  VvRoute.BeaconChoice.FAR,  false, parkMenu);
-        pushMenu.addChoice("NONE", VvRoute.BeaconChoice.NONE, false, parkMenu);
-
-        parkMenu.addChoice("CENTER", Route.ParkPos.CENTER_PARK, false, allianceMenu);
-        parkMenu.addChoice("CORNER", Route.ParkPos.CORNER_PARK, true, allianceMenu);
-
-        allianceMenu.addChoice("RED",  Field.Alliance.RED,  true, teamMenu);
-        allianceMenu.addChoice("BLUE", Field.Alliance.BLUE, false, teamMenu);
-
-        teamMenu.addChoice("Sonic",   Team.SONIC, true);
-        teamMenu.addChoice("Snowman", Team.SNOWMAN, false);
+        allianceMenu.addChoice("RED",  Field.Alliance.RED,  true, testMaxMenu);
+        allianceMenu.addChoice("BLUE", Field.Alliance.BLUE, false, testMaxMenu);
 
         testMaxMenu.addChoice("TRUE",  Boolean.TRUE,  false, testDistMenu);
         testMaxMenu.addChoice("FALSE", Boolean.FALSE, false, testDistMenu);
@@ -655,18 +620,14 @@ public class FtcAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
         // Walk the menu tree starting with the strategy menu as the root
         // menu and get user choices.
         //
-        FtcMenu.walkMenuTree(startPosMenu);
+        FtcMenu.walkMenuTree(allianceMenu);
 
         //
         // Set choices variables.
         //
         //autoStrategy = (Field.AutoStrategy)strategyMenu.getCurrentChoiceObject();
 
-        startPos = startPosMenu.getCurrentChoiceObject();
-        beaconChoice = pushMenu.getCurrentChoiceObject();
-        parkChoice = parkMenu.getCurrentChoiceObject();
         alliance = allianceMenu.getCurrentChoiceObject();
-        team = teamMenu.getCurrentChoiceObject();
 
         doMaxSpeedTest = testMaxMenu.getCurrentChoiceObject();
         testDist  = testDistMenu.getCurrentValue();
@@ -674,12 +635,7 @@ public class FtcAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
         testSpeed = testSpdMenu.getCurrentValue();
         testK     = testKMenu.getCurrentValue();
 
-        //dashboard.displayPrintf(0, "STRATEGY: %s", autoStrategy);
-        dashboard.displayPrintf(0, "START: %s", startPos);
-        dashboard.displayPrintf(1, "PUSH: %s", beaconChoice);
-        dashboard.displayPrintf(2, "PARK: %s", parkChoice);
         dashboard.displayPrintf(3, "ALLIANCE: %s", alliance);
-        dashboard.displayPrintf(4, "TEAM: %s", team);
         dashboard.displayPrintf(5, "TestK:", "4.2f", testK);
     }
 
@@ -732,12 +688,6 @@ public class FtcAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
         RIGHT
     }
 
-    private enum Team
-    {
-        SONIC,
-        SNOWMAN
-    }
-
     private final static double ZER_PUSH_POS = 0.0;
     private final static double RGT_PUSH_POS = 0.2;
     private final static double LFT_PUSH_POS = 0.8;
@@ -766,11 +716,7 @@ public class FtcAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
     private static Point2d curPos;
     private static double  curHdg;
 
-    private static PositionOption startPos = Route.StartPos.START_1;
-    private static GoalOption beaconChoice = VvRoute.BeaconChoice.NEAR;
-    private static PositionOption parkChoice = Route.ParkPos.CENTER_PARK;
     private static Field.Alliance alliance = Field.Alliance.RED;
-    private static Team team = Team.SONIC;
 
     private HalDashboard dashboard;
 
