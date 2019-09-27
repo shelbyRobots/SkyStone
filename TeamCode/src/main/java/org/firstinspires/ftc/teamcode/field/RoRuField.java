@@ -89,10 +89,10 @@ public class RoRuField extends Field
     private static final int MIN_CNTR = 1;
     private static final int MIN_RGHT = 2;
 
-    private static Point2d minOffsetPts[][][] =
+    private static Point2d[][][] minOffsetPts =
             {{{RLM3, RLM2, RLM1}, {RRM3, RRM2, RRM1}}, {{BLM3, BLM2, BLM1}, {BRM3, BRM2, BRM1}}};
 
-    private static Point2d minActualPts[][][] =
+    private static Point2d[][][] minActualPts =
             {{{RLML, RLMC, RLMR}, {RRML, RRMC, RRMR}}, {{BLML, BLMC, BLMR}, {BRML, BRMC, BRMR}}};
 
     public static Point2d getMinOffsetPt(Alliance alnc,
@@ -188,12 +188,12 @@ public class RoRuField extends Field
                     "BackPerimeter_Space"
             };
 
-    private static final float[] TRACKABLE_POS[] = {
-            scaleArr(new float[]{0.0f,     N_WALL_Y,     IMAGE_Z}, scale),
-            scaleArr(new float[]{0.0f,     S_WALL_Y,     IMAGE_Z}, scale),
-            scaleArr(new float[]{E_WALL_X, 0.0f,         IMAGE_Z}, scale),
-            scaleArr(new float[]{W_WALL_X, 0.0f,         IMAGE_Z}, scale)
-            };
+    private static final float[][] TRACKABLE_POS = {
+            scaleArr(new float[]{0.0f, N_WALL_Y, IMAGE_Z}, scale),
+            scaleArr(new float[]{0.0f, S_WALL_Y, IMAGE_Z}, scale),
+            scaleArr(new float[]{E_WALL_X, 0.0f, IMAGE_Z}, scale),
+            scaleArr(new float[]{W_WALL_X, 0.0f, IMAGE_Z}, scale)
+    };
 
     private static final OpenGLMatrix[] LOCATIONS_ON_FIELD =
             {

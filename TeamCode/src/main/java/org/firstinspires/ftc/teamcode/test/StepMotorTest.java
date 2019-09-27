@@ -3,10 +3,9 @@ package org.firstinspires.ftc.teamcode.test;
 import android.util.SparseArray;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -41,7 +40,7 @@ public class StepMotorTest extends InitLinearOpMode
     private static final String TAG = "SJH_RMT";
 
     @Override
-    public void runOpMode() throws InterruptedException
+    public void runOpMode()
     {
         initCommon(this, false, false, false, false);
 
@@ -60,19 +59,19 @@ public class StepMotorTest extends InitLinearOpMode
                 if (mot instanceof DcMotorEx)
                 {
                     DcMotorEx lex = (DcMotorEx) mot;
-                    PIDCoefficients pid;
-                    pid = lex.getPIDCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-                    RobotLog.dd(TAG, "RUN_TO_POS Motor %s PIDs. P:%.2f I:%.2f D:%.2f",
-                            motorName, pid.p, pid.i, pid.d);
-                    pid = lex.getPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-                    RobotLog.dd(TAG, "RUN_USING_ENC Motor %s PIDs. P:%.2f I:%.2f D:%.2f",
-                            motorName, pid.p, pid.i, pid.d);
+                    PIDFCoefficients pid;
+                    pid = lex.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+                    RobotLog.dd(TAG, "RUN_TO_POS Motor %s PIDs. P:%.2f I:%.2f D:%.2f F:%.2f",
+                            motorName, pid.p, pid.i, pid.d, pid.f);
+                    pid = lex.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+                    RobotLog.dd(TAG, "RUN_USING_ENC Motor %s PIDs. P:%.2f I:%.2f D:%.2f F:%.2f",
+                            motorName, pid.p, pid.i, pid.d, pid.f);
                     //pid = lex.getPIDCoefficients(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     //RobotLog.dd(TAG, "RUN_WITHOUT_ENC Motor %s PIDs. P:%.2f I:%.2f D:%.2f",
                     //        motorName, pid.p, pid.i, pid.d);
                 }
             }
-            catch(Exception e)
+            catch(IllegalArgumentException e)
             {
                 RobotLog.ee(TAG, "Problem finding motor " + motorName);
                 continue;

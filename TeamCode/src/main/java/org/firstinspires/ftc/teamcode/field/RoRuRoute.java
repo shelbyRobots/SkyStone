@@ -13,7 +13,6 @@ public class RoRuRoute extends Route
 {
     private static final String TAG = "SJH_RRP";
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected Vector<Point2d> initPoints()
     {
@@ -33,10 +32,6 @@ public class RoRuRoute extends Route
         Segment.Action park    = Segment.Action.PARK;
         Segment.TargetType encType = Segment.TargetType.ENCODER;
         Segment.TargetType colType = Segment.TargetType.COLOR;
-
-        double fakeDist = 0.05;
-        if(alliance == Field.Alliance.BLUE) fakeDist *= -1;
-        //"Fake" points to help set initial orientation for zero length seg
 
 //        Point2d tmpPt = new Point2d("TMP", -12.5, 11.5);
         if(startPos == StartPos.START_1) {

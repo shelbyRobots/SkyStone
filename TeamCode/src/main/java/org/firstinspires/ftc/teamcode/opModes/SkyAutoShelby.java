@@ -11,8 +11,8 @@ import com.vuforia.CameraDevice;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.PositionOption;
-import org.firstinspires.ftc.teamcode.field.RoRuField;
-import org.firstinspires.ftc.teamcode.field.RoRuRoute;
+import org.firstinspires.ftc.teamcode.field.SkyField;
+import org.firstinspires.ftc.teamcode.field.SkyRoute;
 import org.firstinspires.ftc.teamcode.field.Route;
 import org.firstinspires.ftc.teamcode.image.Detector;
 import org.firstinspires.ftc.teamcode.image.ImageTracker;
@@ -51,9 +51,9 @@ import static org.firstinspires.ftc.teamcode.field.Route.ParkPos.DEFEND_PARK;
 @SuppressWarnings({"unused", "ForLoopReplaceableByForEach"})
 @Autonomous(name="RoRuAutoShelby", group="Auton")
 //@Disabled
-public class RoRuAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButtons
+public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButtons
 {
-    public RoRuAutoShelby()
+    public SkyAutoShelby()
     {
         //super();
     }
@@ -266,13 +266,13 @@ public class RoRuAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButt
         RobotLog.ii(TAG, "DELAY    %4.2f", delay);
         RobotLog.ii(TAG, "BOT      %s", robotName);
 
-        Route pts = new RoRuRoute(startPos, alliance, robotName);
+        Route pts = new SkyRoute(startPos, alliance, robotName);
         //noinspection ConstantConditions
-        if(pts instanceof RoRuRoute && parkPos == DEFEND_PARK)
-        {
-            RobotLog.dd(TAG, "Setting up to go for two");
-            ((RoRuRoute) pts).setGoForTwo(true);
-        }
+//        if(pts instanceof SkyRoute && parkPos == DEFEND_PARK)
+//        {
+//            RobotLog.dd(TAG, "Setting up to go for two");
+//            ((SkyRoute) pts).setGoForTwo(true);
+//        }
 
         pathSegs.addAll(Arrays.asList(pts.getSegments()));
 
@@ -494,7 +494,13 @@ public class RoRuAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButt
 
                 case SCAN_IMAGE:
                 {
-                    doScan(i);
+                    //doScan(i);
+                    break;
+                }
+
+                case GRAB:
+                {
+                    //doGrab(i);
                     break;
                 }
 
@@ -507,7 +513,7 @@ public class RoRuAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButt
 
                 case DROP:
                 {
-                    doDrop(i);
+                    //doDrop(i);
                     break;
                 }
 
@@ -586,24 +592,24 @@ public class RoRuAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButt
 
         RobotLog.dd(TAG, "doScan");
         double hdgAdj = 14.0;
-        Point2d cntMinPt = RoRuField.getMineralPt(alliance, startPos, MineralDetector.Position.CENTER);
-        Point2d rgtMinPt = RoRuField.getMineralPt(alliance, startPos, MineralDetector.Position.RIGHT);
-        Point2d lftMinPt = RoRuField.getMineralPt(alliance, startPos, MineralDetector.Position.LEFT);
-        RobotLog.dd(TAG, "Ctr Orig Offset Min Pt: " + cntMinPt.toString());
-        RobotLog.dd(TAG, "Rgt Orig Offset Min Pt: " + rgtMinPt.toString());
-        RobotLog.dd(TAG, "Lft Orig Offset Min Pt: " + lftMinPt.toString());
-        Point2d cntMinOPt = RoRuField.getMinOffsetPt(alliance, startPos, MineralDetector.Position.CENTER);
-        Point2d rgtMinOPt = RoRuField.getMinOffsetPt(alliance, startPos, MineralDetector.Position.RIGHT);
-        Point2d lftMinOPt = RoRuField.getMinOffsetPt(alliance, startPos, MineralDetector.Position.LEFT);
-        RobotLog.dd(TAG, "Ctr New Offset Min Pt: " + cntMinOPt.toString());
-        RobotLog.dd(TAG, "Rgt New Offset Min Pt: " + rgtMinOPt.toString());
-        RobotLog.dd(TAG, "Lft New Offset Min Pt: " + lftMinOPt.toString());
-        Point2d cntMinAPt = RoRuField.getMinActualPt(alliance, startPos, MineralDetector.Position.CENTER);
-        Point2d rgtMinAPt = RoRuField.getMinActualPt(alliance, startPos, MineralDetector.Position.RIGHT);
-        Point2d lftMinAPt = RoRuField.getMinActualPt(alliance, startPos, MineralDetector.Position.LEFT);
-        RobotLog.dd(TAG, "Ctr New Actual Min Pt: " + cntMinAPt.toString());
-        RobotLog.dd(TAG, "Rgt New Actual Min Pt: " + rgtMinAPt.toString());
-        RobotLog.dd(TAG, "Lft New Actual Min Pt: " + lftMinAPt.toString());
+//        Point2d cntMinPt = SkyField.getMineralPt(alliance, startPos, MineralDetector.Position.CENTER);
+//        Point2d rgtMinPt = SkyField.getMineralPt(alliance, startPos, MineralDetector.Position.RIGHT);
+//        Point2d lftMinPt = SkyField.getMineralPt(alliance, startPos, MineralDetector.Position.LEFT);
+//        RobotLog.dd(TAG, "Ctr Orig Offset Min Pt: " + cntMinPt.toString());
+//        RobotLog.dd(TAG, "Rgt Orig Offset Min Pt: " + rgtMinPt.toString());
+//        RobotLog.dd(TAG, "Lft Orig Offset Min Pt: " + lftMinPt.toString());
+//        Point2d cntMinOPt = SkyField.getMinOffsetPt(alliance, startPos, MineralDetector.Position.CENTER);
+//        Point2d rgtMinOPt = SkyField.getMinOffsetPt(alliance, startPos, MineralDetector.Position.RIGHT);
+//        Point2d lftMinOPt = SkyField.getMinOffsetPt(alliance, startPos, MineralDetector.Position.LEFT);
+//        RobotLog.dd(TAG, "Ctr New Offset Min Pt: " + cntMinOPt.toString());
+//        RobotLog.dd(TAG, "Rgt New Offset Min Pt: " + rgtMinOPt.toString());
+//        RobotLog.dd(TAG, "Lft New Offset Min Pt: " + lftMinOPt.toString());
+//        Point2d cntMinAPt = SkyField.getMinActualPt(alliance, startPos, MineralDetector.Position.CENTER);
+//        Point2d rgtMinAPt = SkyField.getMinActualPt(alliance, startPos, MineralDetector.Position.RIGHT);
+//        Point2d lftMinAPt = SkyField.getMinActualPt(alliance, startPos, MineralDetector.Position.LEFT);
+//        RobotLog.dd(TAG, "Ctr New Actual Min Pt: " + cntMinAPt.toString());
+//        RobotLog.dd(TAG, "Rgt New Actual Min Pt: " + rgtMinAPt.toString());
+//        RobotLog.dd(TAG, "Lft New Actual Min Pt: " + lftMinAPt.toString());
         Point2d curPt = pathSegs.get(segIdx).getTgtPt();
         //Finish bisector
 
@@ -667,16 +673,16 @@ public class RoRuAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButt
     private void setMineralPoint(int segIdx)
     {
         RobotLog.dd(TAG, "Getting mineralPt for %s %s %s", alliance, startPos, mineralPos);
-        PositionOption otherPos = Route.StartPos.START_2;
-        if(startPos == Route.StartPos.START_2) otherPos = Route.StartPos.START_1;
-        tgtMinPt1 = RoRuField.getMineralPt(alliance, startPos, mineralPos);
-        tgtMinPt2 = RoRuField.getMineralPt(alliance, otherPos, mineralPos);
-        RobotLog.dd(TAG, "MineralPt = %s", tgtMinPt1);
-
-        Segment sMin = pathSegs.get(segIdx+1);
-        Segment sRev = pathSegs.get(segIdx+2);
-        sMin.setEndPt(tgtMinPt1);
-        sRev.setStrtPt(tgtMinPt1);
+//        PositionOption otherPos = Route.StartPos.START_2;
+//        if(startPos == Route.StartPos.START_2) otherPos = Route.StartPos.START_1;
+//        tgtMinPt1 = SkyField.getMineralPt(alliance, startPos, mineralPos);
+//        tgtMinPt2 = SkyField.getMineralPt(alliance, otherPos, mineralPos);
+//        RobotLog.dd(TAG, "MineralPt = %s", tgtMinPt1);
+//
+//        Segment sMin = pathSegs.get(segIdx+1);
+//        Segment sRev = pathSegs.get(segIdx+2);
+//        sMin.setEndPt(tgtMinPt1);
+//        sRev.setStrtPt(tgtMinPt1);
     }
 
     private void doDrop(int segIdx)
