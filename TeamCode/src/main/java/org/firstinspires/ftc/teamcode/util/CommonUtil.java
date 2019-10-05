@@ -247,13 +247,7 @@ public class CommonUtil
         final Activity act = getActivity();
         final ViewGroup group = act.findViewById(containerId);
 
-        act.runOnUiThread(new Runnable()
-        {
-            @Override
-            public void run() {
-                group.addView(v);
-            }
-        });
+        act.runOnUiThread(() -> group.addView(v));
     }
 
     public void setVisibility(final View v, final int visibility)

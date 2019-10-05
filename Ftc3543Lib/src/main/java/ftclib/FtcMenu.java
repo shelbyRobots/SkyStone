@@ -238,17 +238,22 @@ public abstract class FtcMenu
      *
      * @param rootMenu specifies the root of the menu tree.
      */
-    public static void walkMenuTree(FtcMenu rootMenu)
+    public static void walkMenuTree(FtcMenu rootMenu, LinearOpMode opmode)
     {
-        LinearOpMode opmode = FtcOpMode.getInstance();
-
         setRootMenu(rootMenu);
         rootMenu.displayMenu();
         while (!runMenus() && !opmode.isStopRequested())
         {
             TrcUtil.sleep(LOOP_INTERVAL);
         }
+    }
+    public static void walkMenuTree(FtcMenu rootMenu)
+    {
+        LinearOpMode opmode = FtcOpMode.getInstance();
+
+        walkMenuTree(rootMenu, opmode);
     }   //walkMenuTree
+
 
     /**
      * This method walks the menu tree in a non-blocking environment. It means this method must be called periodically,

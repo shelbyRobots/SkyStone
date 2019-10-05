@@ -188,6 +188,8 @@ public class RoRuBot extends TilerunnerGtoBot {
         {
             armExtend = hwMap.dcMotor.get("armExtend");
             armPitch  = hwMap.dcMotor.get("armPitch");
+            armPitch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             capMap.put("arm", true);
         }
         catch(Exception e)
@@ -195,7 +197,7 @@ public class RoRuBot extends TilerunnerGtoBot {
             RobotLog.ee(TAG, "ERROR get hardware map in initArm\n" + e.toString());
         }
 
-        armPitch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         try
         {
@@ -207,7 +209,7 @@ public class RoRuBot extends TilerunnerGtoBot {
             RobotLog.ww(TAG, "WARNING initArm - no armTouch");
         }
 
-        armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     private void initIntake()

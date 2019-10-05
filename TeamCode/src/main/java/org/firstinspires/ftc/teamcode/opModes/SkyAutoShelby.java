@@ -8,10 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
 
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.PositionOption;
-import org.firstinspires.ftc.teamcode.field.SkyField;
 import org.firstinspires.ftc.teamcode.field.SkyRoute;
 import org.firstinspires.ftc.teamcode.field.Route;
 import org.firstinspires.ftc.teamcode.image.Detector;
@@ -48,8 +46,8 @@ import static org.firstinspires.ftc.teamcode.field.Route.ParkPos.DEFEND_PARK;
 //  - place marker in depot
 //  - park at pit
 
-@SuppressWarnings({"unused", "ForLoopReplaceableByForEach"})
-@Autonomous(name="RoRuAutoShelby", group="Auton")
+
+@Autonomous(name="SkyAutoShelby", group="Auton")
 //@Disabled
 public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButtons
 {
@@ -67,7 +65,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
     //@SuppressWarnings("RedundantThrows")
     @Override
-    public void runOpMode() throws InterruptedException
+    public void runOpMode() //throws InterruptedException
     {
         RobotLog.dd(TAG, "initCommon");
         initCommon(this, true, true, false, false);
@@ -100,7 +98,6 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         setup();
         int initCycle = 0;
         int initSleep = 10;
-        double scanFreqSec = 3.0;
         timer.reset();
         while(!isStarted())
         {
@@ -126,8 +123,6 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                     RobotLog.dd(TAG, "RGB = %d %d %d", r, g, b);
                     dashboard.displayPrintf(15, "RGB %d %d %d", r, g, b);
                 }
-
-                dashboard.displayPrintf(7, "lift pos %d", roRuBot.getLiftyPos());
             }
 
             initCycle++;
@@ -208,7 +203,6 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         ElapsedTime gyroTimer = new ElapsedTime();
         boolean gyroSetToField = false;
         boolean gyroSetToSeg   = false;
-        boolean botInit = false;
         while(gyroTimer.seconds() < 10.0)
         {
             gpad1.update();
@@ -224,8 +218,13 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             }
         }
 
+        if(gyroSetToField)
+            RobotLog.ii(TAG,"X pressed: gyroSetToField");
+        if(gyroSetToSeg)
+            RobotLog.ii(TAG,"Y pressed: gyroSetToSeg");
+
         dashboard.displayPrintf(0, "GYRO CALIBRATING DO NOT TOUCH OR START");
-        RoRuBot.curOpModeType = ShelbyBot.OpModeType.AUTO;
+        ShelbyBot.curOpModeType = ShelbyBot.OpModeType.AUTO;
         robot.init(this, robotName);
 
         if (robot.imu != null || robot.gyro  != null)
@@ -267,7 +266,6 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         RobotLog.ii(TAG, "BOT      %s", robotName);
 
         Route pts = new SkyRoute(startPos, alliance, robotName);
-        //noinspection ConstantConditions
 //        if(pts instanceof SkyRoute && parkPos == DEFEND_PARK)
 //        {
 //            RobotLog.dd(TAG, "Setting up to go for two");
@@ -296,31 +294,15 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         RobotLog.ii(TAG, "IHDG %4.2f", initHdg);
 
-        if(roRuBot != null)
-        {
-//            ElapsedTime liftAdjTimer = new ElapsedTime();
-//            while(liftAdjTimer.seconds() < 10.0)
-//            {
-//                gpad2.update();
-//                if(gpad2.just_pressed(ManagedGamepad.Button.D_UP)) roRuBot.moveHolder(1.0);
-//                if(gpad2.just_pressed(ManagedGamepad.Button.D_DOWN)) roRuBot.moveHolder(-1.0);
-//                if(gpad2.just_pressed(ManagedGamepad.Button.A)) break;
-//                dashboard.displayPrintf(9, "LIFTYBOI ADJUST");
-//            }
+  //      if(roRuBot != null)
+ //       {
+ //           roRuBot.zeroHolder();
 
-            roRuBot.zeroHolder();
-
-            RobotLog.dd(TAG, "Stow Liftyboi");
-            //roRuBot.putHolderAtStow();
-            RobotLog.dd(TAG, "Stow Marker");
-            roRuBot.stowMarker();
-            roRuBot.stowParker();
-
-            roRuBot.zeroArmPitch();
-            roRuBot.zeroArmExtend();
-            roRuBot.armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            roRuBot.armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
+//            roRuBot.zeroArmPitch();
+//            roRuBot.zeroArmExtend();
+//            roRuBot.armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            roRuBot.armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        }
 
         if (startPos == Route.StartPos.START_1)
         {
@@ -348,8 +330,6 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         startTimer.reset();
         dl.resetTime();
 
-        int dropCycle = 0;
-
         RobotLog.ii(TAG, "STARTING AT %4.2f", timer.seconds());
         if(logData)
         {
@@ -374,11 +354,9 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         //robot.resetGyro();
 
-        doLower();
         //doFindLoc();
 
         boolean SkipNextSegment = false;
-        boolean breakOut = false;
 
         if(!robotName.equals("MEC"))
         {
@@ -489,17 +467,20 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             {
                 case SET_ALIGN:
                 {
+                    RobotLog.ii(TAG, "Action SET_ALIGN");
                     break;
                 }
 
                 case SCAN_IMAGE:
                 {
+                    RobotLog.ii(TAG, "Action SCAN_IMAGE");
                     //doScan(i);
                     break;
                 }
 
                 case GRAB:
                 {
+                    RobotLog.ii(TAG, "Action GRAB");
                     //doGrab(i);
                     break;
                 }
@@ -508,17 +489,20 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                 case PUSH:
                 {
                     //If we have a grabber, grab block, else just push with chassis
+                    RobotLog.ii(TAG, "Action PUSH");
                     break;
                 }
 
                 case DROP:
                 {
+                    RobotLog.ii(TAG, "Action DROP");
                     //doDrop(i);
                     break;
                 }
 
                 case PARK:
                 {
+                    RobotLog.ii(TAG, "Action PARK");
                     doPark();
                     break;
                 }
@@ -536,23 +520,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         }
     }
 
-    private void doLower()
-    {
-        RobotLog.dd(TAG, "Lowering bot");
 
-        if(roRuBot != null)
-        {
-            roRuBot.putHolderAtRelease();
-        }
-        else
-        {
-            RobotLog.dd(TAG, "No RoRuRobot - delaying instead of lowering for now");
-            sleep(1); //Remove this - giving 2s for drop for timing
-        }
-        sleep(500);
-    }
-
-
+    @SuppressWarnings("unused")
     private void doFindLoc()
     {
         //Try to use Vuf localization to find loc
@@ -581,6 +550,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         tracker.setActive(false);
     }
 
+    @SuppressWarnings("unused")
     private void doScan(int segIdx)
     {
         if(ctrScan)
@@ -672,7 +642,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
     private void setMineralPoint(int segIdx)
     {
-        RobotLog.dd(TAG, "Getting mineralPt for %s %s %s", alliance, startPos, mineralPos);
+        RobotLog.dd(TAG, "Getting mineralPt for %s %s %s seg=%d",
+                alliance, startPos, mineralPos, segIdx);
 //        PositionOption otherPos = Route.StartPos.START_2;
 //        if(startPos == Route.StartPos.START_2) otherPos = Route.StartPos.START_1;
 //        tgtMinPt1 = SkyField.getMineralPt(alliance, startPos, mineralPos);
@@ -685,9 +656,10 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 //        sRev.setStrtPt(tgtMinPt1);
     }
 
+    @SuppressWarnings("unused")
     private void doDrop(int segIdx)
     {
-        roRuBot.threadedHolderStow();
+       // roRuBot.threadedHolderStow();
         RobotLog.dd(TAG, "Dropping marker");
 
         if(roRuBot != null)
@@ -696,19 +668,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         }
         else
         {
-            RobotLog.dd(TAG, "No RoRuRobot - can't drop");
-        }
-
-        boolean goForTwo = false;
-        if(parkPos == DEFEND_PARK) goForTwo = true;
-
-        if(startPos == Route.StartPos.START_1 & goForTwo)
-        {
-            RobotLog.dd(TAG, "Adjusting points for go for Two");
-            Segment sMin = pathSegs.get(segIdx + 1);
-            Segment sRev = pathSegs.get(segIdx + 2);
-            sMin.setEndPt(tgtMinPt2);
-            sRev.setStrtPt(tgtMinPt2);
+            RobotLog.dd(TAG, "No Skybot - can't drop");
         }
     }
 
@@ -717,15 +677,13 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         RobotLog.dd(TAG, "Parking bot");
         if(roRuBot != null)
         {
-            int stowCounts  = 0;
-            int dropCounts  = -2400; //-(int)(10 * robot.ARM_CPD);
             int hoverCounts = -5000; //-(int)(20 * robot.ARM_CPD);
             roRuBot.parkMarker();
 
             RobotLog.dd(TAG, "Moving to arm pos %d from %d", hoverCounts, 0);
-            roRuBot.armPitch.setTargetPosition(hoverCounts);
-            roRuBot.armPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            roRuBot.armPitch.setPower(0.5);
+            //roRuBot.armPitch.setTargetPosition(hoverCounts);
+            //roRuBot.armPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //roRuBot.armPitch.setPower(0.5);
         }
         else
         {
@@ -778,7 +736,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         if(robot.colorSensor != null && seg.getTgtType() == Segment.TargetType.COLOR)
         {
-            RobotLog.dd(TAG,"Doing color seg");
+            RobotLog.dd(TAG,"Doing color seg %d", colSegNum);
             colSegNum++;
             int colSensOffset = drvTrn.distanceToCounts(3.0);
             drvTrn.setColSensOffset(colSensOffset);
@@ -804,7 +762,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
     }
 
 
-    private void doEncoderTurn(double fHdg, int thresh, String prefix)
+    private void doEncoderTurn(double fHdg, @SuppressWarnings("SameParameterValue") int thresh, String prefix)
     {
         if(!opModeIsActive() || isStopRequested()) return;
         drvTrn.setBusyAnd(true);
@@ -963,7 +921,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         robotNameMenu.addChoice("GTO2", "GTO2", false, delayMenu);
         robotNameMenu.addChoice("MEC", "MEC", false, delayMenu);
 
-        FtcMenu.walkMenuTree(startPosMenu);
+        FtcMenu.walkMenuTree(startPosMenu, this);
 
         startPos  = startPosMenu.getCurrentChoiceObject();
         alliance  = allianceMenu.getCurrentChoiceObject();
@@ -1008,9 +966,9 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
     private TilerunnerGtoBot   robot;
     private RoRuBot roRuBot = null;
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private Point2d tgtMinPt1;
-    private Point2d tgtMinPt2;
+    //@SuppressWarnings("FieldCanBeLocal")
+   // private Point2d tgtMinPt1;
+    //private Point2d tgtMinPt2;
 
     private boolean ctrScan = false;
     @SuppressWarnings("FieldCanBeLocal")
@@ -1022,11 +980,9 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
     private Detector det;
     private static ImageTracker tracker;
-    private RelicRecoveryVuMark key = RelicRecoveryVuMark.UNKNOWN;
     private MineralDetector.Position mineralPos = MineralDetector.Position.NONE;
 
     private static Point2d curPos;
-    private static double  curHdg;
     private double initHdg = 0.0;
     private boolean gyroReady;
     @SuppressWarnings("FieldCanBeLocal")
@@ -1047,24 +1003,11 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
     @SuppressWarnings("FieldCanBeLocal")
     private boolean useImageLoc  = false;
-    private boolean firstInState = true;
-
-    private int postSleep = 150;
 
     private int colSegNum = 0;
 
     @SuppressWarnings("FieldCanBeLocal")
     private boolean useLight = false;
-
-    @SuppressWarnings("FieldCanBeLocal")
-    private boolean doMore = true;
-
-    private double ppitXShift = 0.0;
-
-    @SuppressWarnings("FieldCanBeLocal")
-    private boolean doScanInInit = false;
-    @SuppressWarnings("FieldCanBeLocal")
-    private boolean useKeyPtAdjust = true;
 
     private String robotName = "";
     private static final String TAG = "SJH_RRA";

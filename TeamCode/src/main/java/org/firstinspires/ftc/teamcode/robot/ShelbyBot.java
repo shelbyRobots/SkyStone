@@ -2,7 +2,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -115,7 +114,7 @@ public class ShelbyBot
     public float BOT_LENGTH;
 
     protected double COUNTS_PER_MOTOR_REV;
-    protected double DRIVE_GEARS[];
+    protected double[] DRIVE_GEARS;
 
     protected double WHEEL_DIAMETER_INCHES;
     protected double TUNE;
@@ -317,7 +316,8 @@ public class ShelbyBot
             dim = hwMap.deviceInterfaceModule.get("dim");
 
             gyro = (ModernRoboticsI2cGyro) hwMap.gyroSensor.get("gyro");
-            colorSensor = (ModernRoboticsI2cColorSensor) hwMap.colorSensor.get("color");
+            //colorSensor = (ModernRoboticsI2cColorSensor) hwMap.colorSensor.get("color");
+            colorSensor = hwMap.colorSensor.get("color");
 
             capMap.put("sensor", true);
         }
@@ -361,10 +361,10 @@ public class ShelbyBot
         }
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean getCapability(String cap)
     {
-        return capMap.get(cap);
+        Boolean isCap = capMap.get(cap);
+        return isCap != null && isCap;
     }
 
     private double getTotalGearRatio()

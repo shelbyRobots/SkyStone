@@ -35,22 +35,31 @@ public class SkyRoute extends Route
         Segment.TargetType encType = Segment.TargetType.ENCODER;
         Segment.TargetType colType = Segment.TargetType.COLOR;
 
-//        Point2d tmpPt = new Point2d("TMP", -12.5, 11.5);
-        if(startPos == StartPos.START_1) {
-            points.add(SkyField.RLS1);
-//            addPoint(points, fwd, 0.5, 1.00, encType, drop, tmpPt);
-            addPoint(points, fwd, 0.25, 1.00, encType, scan,  SkyField.RLLP);
-            addPoint(points, fwd, 0.35, 1.00, encType, grab,  SkyField.RGP6);
-            addPoint(points, fwd, 0.50, 1.00, encType, none,  SkyField.RTP1);
-            addPoint(points, rev, 0.50, 1.00, encType, none,  SkyField.RTP2);
-            addPoint(points, fwd, 0.60, 1.00, encType, drop,  SkyField.RDP1);
-            addPoint(points, fwd, 0.60, 1.00, encType, none,  SkyField.RTP2);
-            addPoint(points, fwd, 0.60, 1.00, encType, none,  SkyField.RTP3);
-            addPoint(points, fwd, 0.60, 1.00, encType, grab,  SkyField.RGP3);
-            addPoint(points, fwd, 0.60, 1.00, encType, none,  SkyField.RTP3);
-            addPoint(points, fwd, 0.60, 1.00, encType, drop,  SkyField.RDP1);
-            addPoint(points, fwd, 0.60, 1.00, encType, none,  SkyField.RTP2);
-            addPoint(points, fwd, 0.60, 1.00, encType, park,  SkyField.RPP1);
+        //if(startPos == StartPos.START_1) {
+//            points.add(SkyField.RLS1);
+//            addPoint(points, fwd, 0.50, 1.00, encType, scan,  SkyField.RIS1);
+//            addPoint(points, fwd, 0.50, 1.00, encType, none,  SkyField.RTP1);
+//            addPoint(points, fwd, 0.35, 1.00, encType, grab,  SkyField.RGP6);
+//            addPoint(points, rev, 0.50, 1.00, encType, none,  SkyField.RTP1);
+//            addPoint(points, fwd, 0.50, 1.00, encType, none,  SkyField.RTP2);
+//            addPoint(points, fwd, 0.60, 1.00, encType, drop,  SkyField.RDP1);
+//            addPoint(points, rev, 0.60, 1.00, encType, none,  SkyField.RTP3);
+//            addPoint(points, fwd, 0.60, 1.00, encType, none,  SkyField.RTP4);
+//            addPoint(points, fwd, 0.60, 1.00, encType, grab,  SkyField.RGP3);
+//            addPoint(points, rev, 0.60, 1.00, encType, none,  SkyField.RTP5);
+//            addPoint(points, fwd, 0.60, 1.00, encType, none,  SkyField.RTP6);
+//            addPoint(points, fwd, 0.60, 1.00, encType, drop,  SkyField.RDP1);
+//            addPoint(points, rev, 0.60, 1.00, encType, none,  SkyField.RTP7);
+//            addPoint(points, fwd, 0.60, 1.00, encType, park,  SkyField.RPP1);
+
+        points.add(SkyField.RLS1);
+        addPoint(points, fwd, 0.50, 1.00, encType, scan,  SkyField.RIS1);
+        addPoint(points, fwd, 0.50, 1.00, encType, none,  SkyField.RTP1);
+        addPoint(points, fwd, 0.50, 1.00, encType, grab,  SkyField.RGPA);
+        addPoint(points, rev, 0.60, 1.00, encType, drop,  SkyField.RDPA);
+        addPoint(points, fwd, 0.60, 1.00, encType, none,  SkyField.RGPB);
+        addPoint(points, rev, 0.60, 1.00, encType, none,  SkyField.RDPB);
+        addPoint(points, fwd, 0.60, 1.00, encType, park,  SkyField.RPP1);
 
 //            if(goForTwo) {
 //                 addPoint(points, rev, 0.70, 1.00, encType, push, SkyField.RRM2);
@@ -71,7 +80,7 @@ public class SkyRoute extends Route
 //            addPoint(points, fwd, 0.60, 1.00, encType, drop,  SkyField.RRDP);
 //            addPoint(points, rev, 0.60, 1.00, encType, none,  SkyField.RRR1);
 //            addPoint(points, rev, 0.60, 1.00, encType, park,  SkyField.RRPP);
-        }
+     //   }
 
         return points;
     }

@@ -29,6 +29,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
     private static final String TAG = "SJH_MTD";
 
+    @SuppressWarnings("RedundantThrows")
     @Override
     public void runOpMode() throws InterruptedException
     {
@@ -68,13 +69,7 @@ public class MecanumTeleop extends InitLinearOpMode
 //        boolean pActive = false;
         boolean eActive = false;
 
-
         RobotLog.dd(TAG, "Mecanum_Driver starting");
-
-        RobotLog.dd(TAG, "Setting gripper to init pos %.2f",
-                TilerunnerMecanumBot.GRIPPER_CLOSE_POS);
-
-        robot.closeGripper();
 
         if(robot.elevMotor != null)
         {
@@ -82,8 +77,6 @@ public class MecanumTeleop extends InitLinearOpMode
             robot.elevMotor.setPower(0.0);
             robot.elevMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-
-        robot.raiseFlicker();
 
         while (opModeIsActive())
         {
@@ -231,7 +224,6 @@ public class MecanumTeleop extends InitLinearOpMode
             {
                 robot.elevMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 int minElev = robot.liftPositions.get(0) + 20;
-                int maxElev = robot.liftPositions.get(robot.liftPositions.size() - 1);
                 if(curElevPos < minElev && elev < 0.0)
                     elev = 0.0;
 //                if(curElevPos > maxElev && elev > 0.0)
@@ -351,4 +343,3 @@ public class MecanumTeleop extends InitLinearOpMode
     private enum FlickerState { UP, DOWN }
     private FlickerState currentFlickerState = FlickerState.UP;
 }
-// b o n e s

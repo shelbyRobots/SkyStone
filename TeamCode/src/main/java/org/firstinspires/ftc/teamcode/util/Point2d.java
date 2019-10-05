@@ -23,6 +23,11 @@ public class Point2d
         this(name, (double)fltarr[0], (double)fltarr[1]);
     }
 
+    public Point2d(String name, Point2d inPt)
+    {
+        this(name, inPt.x, inPt.y);
+    }
+
     public double distance(Point2d tgtPt)
     {
         double sq_dist = (tgtPt.x - x)*(tgtPt.x -x) + (tgtPt.y - y)*(tgtPt.y - y);

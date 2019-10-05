@@ -30,6 +30,7 @@ public class AutoSetupMenu extends InitLinearOpMode implements FtcMenu.MenuButto
     {
     }
 
+    @SuppressWarnings("RedundantThrows")
     @Override
     public void runOpMode() throws InterruptedException
     {
@@ -86,10 +87,10 @@ public class AutoSetupMenu extends InitLinearOpMode implements FtcMenu.MenuButto
         RobotLog.dd(TAG, "delay:    %d", delay);
     }
 
-    private String botNames[]       = {"GTO1", "GTO2", "MEC"};
-    private String alliances[]      = {"RED", "BLUE"};
-    private String startPositions[] = {"START_1", "START_2"};
-    private String parkPositions[]  = {"CENTER_PARK", "DEFEND_PARK"};
+    private String[] botNames = {"GTO1", "GTO2", "MEC"};
+    private String[] alliances = {"RED", "BLUE"};
+    private String[] startPositions = {"START_1", "START_2"};
+    private String[] parkPositions = {"CENTER_PARK", "DEFEND_PARK"};
 
     //
     // Implements FtcMenu.MenuButtons interface.
@@ -169,7 +170,7 @@ public class AutoSetupMenu extends InitLinearOpMode implements FtcMenu.MenuButto
         // Walk the menu tree starting with the strategy menu as the root
         // menu and get user choices.
         //
-        FtcMenu.walkMenuTree(botMenu);
+        FtcMenu.walkMenuTree(botMenu, this);
 
         //
         // Set choices variables.
@@ -204,7 +205,7 @@ public class AutoSetupMenu extends InitLinearOpMode implements FtcMenu.MenuButto
         dashboard.displayPrintf(lnum++, "Alliance: " + allianceColor);
         dashboard.displayPrintf(lnum++, "Start:    " + startPosition);
         dashboard.displayPrintf(lnum++, "Park:     " + parkPosition);
-        dashboard.displayPrintf(lnum++, "Delay:    " + String.valueOf(delay));
+        dashboard.displayPrintf(lnum++, "Delay:    " + delay);
     }
 
     private void doOffsets()
@@ -227,7 +228,7 @@ public class AutoSetupMenu extends InitLinearOpMode implements FtcMenu.MenuButto
         leftOffsetMenu.setChildMenu(cntrOffsetMenu);
         cntrOffsetMenu.setChildMenu(rghtOffsetMenu);
 
-        FtcMenu.walkMenuTree(glphOffsetMenu);
+        FtcMenu.walkMenuTree(glphOffsetMenu, this);
 
         double gOff = glphOffsetMenu.getCurrentValue();
         double lOff = leftOffsetMenu.getCurrentValue();

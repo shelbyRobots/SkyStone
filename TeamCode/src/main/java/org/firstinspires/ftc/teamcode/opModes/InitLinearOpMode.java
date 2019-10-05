@@ -45,6 +45,7 @@ public abstract class InitLinearOpMode extends LinearOpMode
         //dtrnType = Drivetrain.DrivetrainType.valueOf(pmgr.getRobotConfig());
     }
 
+    @SuppressWarnings("unused")
     public void cleanup()
     {
         if(dl != null) dl.closeDataLogger();
