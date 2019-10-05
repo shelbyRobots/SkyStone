@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.image.ImageTracker;
 import org.firstinspires.ftc.teamcode.image.MineralDetector;
 import org.firstinspires.ftc.teamcode.image.VuforiaInitializer;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
-import org.firstinspires.ftc.teamcode.robot.RoRuBot;
 import org.firstinspires.ftc.teamcode.robot.ShelbyBot;
+import org.firstinspires.ftc.teamcode.robot.SkyBot;
 import org.firstinspires.ftc.teamcode.robot.TilerunnerGtoBot;
 import org.firstinspires.ftc.teamcode.robot.TilerunnerMecanumBot;
 import org.firstinspires.ftc.teamcode.util.AutoTransitioner;
@@ -181,8 +181,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         }
         else
         {
-            robot = new RoRuBot(robotName);
-            roRuBot = (RoRuBot)robot;
+            robot = new SkyBot(robotName);
+            skyBot = (SkyBot)robot;
         }
 
         dashboard.displayPrintf(1, "Prefs Done");
@@ -294,15 +294,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         RobotLog.ii(TAG, "IHDG %4.2f", initHdg);
 
-  //      if(roRuBot != null)
- //       {
- //           roRuBot.zeroHolder();
 
-//            roRuBot.zeroArmPitch();
-//            roRuBot.zeroArmExtend();
-//            roRuBot.armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            roRuBot.armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        }
 
         if (startPos == Route.StartPos.START_1)
         {
@@ -659,44 +651,30 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
     @SuppressWarnings("unused")
     private void doDrop(int segIdx)
     {
-       // roRuBot.threadedHolderStow();
         RobotLog.dd(TAG, "Dropping marker");
-
-        if(roRuBot != null)
-        {
-            roRuBot.dropMarker();
-        }
-        else
-        {
-            RobotLog.dd(TAG, "No Skybot - can't drop");
-        }
     }
 
     private void doPark()
     {
         RobotLog.dd(TAG, "Parking bot");
-        if(roRuBot != null)
+        if(skyBot != null)
         {
             int hoverCounts = -5000; //-(int)(20 * robot.ARM_CPD);
-            roRuBot.parkMarker();
 
             RobotLog.dd(TAG, "Moving to arm pos %d from %d", hoverCounts, 0);
-            //roRuBot.armPitch.setTargetPosition(hoverCounts);
-            //roRuBot.armPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //roRuBot.armPitch.setPower(0.5);
         }
         else
         {
-            RobotLog.dd(TAG, "No RoRuRobot - can't extend marker");
+            RobotLog.dd(TAG, "No skyRobot - can't extend marker");
         }
 
-        if(roRuBot != null)
+        if(skyBot != null)
         {
-            roRuBot.deployParker();
+            RobotLog.dd(TAG, "Dropping parker");
         }
         else
         {
-            RobotLog.dd(TAG, "No RoRuRobot - can't extend parker");
+            RobotLog.dd(TAG, "No skyRobot - can't extend parker");
         }
     }
 
@@ -964,7 +942,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
     private List<Segment> pathSegs = new ArrayList<>();
 
     private TilerunnerGtoBot   robot;
-    private RoRuBot roRuBot = null;
+    private SkyBot skyBot = null;
 
     //@SuppressWarnings("FieldCanBeLocal")
    // private Point2d tgtMinPt1;
