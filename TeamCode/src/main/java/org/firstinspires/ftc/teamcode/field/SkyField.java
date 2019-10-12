@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.field;
 
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.teamcode.image.MineralDetector;
 import org.firstinspires.ftc.teamcode.util.Point2d;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -9,7 +7,8 @@ public class SkyField extends Field
 {
     public SkyField()
     {
-        super("Skystone", TRACKABLE_NAMES, LOCATIONS_ON_FIELD);
+        super("Skystone");
+        setHasVuMarks(false);
     }
 
     //Point naming key:
@@ -169,28 +168,70 @@ public class SkyField extends Field
 //        return minPt;
 //    }
 
-    private static final String ASSET_NAME = "RoverRuckus";
+    private static final String ASSET_NAME = "Skystone";
 
-    public static final String[] TRACKABLE_NAMES =
-            {
-                    "BluePerimeter_Rover",
-                    "RedPerimeter_Footprint",
-                    "FrontPerimeter_Craters",
-                    "BackPerimeter_Space"
-            };
+    private static final float STONEZ = 2.0f;
+    private static final float bridgeZ = 6.42f;
+    private static final float bridgeY = 23.0f;
+    private static final float bridgeX = 5.18f;
+    private static final float bridgeRotY = 59.0f;
+    private static final float bridgeRotZ = 180.0f;
 
-    private static final float[][] TRACKABLE_POS = {
-            scaleArr(new float[]{0.0f, N_WALL_Y, IMAGE_Z}, scale),
-            scaleArr(new float[]{0.0f, S_WALL_Y, IMAGE_Z}, scale),
-            scaleArr(new float[]{E_WALL_X, 0.0f, IMAGE_Z}, scale),
-            scaleArr(new float[]{W_WALL_X, 0.0f, IMAGE_Z}, scale)
-    };
+    private static final float halfField = 72.0f;
+    private static final float quadField  = 36.0f;
+    private static final float mmTargetHeight   = 6.0f;
 
-    private static final OpenGLMatrix[] LOCATIONS_ON_FIELD =
-            {
-                    genMatrix(TRACKABLE_POS[0], new float[]{90.0f,   0.0f,   0.0f}),
-                    genMatrix(TRACKABLE_POS[1], new float[]{90.0f,   0.0f, 180.0f}),
-                    genMatrix(TRACKABLE_POS[2], new float[]{90.0f,   0.0f,  90.0f}),
-                    genMatrix(TRACKABLE_POS[3], new float[]{90.0f,   0.0f, 270.0f})
-            };
+ //   VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
+
+    //TODO: set up Sky trackables
+    void setImageNames()
+    {
+       trackableNames.add("Stone Target");
+       trackableNames.add("Blue Rear Bridge");
+       trackableNames.add("Red Rear Bridge");
+       trackableNames.add("Red Front Bridge");
+       trackableNames.add("Blue Front Bridge");
+       trackableNames.add("Red Perimeter 1");
+       trackableNames.add("Red Perimeter 2");
+       trackableNames.add("Front Perimeter 1");
+       trackableNames.add("Front Perimeter 2");
+       trackableNames.add("Blue Perimeter 1");
+       trackableNames.add("Blue Perimeter 2");
+       trackableNames.add("Rear Perimeter 1");
+       trackableNames.add("Rear Perimeter 2");
+    }
+
+    void setImageLocations()
+    {
+        float[][] TRACKABLE_POS = {
+
+                scaleArr(new float[]{0.0f, 0.0f, STONEZ}),
+                scaleArr(new float[]{-bridgeX, bridgeY, bridgeZ}),
+                scaleArr(new float[]{-bridgeX, bridgeY, bridgeZ}),
+                scaleArr(new float[]{-bridgeX, -bridgeY, bridgeZ}),
+                scaleArr(new float[]{bridgeX, -bridgeY, bridgeZ}),
+                scaleArr(new float[]{quadField, -halfField, mmTargetHeight}),
+                scaleArr(new float[]{-quadField, -halfField, mmTargetHeight}),
+                scaleArr(new float[]{-halfField, -quadField, mmTargetHeight}),
+                scaleArr(new float[]{-halfField, quadField, mmTargetHeight}),
+                scaleArr(new float[]{-quadField, halfField, mmTargetHeight}),
+                scaleArr(new float[]{quadField, halfField, mmTargetHeight}),
+                scaleArr(new float[]{halfField, quadField, mmTargetHeight}),
+                scaleArr(new float[]{halfField, -quadField, mmTargetHeight})
+        };
+
+        locationsOnField.add(genMatrix(TRACKABLE_POS[0], new float[]{90.0f, 0.0f, -90.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[1], new float[]{0.0f, bridgeRotY, bridgeRotZ}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[2], new float[]{0.0f, -bridgeRotY, bridgeRotZ}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[3], new float[]{0.0f, -bridgeRotY, 0.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[4], new float[]{0, bridgeRotY, 0}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[5], new float[]{90.0f, 0.0f, 180.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[6], new float[]{90.0f, 0.0f, 180.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[7], new float[]{90.0f, 0.0f , 90.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[8], new float[]{90.0f, 0.0f , 90.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[9], new float[]{90.0f, 0.0f, 0.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[10], new float[]{90.0f, 0.0f, 0.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[11], new float[]{90.0f, 0.0f , -90.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[12], new float[]{90.0f, 0.0f , -90.0f}));
+    }
 }

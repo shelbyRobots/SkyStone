@@ -7,24 +7,26 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.util.Units;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 @SuppressWarnings("unused")
 public abstract class Field
 {
-    public Field(String assetName, String[] imageNames, OpenGLMatrix[] imageTransforms)
+    public Field(String assetName)
     {
         this.assetName = assetName;
-        this.trackableNames = imageNames;
-        this.locationsOnField = imageTransforms;
-        imgTransformMap = createPosMap(this.trackableNames, this.locationsOnField);
+        setImageNames();
+        setImageLocations();
+        imgTransformMap = createPosMap(this.trackableNames, locationsOnField);
     }
 
-    private final String         assetName ;
-    private final String[]       trackableNames;
-    private final OpenGLMatrix[] locationsOnField;
+    private final String         assetName;
+            List<String>         trackableNames   = new ArrayList<>();
+            List<OpenGLMatrix>   locationsOnField = new ArrayList<>();
 
     public enum Alliance {BLUE, RED}
 
@@ -37,12 +39,12 @@ public abstract class Field
     private static final float Y_WIDTH = 141.0f;
     /* package */ static final float N_WALL_Y = Y_WIDTH/2.0f;
     /* package */ static final float E_WALL_X = X_WIDTH/2.0f;
-    public static final float S_WALL_Y = -N_WALL_Y;
-    public static final float W_WALL_X = -E_WALL_X;
+    /* package */ static final float S_WALL_Y = -N_WALL_Y;
+    /* package */ static final float W_WALL_X = -E_WALL_X;
 
     static final float IMAGE_Z = 6.50f;
 
-    /* protected */ static final float scale = (float) Units.MM_PER_INCH;
+    private static final float scale = (float) Units.MM_PER_INCH;
 
     //Note: asset file has 304mm x 224mm (12"x8.8")for RR !?!?
     //Need to figure out what xml coordinates really mean
@@ -53,12 +55,12 @@ public abstract class Field
     public static int target_width  = 280;
     public static int target_height = 216;
 
-    static float[] scaleArr(float[] inArr, float scale)
+    static float[] scaleArr(float[] inArr)
     {
         float[] outArr = {inArr[0], inArr[1], inArr[2]};
         for (int i =0; i<inArr.length; ++i)
         {
-            outArr[i]*=scale;
+            outArr[i]*= Field.scale;
         }
         return outArr;
     }
@@ -73,23 +75,32 @@ public abstract class Field
     }
 
     public String getAssetName()    { return assetName; }
-    public String[] getImageNames() { return trackableNames; }
-    public OpenGLMatrix[] getImageTransforms() { return locationsOnField; }
-
+    public List<String> getImageNames() { return trackableNames; }
+    public List<OpenGLMatrix> getImageTransforms() { return locationsOnField; }
     OpenGLMatrix getAssetTransform(String name)
     {
         return imgTransformMap.get(name);
     }
 
+    void setImageNames() {}
+    void setImageLocations() {}
+
+    void setHasVuMarks(boolean hasVuMarks)
+    {
+        this.hasVuMarks = hasVuMarks;
+    }
+    public boolean hasVuMarks() {return hasVuMarks;}
+    private boolean hasVuMarks = false;
+
     private static Map<String, OpenGLMatrix> imgTransformMap;
 
-    private static Map<String, OpenGLMatrix> createPosMap(String[] names,
-                                                           OpenGLMatrix[] transforms)
+    private static Map<String, OpenGLMatrix> createPosMap(List<String> names,
+                                                          List<OpenGLMatrix> transforms)
     {
         Map<String, OpenGLMatrix> map = new HashMap<>();
-        for (int i = 0; i < names.length && i < transforms.length; ++i)
+        for (int i = 0; i < names.size() && i < transforms.size(); ++i)
         {
-            map.put(names[i], transforms[i]);
+            map.put(names.get(i), transforms.get(i));
         }
         return map;
     }

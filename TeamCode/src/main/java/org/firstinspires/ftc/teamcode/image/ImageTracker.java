@@ -38,19 +38,24 @@ import hallib.HalDashboard;
 @SuppressWarnings({"WeakerAccess, unused", "FieldCanBeLocal"})
 public class ImageTracker
 {
-    public ImageTracker(VuforiaInitializer.Challenge challenge)
+    public ImageTracker(Field field)
     {
         com = CommonUtil.getInstance();
         dashboard = com.getDashboard();
-        this.challenge = challenge;
+        this.field = field;
         setupVuforia();
         //setTrackableCorners();
+    }
+
+    public ImageTracker()
+    {
+        this(null);
     }
 
     private void setupVuforia()
     {
         vInit = com.getVuforiaInitializer();
-        trackables = vInit.setupTrackables(challenge);
+        trackables = vInit.setupTrackables(field);
         vuforia = com.getVuforiaLocalizer();
     }
 
@@ -141,16 +146,16 @@ public class ImageTracker
             if (robotLocationTransform != null)
             {
                 lastVisName = trackable.getName();
-                float xyz[] = robotLocationTransform.getTranslation().getData();
+                float[] xyz = robotLocationTransform.getTranslation().getData();
                 currPos = new Point2d(xyz[0] / Units.MM_PER_INCH,
                                       xyz[1] / Units.MM_PER_INCH);
                 currOri = Orientation.getOrientation(robotLocationTransform,
                         AxesReference.EXTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
-                currYaw = Double.valueOf(currOri.firstAngle);
+                currYaw = (double) currOri.firstAngle;
 
                 updateImages();
 
-                if (challenge == VuforiaInitializer.Challenge.RR && keyLoc == RelicRecoveryVuMark.UNKNOWN &&
+                if (field != null && field.hasVuMarks() && keyLoc == RelicRecoveryVuMark.UNKNOWN &&
                     RelicRecoveryVuMark.from(trackable) != RelicRecoveryVuMark.UNKNOWN)
                 {
                     keyLoc = RelicRecoveryVuMark.from(trackable);
@@ -173,7 +178,7 @@ public class ImageTracker
                         break;
                     }
                 }
-                else if (challenge == VuforiaInitializer.Challenge.RoRu)
+                else
                 {
                     rawPose = getImagePose(trackable, true);
                     RobotLog.dd(TAG, "Rawpose: " + format(rawPose));
@@ -436,14 +441,8 @@ public class ImageTracker
 
     public void setTrackableCorners()
     {
-        for(int i = 0; i < trackableSheetCorners.size(); i++)
-        {
-            trackableSheetCorners.remove(i);
-        }
-        for(int i = 0; i < trackableCorners.size(); i++)
-        {
-            trackableCorners.remove(i);
-        }
+        trackableSheetCorners.clear();
+        trackableCorners.clear();
 
         //These are trackable corners in trackable sheet space - using Point2d for naming
         trackableSheetCorners.add(new Point2d("TSTL", -target_width /2,  target_height /2));
@@ -466,10 +465,7 @@ public class ImageTracker
     public void setTrackableRelativeCropCorners(List<Point2d> corners)
     {
         cropSheetCorners = corners;
-        for(int i = 0; i < cropCorners.size(); i++)
-        {
-            cropCorners.remove(i);
-        }
+        cropCorners.clear();
 
         for(Point2d pt : corners)
         {
@@ -497,13 +493,13 @@ public class ImageTracker
     private int target_width  = Field.target_width;
     private int target_height = Field.target_height;
     CommonUtil com;
+    private Field field;
     private VuforiaLocalizer vuforia;
     private VuforiaLocalizer.Parameters parameters;
     private List<VuforiaTrackable> trackables;
     private RelicRecoveryVuMark keyLoc = RelicRecoveryVuMark.UNKNOWN;
 
     VuforiaInitializer vInit = null;
-    VuforiaInitializer.Challenge challenge;
 
     private boolean breakOnVumarkFound = true;
 

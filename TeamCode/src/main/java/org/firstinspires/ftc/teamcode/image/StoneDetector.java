@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.util.CommonUtil;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -14,32 +13,32 @@ import java.util.Iterator;
 
 import hallib.HalDashboard;
 
-/**
- * Created by crazy on 9/20/2018.
- */
-
 @SuppressWarnings("unused")
 public class StoneDetector extends Detector {
-//        private static final double THRESHOLD = 0.4;
-//        private static final int BINS = 8;
-//        private static final float MIN_VALUE = 0.0f;
-//        private static final float MAX_VALUE = 255.0f;
 
     private String bName = "GTO1";
+
+    public enum Position
+    {
+        CENTER, RIGHT, LEFT, NONE
+    }
 
     private static StoneDetector.Position foundPosition = StoneDetector.Position.NONE;
 
     private HalDashboard dashboard;
-    private static final String TAG = "SJH_MCD";
+    private static final String TAG = "SJH_SCD";
 
-    public enum Position
-    {
-        CENTER, RIGHT, LEFT, NONE, GOLDAHEAD, SILVERAHEAD
-    }
+    @SuppressWarnings("FieldCanBeLocal")
+    private boolean saveSizedImage  = true;
+    @SuppressWarnings("FieldCanBeLocal")
+    private boolean saveMaskedImage = true;
+    @SuppressWarnings("FieldCanBeLocal")
+    private boolean saveThreshImage = true;
 
+    @SuppressWarnings("WeakerAccess")
     public StoneDetector()
     {
-        name = "MineralDetector";
+        name = "StoneDetector";
         dashboard = CommonUtil.getInstance().getDashboard();
     }
 
@@ -51,12 +50,12 @@ public class StoneDetector extends Detector {
 
     public void logTelemetry()
     {
-        dashboard.displayPrintf(4,"Mineral Location Detected: %s", foundPosition);
+        dashboard.displayPrintf(4,"Stone Location Detected: %s", foundPosition);
     }
 
     public void logDebug()
     {
-        RobotLog.ii(TAG, "Mineral Location Detected %s", foundPosition);
+        RobotLog.ii(TAG, "Stone Location Detected %s", foundPosition);
     }
 
     public void setImage( Mat img )
@@ -65,73 +64,32 @@ public class StoneDetector extends Detector {
         extract();
     }
 
-    public StoneDetector.Position getMineralPos()
+    public StoneDetector.Position getStonePos()
     {
         return foundPosition;
     }
 
-    private boolean ctrScan = false;
-    public  void setCenterScan(boolean ctrScan) { this.ctrScan = ctrScan; }
-    private boolean pitScan = false;
-    public  void setPitScan(boolean pitScan) { this.pitScan = pitScan; }
-
-
     private void extract()
     {
-        RobotLog.dd(TAG, "MineralDetector.extract()");
-        //GripPipeline gpl = new GripPipeline();
-        GripPipelineLonger gpl = new GripPipelineLonger();
+        RobotLog.dd(TAG, "StoneDetector.extract()");
+        StonePipeline gpl = new StonePipeline();
         gpl.setName(bName);
-
-//        RobotLog.dd(TAG, "Saving source image");
-//        saveImage(showImg, "source");
 
         gpl.sizeSource(showImg);
         Mat sizedImage = gpl.resizeImageOutput();
         RobotLog.dd(TAG, "Saving resize image");
-        saveImage(sizedImage, "sized");
+        if (saveSizedImage) saveImage(sizedImage, "sized");
 
-        ArrayList<MatOfPoint> pitcntrs;
         ArrayList<MatOfPoint> goldcntrs;
-        ArrayList<MatOfPoint> silvercntrs;
-
-        if (pitScan)
-        {
-            gpl.processPit(sizedImage);
-
-//            RobotLog.dd(TAG, "Saving pitBlur image");
-//            saveImage(gpl.blurOutput(), "pitBlur");
-//            RobotLog.dd(TAG, "Saving pitThres image");
-//            saveImage(gpl.hsvThresholdOutput(), "pitThresh");
-//
-//            pitcntrs = gpl.filterContoursOutput();
-//
-//            RobotLog.dd(TAG, "Finding pit mask");
-//            Rect pitMask = gpl.findMask(pitcntrs);
-            Rect ctrMask = gpl.centerMask();
-            //Imgproc.rectangle(sizedImage, pitMask.tl(), pitMask.br(), new Scalar(0, 0, 0), -1);
-            Imgproc.rectangle(sizedImage, ctrMask.tl(), ctrMask.br(), new Scalar(0, 0, 0), -1);
-        }
-
-        if(ctrScan)
-        {
-            RobotLog.dd(TAG, "Finding ctr masks");
-            Rect lMask = gpl.leftMask();
-            Rect rMask = gpl.rightMask();
-            Imgproc.rectangle(sizedImage, lMask.tl(), lMask.br(), new Scalar(0,0,0), -1);
-            Imgproc.rectangle(sizedImage, rMask.tl(), rMask.br(), new Scalar(0,0,0), -1);
-        }
 
         RobotLog.dd(TAG, "Saving masked image");
-        saveImage(sizedImage, "maskedSrc");
+        if (saveMaskedImage) saveImage(sizedImage, "maskedSrc");
 
         RobotLog.dd(TAG, "Digging for gold");
         gpl.processGold(sizedImage);
 
-//        RobotLog.dd(TAG, "Saving minBlur image");
-//        saveImage(gpl.blurOutput(), "minBlur");
         RobotLog.dd(TAG, "Saving minThresh image");
-        saveImage(gpl.hsvThresholdOutput(), "minThresh");
+        if (saveThreshImage) saveImage(gpl.hsvThresholdOutput(), "minThresh");
 
         goldcntrs = gpl.filterContoursOutput();
 
@@ -139,73 +97,82 @@ public class StoneDetector extends Detector {
 
         Rect bounded_box;
         int found_x_ptr = 0;
-        foundPosition = Position.LEFT;
+        foundPosition = Position.NONE;
 
         RobotLog.dd(TAG, "Processing %d gold contours", goldcntrs.size());
-        if(ctrScan)
+
+        int midX = sizedImage.width()/2;
+        int oneThirdX = sizedImage.width()/3;
+        int twoThirdX = 2*sizedImage.width()/3;
+        int numLtOneThird = 0;
+        int numLtTwoThird = 0;
+        int numGtOneThird = 0;
+        int numGtTwoThird = 0;
+
+        if (goldcntrs.size() == 0)
         {
-            if(goldcntrs.size() == 0)
+            RobotLog.dd(TAG, "No Countours found.");
+        }
+        else if (goldcntrs.size() == 1)
+        {
+            RobotLog.ee(TAG, " found 1 contour",
+                    goldcntrs.size());
+            for (MatOfPoint pts : goldcntrs)
             {
-                RobotLog.dd(TAG, "Digging for silver");
-                gpl.processSilver(sizedImage);
-                silvercntrs = gpl.filterContoursOutput();
-                RobotLog.dd(TAG, "Processing %d silver contours", silvercntrs.size());
+                MatOfPoint contour = each.next();
+                bounded_box = Imgproc.boundingRect(contour);
+                found_x_ptr = (bounded_box.width/2 + bounded_box.x);
+            }
 
-                if(silvercntrs.size() == 0)
-                {
-                    foundPosition = Position.NONE;
-                    RobotLog.dd(TAG, "No Silver Countours in center scan.");
-                }
-                else
-                {
-                    foundPosition = Position.SILVERAHEAD;
-                    RobotLog.dd(TAG, "Found silver");
-                }
-
+            if (found_x_ptr < midX)
+            {
+                foundPosition = StoneDetector.Position.RIGHT;
             }
             else
             {
-                foundPosition = Position.GOLDAHEAD;
-                RobotLog.dd(TAG, "In ctrScan mode and %d countours found", goldcntrs.size());
+                foundPosition = StoneDetector.Position.LEFT;
             }
         }
-        else // pitScan
+        else if (goldcntrs.size() == 2)
         {
-            if (goldcntrs.size() == 0)
+            RobotLog.ee(TAG, " found 2 contours",
+                    goldcntrs.size());
+            for (MatOfPoint pts : goldcntrs)
             {
-                foundPosition = Position.LEFT;
-                RobotLog.dd(TAG, "No Countours.  Assuming left is gold");
-            }
-            else if (goldcntrs.size() > 1)
-            {
-                RobotLog.ee(TAG, "Too Many Countours=%d.  I don't know which is gold",
-                        goldcntrs.size());
-                foundPosition = Position.CENTER;
-            }
-            else //goldcntrs.size() == 1
-            {
-                for (MatOfPoint pts : goldcntrs)
+                MatOfPoint contour = each.next();
+                bounded_box = Imgproc.boundingRect(contour);
+                found_x_ptr = (bounded_box.width/2 + bounded_box.x);
+                if (found_x_ptr < twoThirdX)
                 {
-                    MatOfPoint contour = each.next();
-                    bounded_box = Imgproc.boundingRect(contour);
-                    found_x_ptr = (bounded_box.width/2 + bounded_box.x);
-                }
-
-                RobotLog.dd(TAG, "Center of Gold = " + found_x_ptr);
-
-                int midX = gpl.cvDilateOutput().width()/2;
-
-                if (found_x_ptr < midX)
-                {
-                    foundPosition = StoneDetector.Position.CENTER;
-                    //Yay it in deh center!!!!!!!!!!
+                    numLtTwoThird++;
                 }
                 else
                 {
-                    foundPosition = StoneDetector.Position.RIGHT;
-                    //Yay it in deh right!!!!!!!!!!!
+                    numGtTwoThird++;
+                }
+                if (found_x_ptr < oneThirdX)
+                {
+                    numLtOneThird++;
+                }
+                else
+                {
+                    numGtOneThird++;
                 }
             }
+
+            if (numLtTwoThird == 0)
+            {
+                foundPosition = StoneDetector.Position.RIGHT;
+            }
+            else if (numGtOneThird == 0)
+            {
+                foundPosition = StoneDetector.Position.LEFT;
+            }
+            else
+            {
+                foundPosition = StoneDetector.Position.CENTER;
+            }
+
         }
     }
 }

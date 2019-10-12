@@ -349,8 +349,16 @@ public class Drivetrain
 
     public int driveToPoint(Point2d tgtPt, double pwr, Direction dir, double targetHdg)
     {
-        if (tgtPt == null)  RobotLog.ee(TAG, "tgtPt null in driveToPoint");
-        if (currPt == null) RobotLog.ee(TAG, "currPt null in driveToPoint");
+        if (tgtPt == null)
+        {
+            RobotLog.ee(TAG, "tgtPt null in driveToPoint");
+            return 0;
+        }
+        if (currPt == null)
+        {
+            RobotLog.ee(TAG, "currPt null in driveToPoint");
+            return 0;
+        }
         double dist = currPt.distance(tgtPt);
         return driveDistanceLinear(dist, pwr, dir, targetHdg);
     }

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.field;
 
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.image.MineralDetector;
 import org.firstinspires.ftc.teamcode.util.Point2d;
 
@@ -9,7 +8,8 @@ public class RoRuField extends Field
 {
     public RoRuField()
     {
-        super("RoverRuckus", TRACKABLE_NAMES, LOCATIONS_ON_FIELD);
+        super("RoverRuckus");
+        setHasVuMarks(false);
     }
 
     //Point naming key:
@@ -134,7 +134,7 @@ public class RoRuField extends Field
                         switch (minPos) {
                             case LEFT:    minPt = RLM3; break;
                             case RIGHT:   minPt = RLM1; break;
-                            case CENTER:  minPt = RLM2; break;
+                            case CENTER:
                             case NONE:    minPt = RLM2; break;
                         }
                         break;
@@ -143,7 +143,7 @@ public class RoRuField extends Field
                         switch (minPos) {
                             case LEFT:    minPt = RRM3; break;
                             case RIGHT:   minPt = RRM1; break;
-                            case CENTER:  minPt = RRM2; break;
+                            case CENTER:
                             case NONE:    minPt = RRM2; break;
                         }
                         break;
@@ -157,7 +157,7 @@ public class RoRuField extends Field
                         switch (minPos) {
                             case LEFT:    minPt = BLM3; break;
                             case RIGHT:   minPt = BLM1; break;
-                            case CENTER:  minPt = BLM2; break;
+                            case CENTER:
                             case NONE:    minPt = BLM2; break;
                         }
                         break;
@@ -166,7 +166,7 @@ public class RoRuField extends Field
                         switch (minPos) {
                             case LEFT:    minPt = BRM3; break;
                             case RIGHT:   minPt = BRM1; break;
-                            case CENTER:  minPt = BRM2; break;
+                            case CENTER:
                             case NONE:    minPt = BRM2; break;
                         }
                         break;
@@ -178,28 +178,26 @@ public class RoRuField extends Field
         return minPt;
     }
 
-    private static final String ASSET_NAME = "RoverRuckus";
+    void setImageNames()
+    {
+        trackableNames.add("BluePerimeter_Rover");
+        trackableNames.add("RedPerimeter_Footprint");
+        trackableNames.add("FrontPerimeter_Craters");
+        trackableNames.add("BackPerimeter_Space");
+    }
 
-    public static final String[] TRACKABLE_NAMES =
-            {
-                    "BluePerimeter_Rover",
-                    "RedPerimeter_Footprint",
-                    "FrontPerimeter_Craters",
-                    "BackPerimeter_Space"
-            };
+    void setImageLocations()
+    {
+        float[][] TRACKABLE_POS = {
+                scaleArr(new float[]{0.0f, N_WALL_Y, IMAGE_Z}),
+                scaleArr(new float[]{0.0f, S_WALL_Y, IMAGE_Z}),
+                scaleArr(new float[]{E_WALL_X, 0.0f, IMAGE_Z}),
+                scaleArr(new float[]{W_WALL_X, 0.0f, IMAGE_Z})
+        };
 
-    private static final float[][] TRACKABLE_POS = {
-            scaleArr(new float[]{0.0f, N_WALL_Y, IMAGE_Z}, scale),
-            scaleArr(new float[]{0.0f, S_WALL_Y, IMAGE_Z}, scale),
-            scaleArr(new float[]{E_WALL_X, 0.0f, IMAGE_Z}, scale),
-            scaleArr(new float[]{W_WALL_X, 0.0f, IMAGE_Z}, scale)
-    };
-
-    private static final OpenGLMatrix[] LOCATIONS_ON_FIELD =
-            {
-                    genMatrix(TRACKABLE_POS[0], new float[]{90.0f,   0.0f,   0.0f}),
-                    genMatrix(TRACKABLE_POS[1], new float[]{90.0f,   0.0f, 180.0f}),
-                    genMatrix(TRACKABLE_POS[2], new float[]{90.0f,   0.0f,  90.0f}),
-                    genMatrix(TRACKABLE_POS[3], new float[]{90.0f,   0.0f, 270.0f})
-            };
+        locationsOnField.add(genMatrix(TRACKABLE_POS[0], new float[]{90.0f, 0.0f, 0.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[1], new float[]{90.0f, 0.0f, 180.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[2], new float[]{90.0f, 0.0f, 90.0f}));
+        locationsOnField.add(genMatrix(TRACKABLE_POS[3], new float[]{90.0f, 0.0f, 270.0f}));
+    }
 }

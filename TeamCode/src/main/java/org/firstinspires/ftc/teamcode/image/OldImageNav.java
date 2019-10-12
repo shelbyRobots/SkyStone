@@ -306,7 +306,7 @@ public class OldImageNav extends LinearOpMode {
     @Override
     public void runOpMode()
     {
-        tracker = new ImageTracker(VuforiaInitializer.Challenge.VV);
+        tracker = new ImageTracker();
 //        setupTrackables();
 //        setupPhoneOnRobot();
 

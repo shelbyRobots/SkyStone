@@ -8,13 +8,12 @@ import org.firstinspires.ftc.teamcode.util.Segment;
 
 import java.util.Vector;
 
+
 @SuppressWarnings("unused")
 public abstract class Route
 {
-
     private static final String TAG = "SJH_PNT";
 
-    @SuppressWarnings("ConstantConditions")
     protected Vector<Point2d> initPoints()
     {
         return new Vector<>(MAX_SEGMENTS);
@@ -84,7 +83,7 @@ public abstract class Route
         return bpts;
     }
 
-    public Segment[] initSegments(Vector<Point2d> pts)
+    private Segment[] initSegments(Vector<Point2d> pts)
     {
         int numSegs = pts.size() - 1;
         Segment[] pathSegs = new Segment[numSegs];
@@ -128,10 +127,11 @@ public abstract class Route
         rpt.setY(by);
         return rpt;
     }
-    
+
     public String toString()
     {
         StringBuilder sbldr = new StringBuilder();
+        sbldr.append("Segments\n");
         for (Segment segment : segments)
         {
             sbldr.append(segment.toString()).append("\n");
@@ -144,7 +144,7 @@ public abstract class Route
 
     final static int    MAX_SEGMENTS = 16;
 
-    Segment[] segments;
+    private Segment[] segments;
 
     private Vector<Segment.Action> actions = new Vector<>(MAX_SEGMENTS);
     private Vector<Double> segSpeeds = new Vector<>(MAX_SEGMENTS);

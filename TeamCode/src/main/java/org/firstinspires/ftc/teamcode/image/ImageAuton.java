@@ -169,7 +169,7 @@ public class ImageAuton extends InitLinearOpMode
     public void runOpMode()
     {
         initCommon(this, true, true, false, true);
-        tracker = new ImageTracker(VuforiaInitializer.Challenge.VV);
+        tracker = new ImageTracker(null);
 
         bd = new BeaconDetector();
         bf = (BeaconFinder) bd;

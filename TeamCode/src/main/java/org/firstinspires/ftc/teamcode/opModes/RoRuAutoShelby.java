@@ -253,7 +253,7 @@ public class RoRuAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButt
 
         det = new MineralDetector(robotName);
         RobotLog.dd(TAG, "Setting up vuforia");
-        tracker = new ImageTracker(VuforiaInitializer.Challenge.RoRu);
+        tracker = new ImageTracker(new RoRuField());
 
         setupLogger();
 

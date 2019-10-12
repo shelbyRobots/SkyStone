@@ -66,7 +66,7 @@ public class ImageProcTest extends InitLinearOpMode
 
         det = new MineralDetector();
         RobotLog.dd(TAG, "Setting up vuforia");
-        tracker = new ImageTracker(VuforiaInitializer.Challenge.RoRu);
+        tracker = new ImageTracker(new RoRuField());
 
         det.setTelemetry(telemetry);
     }

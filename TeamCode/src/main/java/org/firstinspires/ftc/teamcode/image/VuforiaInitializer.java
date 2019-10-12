@@ -19,12 +19,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.field.Field;
-import org.firstinspires.ftc.teamcode.field.RoRuField;
 import org.firstinspires.ftc.teamcode.robot.ShelbyBot;
 import org.firstinspires.ftc.teamcode.util.CommonUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -140,37 +138,24 @@ public class VuforiaInitializer
         allTrackables.addAll(trackables);
     }
 
-    List<VuforiaTrackable> setupTrackables(Challenge challenge)
+    List<VuforiaTrackable> setupTrackables(Field fld)
     {
-        Field fld = null;
-
-        switch(challenge)
+        if (fld != null && fld.getImageNames().size() > 0)
         {
-            case VV:
-                break;
+            RobotLog.dd(TAG, "Setting up trackables from %s", fld.getAssetName());
 
-            case RR:
-                break;
+            StringBuilder nsb = new StringBuilder();
+            for (String s : fld.getImageNames()) nsb.append(s);
 
-            case RoRu:
-                fld = new RoRuField();
-                break;
+            RobotLog.dd(TAG, "Trackable names %s", nsb.toString());
+
+            StringBuilder osb = new StringBuilder();
+            for (OpenGLMatrix o : fld.getImageTransforms()) osb.append(o.toString());
+
+            RobotLog.dd(TAG, "Transforms %s", osb.toString());
+
+            setupTrackables(fld.getAssetName(), fld.getImageNames(), fld.getImageTransforms());
         }
-
-        RobotLog.dd(TAG, "Setting up trackables from %s", fld.getAssetName());
-
-        StringBuilder nsb = new StringBuilder();
-        for (String s : fld.getImageNames()) nsb.append(s);
-
-        RobotLog.dd(TAG, "Trackable names %s", nsb.toString());
-
-        StringBuilder osb = new StringBuilder();
-        for (OpenGLMatrix o : fld.getImageTransforms()) osb.append(o.toString());
-
-        RobotLog.dd(TAG, "Transforms %s", osb.toString());
-
-        setupTrackables(fld.getAssetName(), Arrays.asList(fld.getImageNames()),
-                Arrays.asList(fld.getImageTransforms()));
         return allTrackables;
     }
 
@@ -193,7 +178,7 @@ public class VuforiaInitializer
         String locStr = null;
         if (mat != null)
         {
-            float xyz[] = mat.getTranslation().getData();
+            float[] xyz = mat.getTranslation().getData();
             Orientation ori = Orientation.getOrientation(mat,
                     AxesReference.EXTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
 

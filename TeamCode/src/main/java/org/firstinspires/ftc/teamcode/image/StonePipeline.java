@@ -15,7 +15,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -40,24 +39,26 @@ public class StonePipeline
 	private ArrayList<MatOfPoint> convexHullsOutput = new ArrayList<>();
 	private ArrayList<MatOfPoint> filterContoursOutput = new ArrayList<>();
 
-	private String name = "GTO1";
+	@SuppressWarnings("FieldCanBeLocal")
+	private String name = "SJH_SPL";
 
 	public void setName(String name) {this.name = name;}
 
-	double GTO1_TOP = 0.45; //Changed to 0.48, was: 0.54
-	double GTO2_TOP = 0.45;
+	@SuppressWarnings("FieldCanBeLocal")
+	private double GTO1_TOP = 0.35; //Changed to 0.48, was: 0.54
+	private double GTO1_BOT = 0.75;
 
-	public void sizeSource(Mat source0)
+	void sizeSource(Mat source0)
 	{
 		RobotLog.dd(TAG, "Processing image WXH= %dx%d", source0.cols(), source0.rows());
 
 		double top = GTO1_TOP;
-		if(name.equals("GTO2")) top = GTO2_TOP;
+		double bot = GTO1_BOT;
 		roiMat = new Mat(source0, new Rect(0, (int)(top * source0.height()),
-				source0.width(), source0.height()/4));
+				source0.width(), (int)(top-bot) * source0.height()));
 		RobotLog.dd(TAG, " roiMat image WXH= %dx%d", roiMat.cols(), roiMat.rows());
 
-		int resizeImageWidth = 512;
+		int resizeImageWidth = 480;
 		int resizeImageHeight = (int)(resizeImageWidth*((double)roiMat.height()/roiMat.width()));
 
 		if(resizeImageOutput == null)
@@ -72,7 +73,7 @@ public class StonePipeline
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
-	public void processGold(Mat goldSource)
+	void processGold(Mat goldSource)
 	{
 		@SuppressWarnings("UnnecessaryLocalVariable")
 //        Mat blurInput = goldSource;
@@ -140,63 +141,15 @@ public class StonePipeline
                 filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
 	}
 
-    public Rect leftMask()
-	{
-        double xMaskPct = 0.35;
-	    int height = 200;
-	    int width  = 512;
-
-	    if(resizeImageOutput != null)
-        {
-            height = resizeImageOutput.height();
-            width  = (int)(resizeImageOutput.width() * xMaskPct);
-        }
-		return new Rect(0, 0, width, height);
-	}
-
-    public Rect rightMask()
-    {
-        double xMaskPct = 0.35;
-        int height = 200;
-        int width  = 512;
-        int x = width - (int)(xMaskPct * width);
-
-        if(resizeImageOutput != null)
-        {
-            height = resizeImageOutput.height();
-            width  = (int)(resizeImageOutput.width() * xMaskPct);
-        }
-        return new Rect(x, 0, width, height);
-    }
-
-	public Rect centerMask()
-	{
-		double xMaskPct = 0.15;
-		int height = 200;
-		int width  = 512;
-		int imgWidth = 512;
-
-		int xStart = width/2;
-
-		if(resizeImageOutput != null)
-		{
-			height = resizeImageOutput.height();
-			width  = (int)(resizeImageOutput.width() * xMaskPct);
-			xStart = (imgWidth - width) / 2;
-		}
-
-		return new Rect(xStart, 0, width, height);
-	}
-
 	public Mat roiMat()                                 { return roiMat; }
-	public Mat resizeImageOutput()                      { return resizeImageOutput; }
+	       Mat resizeImageOutput()                      { return resizeImageOutput; }
     public Mat blurOutput()                             { return blurOutput; }
 	public Mat cvErodeOutput()                          { return cvErodeOutput; }
 	public Mat cvDilateOutput()                         { return cvDilateOutput; }
-	public Mat hsvThresholdOutput()                     { return hsvThresholdOutput; }
+	       Mat hsvThresholdOutput()                     { return hsvThresholdOutput; }
 	public ArrayList<MatOfPoint> findContoursOutput()   { return findContoursOutput; }
 	public ArrayList<MatOfPoint> convexHullsOutput()    { return convexHullsOutput; }
-	public ArrayList<MatOfPoint> filterContoursOutput() {
+	       ArrayList<MatOfPoint> filterContoursOutput() {
 		return filterContoursOutput;
 	}
 

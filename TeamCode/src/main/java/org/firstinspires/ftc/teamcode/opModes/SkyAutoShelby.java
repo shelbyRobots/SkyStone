@@ -3,19 +3,18 @@ package org.firstinspires.ftc.teamcode.opModes;
 import android.graphics.Bitmap;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
 
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.PositionOption;
+import org.firstinspires.ftc.teamcode.field.SkyField;
 import org.firstinspires.ftc.teamcode.field.SkyRoute;
 import org.firstinspires.ftc.teamcode.field.Route;
 import org.firstinspires.ftc.teamcode.image.Detector;
 import org.firstinspires.ftc.teamcode.image.ImageTracker;
-import org.firstinspires.ftc.teamcode.image.MineralDetector;
-import org.firstinspires.ftc.teamcode.image.VuforiaInitializer;
+import org.firstinspires.ftc.teamcode.image.StoneDetector;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.ShelbyBot;
 import org.firstinspires.ftc.teamcode.robot.SkyBot;
@@ -37,14 +36,17 @@ import ftclib.FtcValueMenu;
 
 import static org.firstinspires.ftc.teamcode.field.Route.ParkPos.DEFEND_PARK;
 
-//After starting on latch, opmode needs to lower/detach
-// Then
-//  - align (possibly with tape
-//  - find gold mineral
-//  - move gold mineral
-//  - optionally knock partners gold mineral
-//  - place marker in depot
-//  - park at pit
+//If start at 2nd left tile (centered on block 5):
+//  a set gyro/field hdg init bot/pts
+//  b move forward to scan pt
+//  c can - find SkyStone (A L/C/R)
+//  d move bot to turnpt and turn to align side with stones
+//  e if moving bot to L/R, move fwd/back - else turn arm
+//  f grab stone
+//  g deliver/drop stone
+//  h if doing 2 (default) cycle back to B L/C/R - repeat e-g
+//  i if moving platform, do so
+//  j park under bridge
 
 
 @Autonomous(name="SkyAutoShelby", group="Auton")
@@ -224,7 +226,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             RobotLog.ii(TAG,"Y pressed: gyroSetToSeg");
 
         dashboard.displayPrintf(0, "GYRO CALIBRATING DO NOT TOUCH OR START");
-        ShelbyBot.curOpModeType = ShelbyBot.OpModeType.AUTO;
+        SkyBot.curOpModeType = ShelbyBot.OpModeType.AUTO;
         robot.init(this, robotName);
 
         if (robot.imu != null || robot.gyro  != null)
@@ -250,9 +252,9 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         dashboard.displayPrintf(1, "DrvTrn Inited");
 
-        det = new MineralDetector(robotName);
+        det = new StoneDetector(robotName);
         RobotLog.dd(TAG, "Setting up vuforia");
-        tracker = new ImageTracker(VuforiaInitializer.Challenge.RoRu);
+        tracker = new ImageTracker(new SkyField());
 
         setupLogger();
 
@@ -266,11 +268,6 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         RobotLog.ii(TAG, "BOT      %s", robotName);
 
         Route pts = new SkyRoute(startPos, alliance, robotName);
-//        if(pts instanceof SkyRoute && parkPos == DEFEND_PARK)
-//        {
-//            RobotLog.dd(TAG, "Setting up to go for two");
-//            ((SkyRoute) pts).setGoForTwo(true);
-//        }
 
         pathSegs.addAll(Arrays.asList(pts.getSegments()));
 
@@ -293,25 +290,6 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         dashboard.displayPrintf(8, "PATH: Start at %s", currPoint);
 
         RobotLog.ii(TAG, "IHDG %4.2f", initHdg);
-
-
-
-        if (startPos == Route.StartPos.START_1)
-        {
-            pitScan = true;
-            ctrScan = false;
-        }
-        else
-        {
-            pitScan = false;
-            ctrScan = true;
-        }
-
-        if(det instanceof MineralDetector)
-        {
-            ((MineralDetector) det).setCenterScan(ctrScan);
-            ((MineralDetector) det).setPitScan(pitScan);
-        }
 
         det.setTelemetry(telemetry);
     }
@@ -466,14 +444,14 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                 case SCAN_IMAGE:
                 {
                     RobotLog.ii(TAG, "Action SCAN_IMAGE");
-                    //doScan(i);
+                    doScan(i);
                     break;
                 }
 
                 case GRAB:
                 {
                     RobotLog.ii(TAG, "Action GRAB");
-                    //doGrab(i);
+                    doGrab(i);
                     break;
                 }
 
@@ -542,116 +520,55 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         tracker.setActive(false);
     }
 
-    @SuppressWarnings("unused")
     private void doScan(int segIdx)
     {
-        if(ctrScan)
-        {
-            RobotLog.dd(TAG, "doScanForward");
-            doScanForward(segIdx);
-            return;
-        }
-
         RobotLog.dd(TAG, "doScan");
-        double hdgAdj = 14.0;
-//        Point2d cntMinPt = SkyField.getMineralPt(alliance, startPos, MineralDetector.Position.CENTER);
-//        Point2d rgtMinPt = SkyField.getMineralPt(alliance, startPos, MineralDetector.Position.RIGHT);
-//        Point2d lftMinPt = SkyField.getMineralPt(alliance, startPos, MineralDetector.Position.LEFT);
-//        RobotLog.dd(TAG, "Ctr Orig Offset Min Pt: " + cntMinPt.toString());
-//        RobotLog.dd(TAG, "Rgt Orig Offset Min Pt: " + rgtMinPt.toString());
-//        RobotLog.dd(TAG, "Lft Orig Offset Min Pt: " + lftMinPt.toString());
-//        Point2d cntMinOPt = SkyField.getMinOffsetPt(alliance, startPos, MineralDetector.Position.CENTER);
-//        Point2d rgtMinOPt = SkyField.getMinOffsetPt(alliance, startPos, MineralDetector.Position.RIGHT);
-//        Point2d lftMinOPt = SkyField.getMinOffsetPt(alliance, startPos, MineralDetector.Position.LEFT);
-//        RobotLog.dd(TAG, "Ctr New Offset Min Pt: " + cntMinOPt.toString());
-//        RobotLog.dd(TAG, "Rgt New Offset Min Pt: " + rgtMinOPt.toString());
-//        RobotLog.dd(TAG, "Lft New Offset Min Pt: " + lftMinOPt.toString());
-//        Point2d cntMinAPt = SkyField.getMinActualPt(alliance, startPos, MineralDetector.Position.CENTER);
-//        Point2d rgtMinAPt = SkyField.getMinActualPt(alliance, startPos, MineralDetector.Position.RIGHT);
-//        Point2d lftMinAPt = SkyField.getMinActualPt(alliance, startPos, MineralDetector.Position.LEFT);
-//        RobotLog.dd(TAG, "Ctr New Actual Min Pt: " + cntMinAPt.toString());
-//        RobotLog.dd(TAG, "Rgt New Actual Min Pt: " + rgtMinAPt.toString());
-//        RobotLog.dd(TAG, "Lft New Actual Min Pt: " + lftMinAPt.toString());
-        Point2d curPt = pathSegs.get(segIdx).getTgtPt();
-        //Finish bisector
 
+        if(useLight)
+            CameraDevice.getInstance().setFlashTorchMode(true) ;
+
+        stonePos =  getStonePos();
+        RobotLog.dd(TAG, "doScan stonePos = %s", stonePos);
+
+        if(useLight)
+            CameraDevice.getInstance().setFlashTorchMode(false);
+
+        setStonePoint(segIdx);
+    }
+
+    private void doGrab(int segIdx)
+    {
+        double hdgAdj = 14.0;
+
+        Point2d curPt = pathSegs.get(segIdx).getTgtPt();
         double curAng = pathSegs.get(segIdx).angle();
 //        double newHdg = curAng - hdgAdj;
         double newHdg = robot.getGyroFhdg() - hdgAdj;
-        doGyroTurn(newHdg, "scanAdj");
-
-        if(useLight)
-            CameraDevice.getInstance().setFlashTorchMode(true) ;
-
-        mineralPos =  getMineralPos();
-        //mineralPos = MineralDetector.Position.CENTER;
-        RobotLog.dd(TAG, "doScan mineralPos = %s", mineralPos);
-
-        if(useLight)
-            CameraDevice.getInstance().setFlashTorchMode(false);
-
-        setMineralPoint(segIdx);
+        //TODO:  Uncomment if we are turning bot to grab stone.
+        //       Otherwise, turn arm
+//        doGyroTurn(newHdg, "scanAdj");
+        //Lower/align gripper, extend arm, close gripper, raise arm,
+        //retract/rotate arm
     }
 
-    private void doScanForward(int segIdx)
+    private void setStonePoint(int segIdx)
     {
-        double curHdg = robot.getGyroFhdg();
-
-        double[] dhdgs = {0.0, -27.7, 27.7};
-        MineralDetector.Position[] pos =
-                {
-                        MineralDetector.Position.CENTER,
-                        MineralDetector.Position.RIGHT,
-                        MineralDetector.Position.LEFT
-                };
-
-        if(useLight)
-            CameraDevice.getInstance().setFlashTorchMode(true) ;
-
-        for(int i=0; i < 3; ++i)
-        {
-            dhdgs[i]+=curHdg;
-            RobotLog.dd(TAG, "doScanForward " + pos[i]);
-            if (i != 0)
-            {
-                doEncoderTurn(dhdgs[i], "scanAdj");
-                doGyroTurn(dhdgs[i], "scanAdj");
-            }
-
-            if(getMineralPos() == MineralDetector.Position.GOLDAHEAD)
-            {
-                mineralPos = pos[i];
-                RobotLog.dd(TAG, "doScanForward mineralPos = %s", mineralPos);
-                break;
-            }
-        }
-
-        if(useLight)
-            CameraDevice.getInstance().setFlashTorchMode(false);
-
-        setMineralPoint(segIdx);
-    }
-
-    private void setMineralPoint(int segIdx)
-    {
-        RobotLog.dd(TAG, "Getting mineralPt for %s %s %s seg=%d",
-                alliance, startPos, mineralPos, segIdx);
-//        PositionOption otherPos = Route.StartPos.START_2;
-//        if(startPos == Route.StartPos.START_2) otherPos = Route.StartPos.START_1;
-//        tgtMinPt1 = SkyField.getMineralPt(alliance, startPos, mineralPos);
-//        tgtMinPt2 = SkyField.getMineralPt(alliance, otherPos, mineralPos);
-//        RobotLog.dd(TAG, "MineralPt = %s", tgtMinPt1);
-//
+        RobotLog.dd(TAG, "Getting stonePt for %s %s %s seg=%d",
+                alliance, startPos, stonePos, segIdx);
+        //TODO: If we are going to move bot we need to determine pts for L/R blocks
+        //      TgtPt could be stoneGrabPt[center].x +/- 8in.
+        //      If we are simply going to rotate grabber arm, no need.
 //        Segment sMin = pathSegs.get(segIdx+1);
 //        Segment sRev = pathSegs.get(segIdx+2);
-//        sMin.setEndPt(tgtMinPt1);
-//        sRev.setStrtPt(tgtMinPt1);
+//        sMin.setEndPt(tgtPt1);
+//        sRev.setStrtPt(tgtPt1);
     }
 
     @SuppressWarnings("unused")
     private void doDrop(int segIdx)
     {
-        RobotLog.dd(TAG, "Dropping marker");
+        RobotLog.dd(TAG, "Dropping stone");
+        //rotate arm, lower?, release gripper, return arm
     }
 
     private void doPark()
@@ -662,19 +579,11 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             int hoverCounts = -5000; //-(int)(20 * robot.ARM_CPD);
 
             RobotLog.dd(TAG, "Moving to arm pos %d from %d", hoverCounts, 0);
+            //extend arm if needed
         }
         else
         {
-            RobotLog.dd(TAG, "No skyRobot - can't extend marker");
-        }
-
-        if(skyBot != null)
-        {
-            RobotLog.dd(TAG, "Dropping parker");
-        }
-        else
-        {
-            RobotLog.dd(TAG, "No skyRobot - can't extend parker");
+            RobotLog.dd(TAG, "No skyRobot - can't extend arm");
         }
     }
 
@@ -790,25 +699,26 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                 fHdg, timer.time(), cHdg);
     }
 
-    private MineralDetector.Position getMineralPos()
+    private StoneDetector.Position getStonePos()
     {
-        if(!opModeIsActive() || mineralPos != MineralDetector.Position.NONE)
-            return mineralPos;
+        if(!opModeIsActive() || stonePos != StoneDetector.Position.NONE)
+            return stonePos;
 
         tracker.setActive(true);
-        mineralPos = MineralDetector.Position.NONE;
+        stonePos = StoneDetector.Position.NONE;
         RobotLog.dd(TAG, "Set qsize to get frames");
         tracker.setFrameQueueSize(1);
         RobotLog.dd(TAG, "Start LD sensing");
         det.startSensing();
 
-        MineralDetector.Position minPos = MineralDetector.Position.NONE;
+        StoneDetector.Position stonePos = StoneDetector.Position.NONE;
 
-        double mineralTimeout = 0.5;
+        double stoneTimeout = 0.5;
+
         ElapsedTime mtimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         while(opModeIsActive()                                   &&
-              minPos == MineralDetector.Position.NONE &&
-              mtimer.seconds() < mineralTimeout)
+              stonePos == StoneDetector.Position.NONE &&
+              mtimer.seconds() < stoneTimeout)
         {
             tracker.updateImages();
             Bitmap rgbImage = tracker.getLastImage();
@@ -816,17 +726,17 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             boolean tempTest = false;
             if(rgbImage == null)
             {
-                RobotLog.dd(TAG, "getMineralPos - image from tracker is null");
+                RobotLog.dd(TAG, "getStonePos - image from tracker is null");
                 //noinspection ConstantConditions
                 if(!tempTest) continue;
             }
             det.setBitmap(rgbImage);
             det.logDebug();
             det.logTelemetry();
-            if(det instanceof MineralDetector)
-                minPos = ((MineralDetector) det).getMineralPos();
+            if(det instanceof StoneDetector)
+                stonePos = ((StoneDetector) det).getStonePos();
 
-            if(minPos == MineralDetector.Position.NONE)
+            if(stonePos == StoneDetector.Position.NONE)
                 sleep(10);
         }
 
@@ -834,9 +744,14 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         tracker.setFrameQueueSize(0);
         tracker.setActive(false);
 
-        dashboard.displayPrintf(1, "MIN: " + minPos);
+        dashboard.displayPrintf(1, "MIN: " + stonePos);
 
-        return minPos;
+        if (stonePos == StoneDetector.Position.NONE)
+        {
+            RobotLog.dd(TAG, "No skystone found - defaulting to center");
+            stonePos = StoneDetector.Position.CENTER;
+        }
+        return stonePos;
     }
 
     @Override
@@ -944,21 +859,13 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
     private TilerunnerGtoBot   robot;
     private SkyBot skyBot = null;
 
-    //@SuppressWarnings("FieldCanBeLocal")
-   // private Point2d tgtMinPt1;
-    //private Point2d tgtMinPt2;
-
-    private boolean ctrScan = false;
-    @SuppressWarnings("FieldCanBeLocal")
-    private boolean pitScan = false;
-
     private ElapsedTime timer = new ElapsedTime();
     private ElapsedTime startTimer = new ElapsedTime();
     private Drivetrain drvTrn = new Drivetrain();
 
     private Detector det;
     private static ImageTracker tracker;
-    private MineralDetector.Position mineralPos = MineralDetector.Position.NONE;
+    private StoneDetector.Position stonePos = StoneDetector.Position.NONE;
 
     private static Point2d curPos;
     private double initHdg = 0.0;
