@@ -28,7 +28,7 @@ public class SkyField extends Field
 
     //Red Route > Left
     //Red Left Start Point 1
-    static final Point2d RLS1 = new Point2d("RLS1", -36.0,  -61.0);
+    static final Point2d RLS1 = new Point2d("RLS1", -36.0,  -62.0);
 
     //Red Scan Pt (Image Scan Pt)
     static final Point2d RIS1 = new Point2d("RIS1", -36.0,  -50.0);
@@ -69,8 +69,6 @@ public class SkyField extends Field
 
     static final Point2d RPP1 = new Point2d("RPP1",   0.0,  -36.0); //R
 
-
-
     private static final int ALNC_RED = 0;
     private static final int ALNC_BLU = 1;
     private static final int STRT_ONE = 0;
@@ -78,95 +76,6 @@ public class SkyField extends Field
     private static final int STN_LEFT = 0;
     private static final int STN_CNTR = 1;
     private static final int STN_RGHT = 2;
-
-    //private static Point2d[][][] minOffsetPts =
-    //        {{{RLM3, RLM2, RLM1}, {RRM3, RRM2, RRM1}}, {{BLM3, BLM2, BLM1}, {BRM3, BRM2, BRM1}}};
-
-    //private static Point2d[][][] minActualPts =
-    //        {{{RLML, RLMC, RLMR}, {RRML, RRMC, RRMR}}, {{BLML, BLMC, BLMR}, {BRML, BRMC, BRMR}}};
-
-//    public static Point2d getMinOffsetPt(Alliance alnc,
-//                                         PositionOption startPos,
-//                                         MineralDetector.Position minPos)
-//    {
-//        int allnc = alnc == Alliance.RED ? 0 : 1;
-//        int start = startPos == Route.StartPos.START_1 ? 0 : 1;
-//        int minps = 1; //CENTER or NONE
-//        if      (minPos == MineralDetector.Position.LEFT) minps = 0;
-//        else if (minPos == MineralDetector.Position.RIGHT) minps = 2;
-//        return minOffsetPts[allnc][start][minps];
-//    }
-//
-//    public static Point2d getMinActualPt(Alliance alnc,
-//                                         PositionOption startPos,
-//                                         MineralDetector.Position minPos)
-//    {
-//        int allnc = alnc == Alliance.RED ? 0 : 1;
-//        int start = startPos == Route.StartPos.START_1 ? 0 : 1;
-//        int minps = 1; //CENTER or NONE
-//        if      (minPos == MineralDetector.Position.LEFT) minps = 0;
-//        else if (minPos == MineralDetector.Position.RIGHT) minps = 2;
-//        return minActualPts[allnc][start][minps];
-//    }
-//
-//    public static Point2d getMineralPt(Alliance alnc,
-//                                       PositionOption startPos,
-//                                       MineralDetector.Position minPos)
-//    {
-//        Route.StartPos spos = Route.StartPos.START_1;
-//        if(startPos instanceof Route.StartPos) spos = (Route.StartPos) startPos;
-//        Point2d minPt = null;
-//        switch(alnc)
-//        {
-//            case RED: {
-//                switch (spos) {
-//                    case START_1: {
-//                        switch (minPos) {
-//                            case LEFT:    minPt = RLM3; break;
-//                            case RIGHT:   minPt = RLM1; break;
-//                            case CENTER:  minPt = RLM2; break;
-//                            case NONE:    minPt = RLM2; break;
-//                        }
-//                        break;
-//                    }
-//                    case START_2: {
-//                        switch (minPos) {
-//                            case LEFT:    minPt = RRM3; break;
-//                            case RIGHT:   minPt = RRM1; break;
-//                            case CENTER:  minPt = RRM2; break;
-//                            case NONE:    minPt = RRM2; break;
-//                        }
-//                        break;
-//                    }
-//                }
-//                break;
-//            }
-//            case BLUE: {
-//                switch (spos) {
-//                    case START_1: {
-//                        switch (minPos) {
-//                            case LEFT:    minPt = BLM3; break;
-//                            case RIGHT:   minPt = BLM1; break;
-//                            case CENTER:  minPt = BLM2; break;
-//                            case NONE:    minPt = BLM2; break;
-//                        }
-//                        break;
-//                    }
-//                    case START_2: {
-//                        switch (minPos) {
-//                            case LEFT:    minPt = BRM3; break;
-//                            case RIGHT:   minPt = BRM1; break;
-//                            case CENTER:  minPt = BRM2; break;
-//                            case NONE:    minPt = BRM2; break;
-//                        }
-//                        break;
-//                    }
-//                }
-//                break;
-//            }
-//        }
-//        return minPt;
-//    }
 
     private static final String ASSET_NAME = "Skystone";
 
@@ -181,9 +90,6 @@ public class SkyField extends Field
     private static final float quadField  = 36.0f;
     private static final float mmTargetHeight   = 6.0f;
 
- //   VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
-
-    //TODO: set up Sky trackables
     void setImageNames()
     {
        trackableNames.add("Stone Target");

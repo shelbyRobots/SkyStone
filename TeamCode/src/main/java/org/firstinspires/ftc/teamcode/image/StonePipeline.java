@@ -46,6 +46,7 @@ public class StonePipeline
 
 	@SuppressWarnings("FieldCanBeLocal")
 	private double GTO1_TOP = 0.35; //Changed to 0.48, was: 0.54
+	@SuppressWarnings("FieldCanBeLocal")
 	private double GTO1_BOT = 0.75;
 
 	void sizeSource(Mat source0)

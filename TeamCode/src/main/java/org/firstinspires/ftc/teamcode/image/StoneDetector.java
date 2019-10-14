@@ -31,7 +31,7 @@ public class StoneDetector extends Detector {
     @SuppressWarnings("FieldCanBeLocal")
     private boolean saveSizedImage  = true;
     @SuppressWarnings("FieldCanBeLocal")
-    private boolean saveMaskedImage = true;
+    private boolean saveMaskedImage = false;
     @SuppressWarnings("FieldCanBeLocal")
     private boolean saveThreshImage = true;
 

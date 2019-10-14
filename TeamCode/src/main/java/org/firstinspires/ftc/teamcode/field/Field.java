@@ -85,6 +85,7 @@ public abstract class Field
     void setImageNames() {}
     void setImageLocations() {}
 
+    @SuppressWarnings("SameParameterValue")
     void setHasVuMarks(boolean hasVuMarks)
     {
         this.hasVuMarks = hasVuMarks;

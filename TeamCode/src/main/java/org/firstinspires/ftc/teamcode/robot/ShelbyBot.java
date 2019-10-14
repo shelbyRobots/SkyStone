@@ -162,6 +162,7 @@ public class ShelbyBot
         capMap.put("sensor",     false);
         capMap.put("arm",        false);
         capMap.put("holder",     false);
+        capMap.put("lifter",     false);
     }
 
     /* Initialize standard Hardware interfaces */
