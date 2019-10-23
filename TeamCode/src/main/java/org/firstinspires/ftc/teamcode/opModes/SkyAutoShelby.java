@@ -547,8 +547,31 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         //TODO:  Uncomment if we are turning bot to grab stone.
         //       Otherwise, turn arm
 //        doGyroTurn(newHdg, "scanAdj");
-        //Lower/align gripper, extend arm, close gripper, raise arm,
-        //retract/rotate arm
+
+        //Rotate arm for red/blue
+
+        if(alliance == Field.Alliance.BLUE)
+        {
+            skyBot.putArmRight();
+        }
+        else
+        {
+            skyBot.putArmLeft();
+        }
+        //Extend arm so fixed gripper is clear of side of bot
+        skyBot.putExtendAtStage();
+        //Lower arm and open gripper
+        skyBot.putLiftAtGrab();
+        skyBot.openGripper();
+        //Extend arm to grab state
+        skyBot.putExtendAtGrab();
+        //Close gripper
+        skyBot.closeGripper();
+        //Raise arm
+        skyBot.putLiftAtLevel2();
+        //Rotate arm to forward and possibly retract some
+        skyBot.putArmForward();
+        skyBot.putExtendAtStage();
     }
 
     private void setStonePoint(int segIdx)
@@ -569,6 +592,19 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
     {
         RobotLog.dd(TAG, "Dropping stone");
         //rotate arm, lower?, release gripper, return arm
+        if(alliance == Field.Alliance.BLUE)
+        {
+            skyBot.putArmHalfRight();
+        }
+        else
+        {
+            skyBot.putArmHalfLeft();
+
+        }
+        //skyBot.putLiftAtDrop();
+        skyBot.openGripper();
+        skyBot.putLiftAtGrab();
+        skyBot.putArmForward();
     }
 
     private void doPark()

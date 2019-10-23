@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.RoRuBot;
 import org.firstinspires.ftc.teamcode.robot.ShelbyBot;
+import org.firstinspires.ftc.teamcode.robot.SkyBot;
 import org.firstinspires.ftc.teamcode.util.Input_Shaper;
 import org.firstinspires.ftc.teamcode.util.ManagedGamepad;
 import org.firstinspires.ftc.teamcode.util.Point2d;
@@ -61,111 +62,84 @@ public class Teleop_Driver extends InitLinearOpMode
 //        robot.armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //if(prevOpModeType == ShelbyBot.OpModeType.AUTO) robot.threadputHolderAtPrelatch();
         //robot.stowMarker();
-        robot.stowParker();
+        //robot.stowParker();
     }
 
-    private boolean useCnts = false;
-
-    private int counts = 0;
-    private int oldCounts = 0;
+    private boolean useExtdCnts = false;
+    private boolean useRotCnts  = false;
 
     private void controlArm()
     {
-        if(!robot.getCapability("arm")) return;
+        controlArmExtend();
+        controlArmRotate();
+        controlArmElev();
+    }
 
-        if(robot.armPitch == null) return;
+    private void controlArmExtend()
+    {
         if(robot.armExtend == null) return;
 
-        if(robot.isElevTouchPressed() && !lastArmTouchPressed)
+        if(robot.isArmTouchPressed() && !lastArmTouchPressed)
         {
-            robot.zeroArmPitch();
+            robot.zeroArmExtend();
+            return;
         }
 
         lastArmTouchPressed = robot.isElevTouchPressed();
 
-        int stowCounts  = 0;
-        int dropCounts  = -2400; //-(int)(10 * robot.ARM_CPD);
-        int hoverCounts = -4500; //-(int)(20 * robot.ARM_CPD);
-        int grabCounts  = -4500; //-(int)(30 * robot.ARM_CPD);
-        int maxCounts   = -8000;
-
-        double stowAngle = robot.ARM_ZERO_ANGLE;
-
-        double  aslide      = -gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
-        double  apitch      = -gpad2.value(ManagedGamepad.AnalogInput.R_STICK_Y);
-
-        boolean dStow       =  gpad2.just_pressed(ManagedGamepad.Button.D_DOWN);
-        boolean dDrop       =  gpad2.just_pressed(ManagedGamepad.Button.D_UP);
-        boolean dHover      =  gpad2.just_pressed(ManagedGamepad.Button.D_LEFT);
-        boolean dGrab       =  gpad2.just_pressed(ManagedGamepad.Button.D_RIGHT);
-        boolean changeMode  =  gpad2.just_pressed(ManagedGamepad.Button.A);
-        boolean intakeIn    =  gpad2.pressed(ManagedGamepad.Button.L_BUMP);
-        boolean intakeOut   =  gpad2.pressed(ManagedGamepad.Button.L_TRIGGER);
-        boolean override    =  gpad2.pressed(ManagedGamepad.Button.R_BUMP);
-//        aslide = ishaper.shape(aslide);
-//        apitch = ishaper.shape(apitch);
-        double THE_ANSWER_TO_LIFE_THE_UNIVERSE_AND_EVERYTHING = 0.42;
-        double MAX_APITCH_SPD = THE_ANSWER_TO_LIFE_THE_UNIVERSE_AND_EVERYTHING;
-        //apitch = Math.min(apitch,  MAX_APITCH_SPD);
-        //apitch = Math.max(apitch, -MAX_APITCH_SPD);
-        apitch *= MAX_APITCH_SPD;
-
-        aslide *= -1;
+        double  axtnd        = -gpad2.value(ManagedGamepad.AnalogInput.R_STICK_Y);
+        boolean changeMode   =  gpad2.just_pressed(ManagedGamepad.Button.A);
+        boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.R_BUMP);
 
         if(changeMode)
         {
-            useCnts = !useCnts;
+            useExtdCnts = !useExtdCnts;
+            axtnd = 0.5;
         }
 
-        int pitchDir = 1;
-
-        if(intakeIn)       robot.intakeIn();
-        else if(intakeOut) robot.intakeOut();
-        else               robot.intakeStop();
-
-        int curArmCounts = robot.armPitch.getCurrentPosition();
-        if(useCnts)
-        {
-            if(changeMode)  counts = curArmCounts;
-            else if(dDrop)  counts = dropCounts;
-            else if(dHover) counts = hoverCounts;
-            else if(dGrab)  counts = grabCounts;
-            else if(dStow)  counts = stowCounts;
-            if(counts  != oldCounts)
-            {
-                RobotLog.dd(TAG, "Moving to arm pos %d from %d", counts, curArmCounts);
-                robot.armPitch.setTargetPosition(counts);
-                robot.armPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.armPitch.setPower(0.5);
-            }
-            oldCounts = counts;
-        }
-        else
-        {
-            robot.armPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            if(curArmCounts > 100 && !override) apitch = 0.0;
-//            if(curArmCounts < maxCounts) apitch = 0.0;
-            robot.setArmSpeed(apitch, false);
-        }
-
-        RobotLog.dd(TAG, "ArmPitch = %d", curArmCounts);
+        robot.setExtend(axtnd, useExtdCnts, overrideLims);
 
         dashboard.displayPrintf(4, "extcounts %d", robot.armExtend.getCurrentPosition());
-        dashboard.displayPrintf(5, "tgtcounts %d", counts);
-        dashboard.displayPrintf(6, "armcounts %d", robot.armPitch.getCurrentPosition());
+    }
 
-        if(robot.armExtend != null)
+    private void controlArmRotate()
+    {
+        if(robot.armRotate == null) return;
+
+        double  arot        =  gpad2.value(ManagedGamepad.AnalogInput.R_STICK_X);
+        boolean changeMode   =  gpad2.just_pressed(ManagedGamepad.Button.B);
+        boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.R_BUMP);
+
+        if(changeMode)
         {
-            int curArmExtend = robot.armExtend.getCurrentPosition();
-            if(aslide != 0.0)
-            {
-                RobotLog.dd(TAG, "moving slide %4.3f at %d", aslide, curArmExtend);
-            }
-            int ENC_SAFE = 10;
-            //if(curArmExtend < (ENC_SAFE) && aslide < 0.0 && !override) aslide = 0.0;
-
-            robot.armExtend.setPower(aslide);
+            useRotCnts = !useRotCnts;
+            arot = 0.5;
         }
+
+        robot.setRotate(arot, useExtdCnts, overrideLims);
+
+        dashboard.displayPrintf(4, "rotcounts %d", robot.armRotate.getCurrentPosition());
+    }
+
+    private void controlArmElev()
+    {
+        if(robot._liftyBoi == null) return;
+
+        double  aelev       = -gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
+        //TODO:  add dpad up/down by steps and and safety on continuous ctrl
+        robot._liftyBoi.setPower(aelev);
+    }
+
+    private void controlLatch()
+    {
+        if(robot.rplatch == null || robot.lplatch == null) return;
+
+        double  platchPos    =  gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
+
+        if(platchPos > 0.5)
+            robot.putHolderAtGrab();
+        else
+            robot.putHolderAtPre();
     }
 
     private void controlDrive()
@@ -386,72 +360,30 @@ public class Teleop_Driver extends InitLinearOpMode
         }
     }
 
-    private boolean joyHolder = false;
-    private void controlHolder()
-    {
-//        boolean lowerHolder      = gpad2.just_pressed(ManagedGamepad.Button.D_DOWN);
-//        boolean raiseHolder      = gpad2.just_pressed(ManagedGamepad.Button.D_UP);
-        boolean lowerOne         = gpad2.just_pressed(ManagedGamepad.Button.D_LEFT);
-        boolean raiseOne         = gpad2.just_pressed(ManagedGamepad.Button.D_RIGHT);
-        double hldrSpd           = -gamepad2.left_stick_y;
-        boolean overrideLims     = gpad2.pressed(ManagedGamepad.Button.L_BUMP);
-        double moveDist          = 1.0;
-
-//        lowerHolder = false;
-//        raiseHolder = false;
-//        if(lowerHolder)
-//        {
-//            //setting to false lowers holder which raises the bot
-//            robot.putHolderAtStow();
-//        }
-//        else if (raiseHolder)
-//        {
-//            //setting to true raises holder
-//            robot.putHolderAtLatch();
-//        }
-
-        if(Math.abs(hldrSpd) > 0.01) joyHolder = true;
-
-        if(lowerOne)
-        {
-            //Lowers holder by one unit
-            joyHolder = false;
-            robot.moveHolder(-moveDist);
-        }
-        else if (raiseOne)
-        {
-            //Raises holder by one unit
-            joyHolder = false;
-            robot.moveHolder(moveDist);
-        }
-        else if (joyHolder)
-        {
-            robot.setHolderSpeed(hldrSpd, overrideLims);
-        }
-    }
-
-    private boolean lastShift = false;
+    //private boolean lastShift = false;
 
     private void processControllerInputs()
     {
-        boolean shiftControls = gpad2.pressed(ManagedGamepad.Button.R_TRIGGER);
-
-        if(!shiftControls)
-        {
-            controlHolder();
-            if(lastShift)
-            {
-                robot.setArmSpeed(0.0, false);
-                if(robot.armExtend != null) robot.armExtend.setPower(0.0);
-                robot.intakeStop();
-            }
-        }
-        else
-        {
-            controlArm();
-        }
-
-        lastShift = shiftControls;
+//        boolean shiftControls = gpad2.pressed(ManagedGamepad.Button.R_TRIGGER);
+//
+//        if(!shiftControls)
+//        {
+//            controlHolder();
+//            if(lastShift)
+//            {
+//                robot.setArmSpeed(0.0, false);
+//                if(robot.armExtend != null) robot.armExtend.setPower(0.0);
+//                robot.intakeStop();
+//            }
+//        }
+//        else
+//        {
+//            controlArm();
+//        }
+//
+//        lastShift = shiftControls;
+        controlArm();
+        controlLatch();
     }
 
     private void processDriverInputs()
@@ -555,10 +487,10 @@ public class Teleop_Driver extends InitLinearOpMode
 //            gpad1.log(1);
 //            gpad2.log(2);
 
-            if(robot.armPitch != null)
+            if(robot.armExtend != null)
             {
                 dashboard.displayPrintf(5, "ArmPitch cnt %d",
-                        robot.armPitch.getCurrentPosition());
+                        robot.armExtend.getCurrentPosition());
             }
             idle();
         }
@@ -615,7 +547,7 @@ public class Teleop_Driver extends InitLinearOpMode
     private DcMotorEx lex = null;
     private DcMotorEx rex = null;
 
-    private RoRuBot robot = new RoRuBot();
+    private SkyBot robot = new SkyBot();
     private Drivetrain dtrn = new Drivetrain();
     private Input_Shaper ishaper = new Input_Shaper();
 
