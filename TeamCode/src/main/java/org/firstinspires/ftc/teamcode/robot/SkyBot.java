@@ -56,22 +56,22 @@ public class SkyBot extends TilerunnerGtoBot {
     public Servo    lplatch    = null;
     public Servo    rplatch    = null;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double LPLATCH_STOW = 0.98;
+    private final double LPLATCH_STOW = 0.02;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double LPLATCH_PRE  = 0.5;
+    private final double LPLATCH_PRE  = 0.56;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double LPLATCH_GRAB = 0.38;
+    private final double LPLATCH_GRAB = 0.74;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double RPLATCH_STOW = 0.98;
+    private final double RPLATCH_STOW = 0.76;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double RPLATCH_PRE  = 0.5;
+    private final double RPLATCH_PRE  = 0.24;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double RPLATCH_GRAB = 0.38;
+    private final double RPLATCH_GRAB = 0.04;
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final double GRIPPER_STOW = 0.2;
+    private final double GRIPPER_STOW = 0.05;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double GRIPPER_OPEN = 0.9;
+    private final double GRIPPER_OPEN = 0.99;
     @SuppressWarnings("FieldCanBeLocal")
     private final double GRIPPER_PRE  = 0.4;
     @SuppressWarnings("FieldCanBeLocal")
@@ -90,8 +90,8 @@ public class SkyBot extends TilerunnerGtoBot {
     private int ARM_EXT_GRAB_POS  = (int) (10.0 * EXTND_CPI);
     private int MAX_EXTND_CNT     = (int) (16.0 * EXTND_CPI);
 
-    int ARMROT_COUNTS_PER_MOTOR_REV = 28;
-    double ARMROT_GEAR_ONE = 40.0;
+    int ARMROT_COUNTS_PER_MOTOR_REV = 4;
+    double ARMROT_GEAR_ONE = 72.0;
     double ARMROT_CPR = ARMROT_COUNTS_PER_MOTOR_REV * ARMROT_GEAR_ONE;
     double ARMROT_CPD = ARMROT_CPR /360.0;
     private int ARM_ROT_FWD = (int) ( 90.0 * ARMROT_CPD);
@@ -99,8 +99,8 @@ public class SkyBot extends TilerunnerGtoBot {
     private int ARM_ROT_LFT = (int) (180.0 * ARMROT_CPD);
     private int ARM_DRP_RGT = (int) ( 45.0 * ARMROT_CPD);
     private int ARM_DRP_LFT = (int) (135.0 * ARMROT_CPD);
-    private int ARM_ROT_MIN = (int) (200.0 * ARMROT_CPD);
-    private int ARM_ROT_MAX = (int) (-20.0 * ARMROT_CPD);
+    private int ARM_ROT_MIN = (int) (210.0 * ARMROT_CPD);
+    private int ARM_ROT_MAX = (int) (-30.0 * ARMROT_CPD);
 
     private DigitalChannel armIndexSensor = null;
 

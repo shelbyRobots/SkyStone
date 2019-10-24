@@ -291,6 +291,12 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         RobotLog.ii(TAG, "IHDG %4.2f", initHdg);
 
+        skyBot.putHolderAtStow();
+        skyBot.stowGripper();
+        skyBot.zeroLift();
+        skyBot.zeroArmRotate();
+        skyBot.zeroArmExtend();
+
         det.setTelemetry(telemetry);
     }
 
@@ -605,6 +611,24 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         skyBot.openGripper();
         skyBot.putLiftAtGrab();
         skyBot.putArmForward();
+    }
+
+    private void doPlatch()
+    {
+        RobotLog.dd(TAG, "Platching platform");
+        if(skyBot != null)
+        {
+            skyBot.putHolderAtGrab();
+        }
+    }
+
+    private void doUnPlatch()
+    {
+        RobotLog.dd(TAG, "UnPlatching platform");
+        if(skyBot != null)
+        {
+            skyBot.putHolderAtStow();
+        }
     }
 
     private void doPark()
