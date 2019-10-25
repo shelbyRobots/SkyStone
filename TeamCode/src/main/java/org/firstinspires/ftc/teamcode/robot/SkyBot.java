@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.util.Units;
@@ -378,7 +379,7 @@ public class SkyBot extends TilerunnerGtoBot {
     public void setRotate (double scale)
     {
         double baseScale = 0.001;
-        curRotSrvPos += baseScale * scale;
+        curRotSrvPos = Range.clip(curRotSrvPos + baseScale * scale, -1.0, 1.0);
         armRotate.setPosition(curRotSrvPos);
     }
 
