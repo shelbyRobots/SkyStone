@@ -464,15 +464,23 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
                 case PUSH:
                 {
-                    //If we have a grabber, grab block, else just push with chassis
+                    //If we have a grabber, grab platform
                     RobotLog.ii(TAG, "Action PUSH");
+                    doPlatch();
                     break;
                 }
 
                 case DROP:
                 {
                     RobotLog.ii(TAG, "Action DROP");
-                    //doDrop(i);
+                    doDrop(i);
+                    break;
+                }
+
+                case RETRACT:
+                {
+                    RobotLog.ii(TAG, "Action RETRACT");
+                    doUnPlatch();
                     break;
                 }
 
@@ -615,11 +623,13 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
     private void doPlatch()
     {
+        sleep(1000);
         RobotLog.dd(TAG, "Platching platform");
         if(skyBot != null)
         {
             skyBot.putHolderAtGrab();
         }
+        sleep(1000);
     }
 
     private void doUnPlatch()

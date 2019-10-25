@@ -53,11 +53,12 @@ public class SkyRoute extends Route
             addPoint(points, fwd, 0.50, 1.00, encType, none, SkyField.RBP1);
             addPoint(points, fwd, 0.50, 1.00, encType, none, SkyField.RBP2);
             addPoint(points, fwd, 0.50, 1.00, encType, push, SkyField.RBP3);
-            addPoint(points, rev, 0.50, 1.00, encType, rtct, SkyField.RBP4);
-            addPoint(points, fwd, 0.50, 1.00, encType, park, SkyField.RBP5);
+            addPoint(points, rev, 0.50, 1.00, encType, none, SkyField.RBP4);
+            addPoint(points, rev, 0.50, 1.00, encType, rtct, SkyField.RBP5);
+            addPoint(points, rev, 0.50, 1.00, encType, park, SkyField.RBP6);
 
         }
-        
+
         return points;
     }
 

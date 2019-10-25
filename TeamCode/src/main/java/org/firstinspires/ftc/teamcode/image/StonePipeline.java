@@ -56,7 +56,7 @@ public class StonePipeline
 		double top = GTO1_TOP;
 		double bot = GTO1_BOT;
 		roiMat = new Mat(source0, new Rect(0, (int)(top * source0.height()),
-				source0.width(), (int)(top-bot) * source0.height()));
+				source0.width(), (int)((bot-top) * source0.height())));
 		RobotLog.dd(TAG, " roiMat image WXH= %dx%d", roiMat.cols(), roiMat.rows());
 
 		int resizeImageWidth = 480;

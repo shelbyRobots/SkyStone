@@ -116,9 +116,11 @@ public class Teleop_Driver extends InitLinearOpMode
             arot = 0.5;
         }
 
-        robot.setRotate(arot, useExtdCnts, overrideLims);
+//        robot.setRotate(arot, useExtdCnts, overrideLims);
+        robot.setRotate(arot);
 
-        dashboard.displayPrintf(4, "rotcounts %d", robot.armRotate.getCurrentPosition());
+//        dashboard.displayPrintf(4, "rotcounts %d", robot.armRotate.getCurrentPosition());
+        dashboard.displayPrintf(4, "rotspeed %f",arot);
     }
 
     private void controlArmElev()

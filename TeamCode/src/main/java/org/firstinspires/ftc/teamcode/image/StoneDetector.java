@@ -75,6 +75,14 @@ public class StoneDetector extends Detector {
         StonePipeline gpl = new StonePipeline();
         gpl.setName(bName);
 
+        if(showImg == null)
+        {
+            RobotLog.ee(TAG, "StoneDetector.extract() null image");
+        }
+
+        RobotLog.dd(TAG, "StoneDetector.extract imgSize %dx%d",
+                showImg.cols(), showImg.rows());
+
         gpl.sizeSource(showImg);
         Mat sizedImage = gpl.resizeImageOutput();
         RobotLog.dd(TAG, "Saving resize image");
