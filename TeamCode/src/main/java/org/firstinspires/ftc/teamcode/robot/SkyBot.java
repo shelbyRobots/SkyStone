@@ -152,6 +152,8 @@ public class SkyBot extends TilerunnerGtoBot {
         initLifter();
     }
 
+    private double curRotSrvPos = 0.5;
+
     @Override
     public void initArm() //rotate, extend
     {
@@ -161,6 +163,7 @@ public class SkyBot extends TilerunnerGtoBot {
             armExtend = hwMap.dcMotor.get("armExtend");
 //            armRotate  = hwMap.dcMotor.get("armRotate");
             armRotate = hwMap.servo.get("armRotate");
+            if(armRotate != null) curRotSrvPos = armRotate.getPosition();
 //            armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             capMap.put("arm", true);
@@ -374,8 +377,6 @@ public class SkyBot extends TilerunnerGtoBot {
         lastRotUseCnts = useCnts;
     }
 
-
-    private double curRotSrvPos = 0.5;
     public void setRotate (double scale)
     {
         double baseScale = 0.001;
