@@ -28,10 +28,10 @@ public class SkyField extends Field
 
     //Red Route > Left
     //Red Left Start Point 1
-    static final Point2d RLS1 = new Point2d("RLS1", -36.0,  -62.0);
+    static final Point2d RLS1 = new Point2d("RLS1", -35.5,  -61.5);
 
     //Red Scan Pt (Image Scan Pt)
-    static final Point2d RIS1 = new Point2d("RIS1", -36.0,  -50.0);
+    static final Point2d RIS1 = new Point2d("RIS1", -35.5,  -50.0);
     //includes offset for veh center. actual
 
     //Red Stone Points (Stone center location on field)
@@ -39,7 +39,7 @@ public class SkyField extends Field
     static final Point2d RSP2 = new Point2d("RSP2", -60.0,  -21.0); //R
     static final Point2d RSP3 = new Point2d("RSP3", -52.0,  -21.0); //R
     static final Point2d RSP4 = new Point2d("RSP4", -44.0,  -21.0); //R
-    static final Point2d RSP5 = new Point2d("RSP5", -36.0,  -21.0); //R
+    static final Point2d RSP5 = new Point2d("RSP5", -35.5,  -21.0); //R
     static final Point2d RSP6 = new Point2d("RSP6", -28.0,  -21.0); //R
 
     //Red Grab Points - will need tuning after grabber installed
@@ -47,18 +47,18 @@ public class SkyField extends Field
     static final Point2d RGP2 = new Point2d("RGP2", -60.0,  -33.0); //R
     static final Point2d RGP3 = new Point2d("RGP3", -57.0,  -33.0); //R
     static final Point2d RGP4 = new Point2d("RGP4", -39.0,  -33.0); //R
-    static final Point2d RGP5 = new Point2d("RGP5", -36.0,  -33.0); //R
+    static final Point2d RGP5 = new Point2d("RGP5", -35.5,  -33.0); //R
     static final Point2d RGP6 = new Point2d("RGP6", -33.0,  -33.0); //R
 
-    static final Point2d RGPA = new Point2d("RGPA", -35.9,  -36.0); //R
-    static final Point2d RGPB = new Point2d("RGPB", -60.0,  -36.0); //R
-    static final Point2d RDPA = new Point2d("RDPA",  36.0,  -36.0); //R
-    static final Point2d RDPB = new Point2d("RDPB",  36.0,  -36.0); //R
+    static final Point2d RGPA = new Point2d("RGPA", -35.4,  -38.0); //R
+    static final Point2d RGPB = new Point2d("RGPB", -60.0,  -38.0); //R
+    static final Point2d RDPA = new Point2d("RDPA",  24.0,  -38.0); //R
+    static final Point2d RDPB = new Point2d("RDPB",  24.0,  -38.0); //R
 
-    static final Point2d RTP1 = new Point2d("RTP1", -36.0,  -36.0); //R
-    static final Point2d RTP2 = new Point2d("RTP2",  36.0,  -36.0); //R
+    static final Point2d RTP1 = new Point2d("RTP1", -35.5,  -38.0); //R
+    static final Point2d RTP2 = new Point2d("RTP2",  36.0,  -38.0); //R
     static final Point2d RTP3 = new Point2d("RTP3", RTP2);
-    static final Point2d RTP4 = new Point2d("RTP4", -60.0,  -36.0); //R
+    static final Point2d RTP4 = new Point2d("RTP4", -60.0,  -38.0); //R
     static final Point2d RTP5 = new Point2d("RTP5", RTP4);
     static final Point2d RTP6 = new Point2d("RTP6", RTP2);
     static final Point2d RTP7 = new Point2d("RTP7", RTP2);
@@ -69,7 +69,7 @@ public class SkyField extends Field
 
     static final Point2d RPP1 = new Point2d("RPP1",   0.0,  -36.0); //R
     //platch
-    static final Point2d RBS1 = new Point2d( "RBS1", 36.0, -62.0);
+    static final Point2d RBS1 = new Point2d( "RBS1", 36.0, -61.5);
     static final Point2d RBP1 = new Point2d( "RBP1", 36.0, -50.0);
     static final Point2d RBP2 = new Point2d( "RBP2", 39.0, -39.0);
     static final Point2d RBP3 = new Point2d( "RBP3", 39.0, -32.0);

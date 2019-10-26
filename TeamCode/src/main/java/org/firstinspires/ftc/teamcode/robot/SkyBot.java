@@ -22,7 +22,7 @@ public class SkyBot extends TilerunnerGtoBot {
     //  1150 rpm (19.17 rps) no load speed
     //
     // Replaced with 13.7:1 gear box motor with 383.6 cpr
-    //
+    // And Replaced with 3.7:1 gear box motor with 103.6 cpr
     //lift is made with 1:1 gear between motor output shaft and lead screw
     //
     //gobilda lead screw has 7.9in range, 2mm pitch, and 4 start
@@ -33,7 +33,7 @@ public class SkyBot extends TilerunnerGtoBot {
     //25.125rev * 145.6 cpr = 3658 counts
 
     private final double LIFTER_CPER = 28; //quad encoder cnts/encoder rev
-    private final double LIFTER_INT_GEAR = 13.7;  // 5.2;
+    private final double LIFTER_INT_GEAR = 3.7; //13.7;  // 5.2;
     private final double LIFTER_CPOR = LIFTER_CPER * LIFTER_INT_GEAR; //383.6 //145.6 cnts/outShaftRev
     private final double LIFTER_EXT_GEAR = 1.0;
     private final double LIFTER_PITCH = 2.0; //2.0mm/pitch
@@ -537,6 +537,7 @@ public class SkyBot extends TilerunnerGtoBot {
 
     public void zeroLift()
     {
+        if(_liftyBoi == null) return;
         _liftyBoi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
@@ -562,8 +563,8 @@ public class SkyBot extends TilerunnerGtoBot {
 
     public void putHolderAtStow()
     {
-        lplatch.setPosition(LPLATCH_STOW);
-        rplatch.setPosition(RPLATCH_STOW);
+        if(lplatch != null) lplatch.setPosition(LPLATCH_STOW);
+        if(rplatch != null) rplatch.setPosition(RPLATCH_STOW);
     }
 
     public void putHolderAtPre()

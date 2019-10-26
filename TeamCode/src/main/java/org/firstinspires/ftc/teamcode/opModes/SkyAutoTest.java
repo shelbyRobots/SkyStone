@@ -9,9 +9,9 @@ import com.vuforia.CameraDevice;
 
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.PositionOption;
+import org.firstinspires.ftc.teamcode.field.Route;
 import org.firstinspires.ftc.teamcode.field.SkyField;
 import org.firstinspires.ftc.teamcode.field.SkyRoute;
-import org.firstinspires.ftc.teamcode.field.Route;
 import org.firstinspires.ftc.teamcode.image.Detector;
 import org.firstinspires.ftc.teamcode.image.ImageTracker;
 import org.firstinspires.ftc.teamcode.image.StoneDetector;
@@ -49,11 +49,11 @@ import static org.firstinspires.ftc.teamcode.field.Route.ParkPos.DEFEND_PARK;
 //  j park under bridge
 
 
-@Autonomous(name="SkyAutoShelby", group="Auton")
+@Autonomous(name="SkyAutoTest", group="Auton")
 //@Disabled
-public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButtons
+public class SkyAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
 {
-    public SkyAutoShelby()
+    public SkyAutoTest()
     {
         //super();
     }
@@ -344,154 +344,12 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             drvTrn.setRampCntL(100);
         }
 
-
-        for (int i = 0; i < pathSegs.size(); ++i)
-        {
-            if (!opModeIsActive() || isStopRequested()) break;
-
-            Segment prntSeg = pathSegs.get(i);
-            String segName = prntSeg.getName();
-            RobotLog.ii(TAG, "Starting segment %s at %4.2f", segName,
-                    startTimer.seconds());
-            RobotLog.ii(TAG, prntSeg.toString());
-
-            //noinspection ConstantConditions
-            if (SkipNextSegment)
-            {
-                SkipNextSegment = false;
-                RobotLog.ii(TAG, "Skipping segment %s", pathSegs.get(i).getName());
-                if (i < pathSegs.size() - 1)
-                {
-                    RobotLog.ii(TAG, "Setting segment %s start pt to %s",
-                            pathSegs.get(i + 1).getName(),
-                            pathSegs.get(i).getStrtPt());
-                    pathSegs.get(i + 1).setStrtPt(pathSegs.get(i).getStrtPt());
-                }
-                continue;
-            }
-
-            Segment curSeg;
-
-            if (curPos == null || !useImageLoc)
-            {
-                curSeg = pathSegs.get(i);
-            } else
-            {
-                drvTrn.setCurrPt(curPos);
-                curSeg = new Segment("CURSEG", curPos, pathSegs.get(i).getTgtPt());
-            }
-            curPos = null;
-
-            robot.setDriveDir(curSeg.getDir());
-
-            drvTrn.setInitValues();
-            String segLogStr = String.format(Locale.US, "%s - %s H: %4.1f",
-                    curSeg.getStrtPt().toString(),
-                    curSeg.getTgtPt().toString(),
-                    curSeg.getFieldHeading());
-            drvTrn.logData(true, segName + " " + segLogStr);
-
-            if (curSeg.getLength() >= 0.1)
-            {
-                RobotLog.ii(TAG, "ENCODER TURN %s t=%6.4f", curSeg.getName(),
-                        startTimer.seconds());
-                doEncoderTurn(curSeg.getFieldHeading(), segName + " encoderTurn"); //quick but rough
-                RobotLog.ii(TAG, "GYRO TURN %s t=%6.4f", curSeg.getName(),
-                        startTimer.seconds());
-                doGyroTurn(curSeg.getFieldHeading(), segName + " gyroTurn");
-
-
-                RobotLog.ii(TAG, "MOVE %s t=%6.4f", curSeg.getName(),
-                        startTimer.seconds());
-                doMove(curSeg);
-            }
-
-
-            Double pturn = curSeg.getPostTurn();
-            if (usePostTurn && pturn != null)
-            {
-                RobotLog.ii(TAG, "ENCODER POST TURN %s", curSeg.getName());
-                doEncoderTurn(pturn, segName + " postEncoderTurn");
-
-//                RobotLog.ii(TAG, "GRYO POST TURN %s", curSeg.getName());
-//                doGyroTurn(pturn, segName + " postGyroTurn");
-            }
-
-            if (!opModeIsActive() || isStopRequested())
-            {
-                drvTrn.stopMotion();
-                break;
-            }
-
-            RobotLog.ii(TAG, "Planned pos: %s %s",
-                    pathSegs.get(i).getTgtPt(),
-                    pathSegs.get(i).getFieldHeading());
-
-
-            Segment.Action act = curSeg.getAction();
-
-            RobotLog.ii(TAG, "ACTION %s %s t=%6.4f", curSeg.getName(), act,
-                    startTimer.seconds());
-
-            if (act != Segment.Action.NOTHING)
-            {
-                drvTrn.setInitValues();
-                drvTrn.logData(true, segName + " action " + act.toString());
-            }
-
-            switch (act)
-            {
-                case SET_ALIGN:
-                {
-                    RobotLog.ii(TAG, "Action SET_ALIGN");
-                    break;
-                }
-
-                case SCAN_IMAGE:
-                {
-                    RobotLog.ii(TAG, "Action SCAN_IMAGE");
-                    doScan(i);
-                    break;
-                }
-
-                case GRAB:
-                {
-                    RobotLog.ii(TAG, "Action GRAB");
-                    doGrab(i);
-                    break;
-                }
-
-
-                case PUSH:
-                {
-                    //If we have a grabber, grab platform
-                    RobotLog.ii(TAG, "Action PUSH");
-                    doPlatch();
-                    break;
-                }
-
-                case DROP:
-                {
-                    RobotLog.ii(TAG, "Action DROP");
-                    doDrop(i);
-                    break;
-                }
-
-                case RETRACT:
-                {
-                    RobotLog.ii(TAG, "Action RETRACT");
-                    doUnPlatch();
-                    break;
-                }
-
-                case PARK:
-                {
-                    RobotLog.ii(TAG, "Action PARK");
-                    doPark();
-                    break;
-                }
-            }
-        }
+        skyBot.putArmRight();
+        sleep(2000);
+        skyBot.putArmLeft();
+        sleep(2000);
+        skyBot.putArmForward();
+        sleep(2000);
 
         RobotLog.dd(TAG, "Finished auton segments");
         robot.setAutonEndHdg(robot.getGyroFhdg());
