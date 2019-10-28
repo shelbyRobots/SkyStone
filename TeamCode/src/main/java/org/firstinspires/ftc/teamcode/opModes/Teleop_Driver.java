@@ -106,15 +106,15 @@ public class Teleop_Driver extends InitLinearOpMode
     {
         if(robot.armRotate == null) return;
 
-        double  arot        =  gpad2.value(ManagedGamepad.AnalogInput.R_STICK_X);
-        boolean changeMode   =  gpad2.just_pressed(ManagedGamepad.Button.B);
-        boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.R_BUMP);
+        double  arot         =  gpad2.value(ManagedGamepad.AnalogInput.R_STICK_X);
+//        boolean changeMode   =  gpad2.just_pressed(ManagedGamepad.Button.B);
+//        boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.L_BUMP);
 
-        if(changeMode)
-        {
-            useRotCnts = !useRotCnts;
-            arot = 0.5;
-        }
+//        if(changeMode)
+//        {
+//            useRotCnts = !useRotCnts;
+//            arot = 0.5;
+//        }
 
 //        robot.setRotate(arot, useExtdCnts, overrideLims);
         robot.setRotate(arot);
@@ -128,6 +128,9 @@ public class Teleop_Driver extends InitLinearOpMode
         if(robot._liftyBoi == null) return;
 
         double  aelev       = -gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
+
+        aelev  = ishaper.shape(aelev, 0.05);
+
         //TODO:  add dpad up/down by steps and and safety on continuous ctrl
         robot._liftyBoi.setPower(aelev);
     }
@@ -142,6 +145,15 @@ public class Teleop_Driver extends InitLinearOpMode
             robot.putHolderAtGrab();
         else
             robot.putHolderAtPre();
+    }
+
+    private void controlGripper()
+    {
+        boolean grip =  gpad2.just_pressed(ManagedGamepad.Button.L_BUMP);
+
+        if(grip) robot.closeGripper();
+        else robot.openGripper();
+
     }
 
     private void controlDrive()
@@ -386,6 +398,7 @@ public class Teleop_Driver extends InitLinearOpMode
 //        lastShift = shiftControls;
         controlArm();
         controlLatch();
+        controlGripper();
     }
 
     private void processDriverInputs()

@@ -114,8 +114,13 @@ public class SkyAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
                     dashboard.displayPrintf(12, "LENC %d", robot.leftMotor.getCurrentPosition());
                 if (robot.leftMotor != null)
                     dashboard.displayPrintf(13, "RENC %d", robot.rightMotor.getCurrentPosition());
-                if (robot.elevMotor != null)
-                    dashboard.displayPrintf(14, "ELEV %d", robot.elevMotor.getCurrentPosition());
+                if (skyBot._liftyBoi != null)
+                    dashboard.displayPrintf(14, "ELEV %d", skyBot._liftyBoi.getCurrentPosition());
+                if (skyBot.armExtend != null)
+                    dashboard.displayPrintf(15, "XTND %d", skyBot.armExtend.getCurrentPosition());
+
+                if(skyBot.armRotate != null)
+                    dashboard.displayPrintf(16, "armRot good");
 
                 if (robot.colorSensor != null)
                 {
@@ -123,7 +128,7 @@ public class SkyAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
                     int g = robot.colorSensor.green();
                     int b = robot.colorSensor.blue();
                     RobotLog.dd(TAG, "RGB = %d %d %d", r, g, b);
-                    dashboard.displayPrintf(15, "RGB %d %d %d", r, g, b);
+                    dashboard.displayPrintf(17, "RGB %d %d %d", r, g, b);
                 }
             }
 
@@ -227,7 +232,7 @@ public class SkyAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
 
         dashboard.displayPrintf(0, "GYRO CALIBRATING DO NOT TOUCH OR START");
         SkyBot.curOpModeType = ShelbyBot.OpModeType.AUTO;
-        robot.init(this, robotName);
+        skyBot.init(this, robotName);
 
         if (robot.imu != null || robot.gyro  != null)
         {
@@ -344,12 +349,90 @@ public class SkyAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
             drvTrn.setRampCntL(100);
         }
 
-        skyBot.putArmRight();
-        sleep(2000);
-        skyBot.putArmLeft();
-        sleep(2000);
-        skyBot.putArmForward();
-        sleep(2000);
+        ElapsedTime mTimer = new ElapsedTime();
+        while(opModeIsActive())
+        {
+            gpad1.update();
+            gpad2.update();
+            if(gpad1.just_pressed(ManagedGamepad.Button.D_RIGHT))
+            {
+                skyBot.putArmRight();
+            }
+            if(gpad1.just_pressed(ManagedGamepad.Button.D_LEFT))
+            {
+                skyBot.putArmLeft();
+            }
+            if(gpad1.just_pressed(ManagedGamepad.Button.D_UP))
+            {
+                skyBot.putArmForward();
+            }
+            if(gpad1.just_pressed(ManagedGamepad.Button.D_DOWN))
+            {
+                if(skyBot.armRotate == null) return;
+                double curPos = skyBot.armRotate.getPosition();
+                if(curPos == skyBot.ARM_ROT_LFT)
+                    skyBot.putArmHalfLeft();
+                else if(curPos == skyBot.ARM_DRP_LFT)
+                    skyBot.putArmForward();
+                else if(curPos == skyBot.ARM_ROT_FWD)
+                    skyBot.putArmHalfRight();
+                else if(curPos == skyBot.ARM_DRP_RGT)
+                    skyBot.putArmRight();
+                else if(curPos == skyBot.ARM_ROT_RGT)
+                    skyBot.putArmLeft();
+            }
+
+            if(gpad1.just_pressed(ManagedGamepad.Button.L_BUMP))
+                skyBot.putHolderAtPre();
+            if(gpad1.just_pressed(ManagedGamepad.Button.L_TRIGGER))
+                skyBot.putHolderAtGrab();
+
+            if(gpad1.just_pressed(ManagedGamepad.Button.R_BUMP))
+                skyBot.openGripper();
+            if(gpad1.just_pressed(ManagedGamepad.Button.R_TRIGGER))
+                skyBot.closeGripper();
+
+            if(gpad1.just_pressed(ManagedGamepad.Button.Y))
+            {
+                skyBot.putHolderAtStow();
+                skyBot.stageGripper();
+            }
+
+            if(gpad1.just_pressed(ManagedGamepad.Button.A))
+                skyBot.putExtendAtStow();
+            if(gpad1.just_pressed(ManagedGamepad.Button.B))
+                skyBot.putExtendAtStage();
+            if(gpad1.just_pressed(ManagedGamepad.Button.X))
+                skyBot.putExtendAtGrab();
+
+            double  aelev       = -gpad1.value(ManagedGamepad.AnalogInput.L_STICK_Y);
+            double  aelev1      = gpad1.value(ManagedGamepad.AnalogInput.L_STICK_X);
+            if(aelev > 0.5) skyBot.putLiftAtStow();
+            else if(aelev < -0.5) skyBot.putLiftAtGrab();
+            else if(aelev1 > 0.5) skyBot.putLiftAtMove();
+
+            if(gpad2.just_pressed(ManagedGamepad.Button.D_UP))
+            {
+                skyBot.putLiftAtStow();
+            }
+            if(gpad2.just_pressed(ManagedGamepad.Button.D_DOWN))
+            {
+                skyBot.putLiftAtGrab();
+            }
+            if(gpad2.just_pressed(ManagedGamepad.Button.D_RIGHT))
+            {
+                skyBot.putLiftAtMove();
+            }
+            if(gpad2.just_pressed(ManagedGamepad.Button.D_LEFT))
+            {
+                skyBot.putLiftAtDrop();
+            }
+            if(gpad2.just_pressed(ManagedGamepad.Button.A))
+            {
+                skyBot.putLiftAtLevel2();
+            }
+            idle();
+        }
 
         RobotLog.dd(TAG, "Finished auton segments");
         robot.setAutonEndHdg(robot.getGyroFhdg());

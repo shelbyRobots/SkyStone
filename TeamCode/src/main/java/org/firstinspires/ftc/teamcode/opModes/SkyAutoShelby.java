@@ -114,8 +114,10 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                     dashboard.displayPrintf(12, "LENC %d", robot.leftMotor.getCurrentPosition());
                 if (robot.leftMotor != null)
                     dashboard.displayPrintf(13, "RENC %d", robot.rightMotor.getCurrentPosition());
-                if (robot.elevMotor != null)
-                    dashboard.displayPrintf(14, "ELEV %d", robot.elevMotor.getCurrentPosition());
+                if (skyBot._liftyBoi != null)
+                    dashboard.displayPrintf(14, "ELEV %d", skyBot._liftyBoi.getCurrentPosition());
+                if (skyBot.armExtend != null)
+                    dashboard.displayPrintf(14, "ELEV %d", skyBot.armExtend.getCurrentPosition());
 
                 if (robot.colorSensor != null)
                 {
@@ -200,34 +202,34 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         //Drive team aligns bot with field
         //Drive team hits another button to lock in gyro init
 
-        dashboard.displayPrintf(6, "ALIGN TO FIELD THEN HIT X TO START GYRO INIT");
-        dashboard.displayPrintf(7, "OR ALIGN TO FIRST SEG THEN HIT Y TO SKIP");
-        ElapsedTime gyroTimer = new ElapsedTime();
-        boolean gyroSetToField = false;
-        boolean gyroSetToSeg   = false;
-        while(gyroTimer.seconds() < 10.0)
-        {
-            gpad1.update();
-            if(gpad1.just_pressed(ManagedGamepad.Button.X))
-            {
-                gyroSetToField = true;
-                break;
-            }
-            if(gpad1.just_pressed(ManagedGamepad.Button.Y))
-            {
-                gyroSetToSeg = true;
-                break;
-            }
-        }
+//        dashboard.displayPrintf(6, "ALIGN TO FIELD THEN HIT X TO START GYRO INIT");
+//        dashboard.displayPrintf(7, "OR ALIGN TO FIRST SEG THEN HIT Y TO SKIP");
+//        ElapsedTime gyroTimer = new ElapsedTime();
+        boolean gyroSetToField = true;
+//        boolean gyroSetToSeg   = false;
+//        while(gyroTimer.seconds() < 10.0)
+//        {
+//            gpad1.update();
+//            if(gpad1.just_pressed(ManagedGamepad.Button.X))
+//            {
+//                gyroSetToField = true;
+//                break;
+//            }
+//            if(gpad1.just_pressed(ManagedGamepad.Button.Y))
+//            {
+//                gyroSetToSeg = true;
+//                break;
+//            }
+//        }
 
-        if(gyroSetToField)
-            RobotLog.ii(TAG,"X pressed: gyroSetToField");
-        if(gyroSetToSeg)
-            RobotLog.ii(TAG,"Y pressed: gyroSetToSeg");
+//        if(gyroSetToField)
+//            RobotLog.ii(TAG,"X pressed: gyroSetToField");
+//        if(gyroSetToSeg)
+//            RobotLog.ii(TAG,"Y pressed: gyroSetToSeg");
 
         dashboard.displayPrintf(0, "GYRO CALIBRATING DO NOT TOUCH OR START");
         SkyBot.curOpModeType = ShelbyBot.OpModeType.AUTO;
-        robot.init(this, robotName);
+        skyBot.init(this, robotName);
 
         if (robot.imu != null || robot.gyro  != null)
         {
@@ -235,7 +237,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         }
         dashboard.displayPrintf(0, "GYRO CALIBATED: %s", gyroReady);
 
-        dashboard.displayPrintf(6, gyroSetToField ? "Field" : "1stSeg" +"Init done");
+//        dashboard.displayPrintf(6, gyroSetToField ? "Field" : "1stSeg" +"Init done");
         dashboard.displayPrintf(7, "");
 
         robot.setAlliance(alliance);
@@ -283,7 +285,9 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         Point2d currPoint = pathSegs.get(0).getStrtPt();
         drvTrn.setCurrPt(currPoint);
 
+        //noinspection ConstantConditions
         drvTrn.setStartHdg(gyroSetToField ? 0 : initHdg);
+        //noinspection ConstantConditions
         robot.setInitHdg(gyroSetToField   ? 0 : initHdg);
 
         RobotLog.ii(TAG, "Start %s.", currPoint);
@@ -293,8 +297,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         skyBot.putHolderAtStow();
         skyBot.stowGripper();
+        skyBot.putArmRight();
         skyBot.zeroLift();
-        skyBot.zeroArmRotate();
         skyBot.zeroArmExtend();
 
         det.setTelemetry(telemetry);
@@ -315,6 +319,18 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             dl.addField(spt.getX());
             dl.addField(spt.getY());
             dl.newLine();
+        }
+
+        skyBot.openGripper();
+        skyBot.putHolderAtPre();
+
+        if(alliance == Field.Alliance.BLUE)
+        {
+            skyBot.putArmRight();
+        }
+        else
+        {
+            skyBot.putArmLeft();
         }
 
         RobotLog.ii(TAG, "Delaying for %4.2f seconds", delay);
@@ -552,19 +568,16 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
     private void doGrab(int segIdx)
     {
-        double hdgAdj = 14.0;
+//        double hdgAdj = 14.0;
 
-        Point2d curPt = pathSegs.get(segIdx).getTgtPt();
-        double curAng = pathSegs.get(segIdx).angle();
+//        Point2d curPt = pathSegs.get(segIdx).getTgtPt();
+//        double curAng = pathSegs.get(segIdx).angle();
 //        double newHdg = curAng - hdgAdj;
-        double newHdg = robot.getGyroFhdg() - hdgAdj;
-        //TODO:  Uncomment if we are turning bot to grab stone.
-        //       Otherwise, turn arm
+//        double newHdg = robot.getGyroFhdg() - hdgAdj;
 //        doGyroTurn(newHdg, "scanAdj");
 
         //Rotate arm for red/blue
 
-        sleep(2000);
         if(alliance == Field.Alliance.BLUE)
         {
             skyBot.putArmRight();
@@ -583,7 +596,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         //Close gripper
         skyBot.closeGripper();
         //Raise arm
-        skyBot.putLiftAtLevel2();
+        skyBot.putLiftAtMove();
         //Rotate arm to forward and possibly retract some
         skyBot.putArmForward();
         skyBot.putExtendAtStage();
@@ -607,7 +620,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
     {
         RobotLog.dd(TAG, "Dropping stone");
         //rotate arm, lower?, release gripper, return arm
-        sleep(1000);
+        skyBot.putLiftAtDrop();
+
         if(alliance == Field.Alliance.BLUE)
         {
             skyBot.putArmHalfRight();
@@ -617,9 +631,9 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             skyBot.putArmHalfLeft();
 
         }
-        //skyBot.putLiftAtDrop();
+
         skyBot.openGripper();
-        skyBot.putLiftAtGrab();
+        skyBot.putLiftAtMove();
         skyBot.putArmForward();
     }
 
