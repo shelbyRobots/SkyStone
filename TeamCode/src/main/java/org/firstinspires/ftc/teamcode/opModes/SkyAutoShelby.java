@@ -205,7 +205,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 //        dashboard.displayPrintf(6, "ALIGN TO FIELD THEN HIT X TO START GYRO INIT");
 //        dashboard.displayPrintf(7, "OR ALIGN TO FIRST SEG THEN HIT Y TO SKIP");
 //        ElapsedTime gyroTimer = new ElapsedTime();
-        boolean gyroSetToField = true;
+        boolean gyroSetToField = false;
 //        boolean gyroSetToSeg   = false;
 //        while(gyroTimer.seconds() < 10.0)
 //        {
@@ -297,7 +297,14 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         skyBot.putHolderAtStow();
         skyBot.stowGripper();
-        skyBot.putArmRight();
+        if(alliance == Field.Alliance.BLUE)
+        {
+            skyBot.putArmRight();
+        }
+        else
+        {
+            skyBot.putArmLeft();
+        }
         skyBot.zeroLift();
         skyBot.zeroArmExtend();
 
@@ -323,15 +330,6 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         skyBot.openGripper();
         skyBot.putHolderAtPre();
-
-        if(alliance == Field.Alliance.BLUE)
-        {
-            skyBot.putArmRight();
-        }
-        else
-        {
-            skyBot.putArmLeft();
-        }
 
         RobotLog.ii(TAG, "Delaying for %4.2f seconds", delay);
         ElapsedTime delayTimer = new ElapsedTime();
@@ -580,11 +578,19 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         if(alliance == Field.Alliance.BLUE)
         {
-            skyBot.putArmRight();
+            if(stonePos == StoneDetector.Position.LEFT)
+                skyBot.setRotatePos(SkyBot.ARM_GRB_RGT_L);
+            else if(stonePos == StoneDetector.Position.RIGHT)
+                skyBot.setRotatePos(SkyBot.ARM_GRB_RGT_R);
+            else skyBot.putArmRight();
         }
         else
         {
-            skyBot.putArmLeft();
+            if(stonePos == StoneDetector.Position.LEFT)
+                skyBot.setRotatePos(SkyBot.ARM_GRB_LFT_L);
+            else if(stonePos == StoneDetector.Position.RIGHT)
+                skyBot.setRotatePos(SkyBot.ARM_GRB_LFT_R);
+            else skyBot.putArmLeft();
         }
         //Extend arm so fixed gripper is clear of side of bot
         skyBot.putExtendAtStage();
@@ -598,8 +604,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         //Raise arm
         skyBot.putLiftAtMove();
         //Rotate arm to forward and possibly retract some
-        skyBot.putArmForward();
         skyBot.putExtendAtStage();
+        skyBot.putArmForward();
     }
 
     private void setStonePoint(int segIdx)

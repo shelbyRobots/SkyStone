@@ -88,7 +88,7 @@ public class Teleop_Driver extends InitLinearOpMode
         lastArmTouchPressed = robot.isElevTouchPressed();
 
         double  axtnd        = -gpad2.value(ManagedGamepad.AnalogInput.R_STICK_Y);
-        boolean changeMode   =  gpad2.just_pressed(ManagedGamepad.Button.A);
+        boolean changeMode   =  false; //gpad2.just_pressed(ManagedGamepad.Button.A);
         boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.R_BUMP);
 
         if(changeMode)
@@ -106,7 +106,7 @@ public class Teleop_Driver extends InitLinearOpMode
     {
         if(robot.armRotate == null) return;
 
-        double  arot         =  gpad2.value(ManagedGamepad.AnalogInput.R_STICK_X);
+        double  arot         =  -gpad2.value(ManagedGamepad.AnalogInput.R_STICK_X);
 //        boolean changeMode   =  gpad2.just_pressed(ManagedGamepad.Button.B);
 //        boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.L_BUMP);
 
@@ -147,11 +147,14 @@ public class Teleop_Driver extends InitLinearOpMode
             robot.putHolderAtPre();
     }
 
+    boolean gripTog = false;
     private void controlGripper()
     {
         boolean grip =  gpad2.just_pressed(ManagedGamepad.Button.L_BUMP);
 
-        if(grip) robot.closeGripper();
+        if(grip) gripTog = !gripTog;
+
+        if (gripTog) robot.closeGripper();
         else robot.openGripper();
 
     }
