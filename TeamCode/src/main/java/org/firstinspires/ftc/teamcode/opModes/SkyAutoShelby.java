@@ -601,7 +601,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         }
         //Extend arm so fixed gripper is clear of side of bot
         RobotLog.dd(TAG,"doGrab extend to stage");
-        skyBot.putExtendAtStage();
+        skyBot.putExtendAtSnug();
         //Lower arm and open gripper
         RobotLog.dd(TAG,"doGrab opengripper");
         skyBot.openGripper();
@@ -619,15 +619,13 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         RobotLog.dd(TAG,"doGrab lift at stow");
         skyBot.putLiftAtStow();
         RobotLog.dd(TAG,"doGrab extend to stage");
-        skyBot.putExtendAtStage();
+        skyBot.putExtendAtSnug();
         //Rotate arm to forward and possibly retract some
         RobotLog.dd(TAG,"doGrab armforward");
         skyBot.putArmForward();
         sleep(100);
         RobotLog.dd(TAG,"doGrab lift at move");
         skyBot.putLiftAtMove();
-
-
     }
 
     private void setStonePoint(int segIdx)
@@ -660,11 +658,11 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         skyBot.putLiftAtStow();
         if(alliance == Field.Alliance.BLUE)
         {
-            skyBot.putArmRight();
+            skyBot.putArmHalfRight();
         }
         else
         {
-            skyBot.putArmLeft();
+            skyBot.putArmHalfLeft();
 
         }
 
@@ -694,7 +692,9 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             skyBot.putHolderAtStow();
         }
         skyBot.putExtendAtStage();
+        skyBot.putArmForward();
         skyBot.putLiftAtMove();
+        skyBot.putExtendAtSnug();
     }
 
     private void doPark()
