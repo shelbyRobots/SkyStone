@@ -42,10 +42,10 @@ public class SkyRoute extends Route
             addPoint(points, fwd, 0.50, 1.00, encType, scan, SkyField.RIS1);
             addPoint(points, fwd, 0.50, 1.00, encType, none, SkyField.RTP1);
             addPoint(points, rev, 0.50, 1.00, encType, grab, SkyField.RGPA);
-            addPoint(points, fwd, 0.60, 1.00, encType, drop, SkyField.RDPA);
-            addPoint(points, rev, 0.60, 1.00, encType, grab, SkyField.RGPB);
-            addPoint(points, fwd, 0.60, 1.00, encType, none, SkyField.RDPB);
-            addPoint(points, rev, 0.60, 1.00, encType, park, SkyField.RPP1);
+            addPoint(points, fwd, 0.70, 1.00, encType, drop, SkyField.RDPA);
+            addPoint(points, rev, 0.70, 1.00, encType, grab, SkyField.RGPB);
+            addPoint(points, fwd, 0.70, 1.00, encType, none, SkyField.RDPB);
+            addPoint(points, rev, 0.70, 1.00, encType, park, SkyField.RPP1);
         }
         else
         {
@@ -80,6 +80,10 @@ public class SkyRoute extends Route
     {
         double bx =  rpt.getX();
         double by = -rpt.getY();
+        if(rpt.getName().equals("RTP1") ||
+           rpt.getName().equals("RGPA") ||
+           rpt.getName().equals("RGPB"))
+            by+=1;
         String nm = "B" + rpt.getName().substring(1);
 
         RobotLog.dd(TAG, "convertRtoB %s to %s", rpt.getName(), nm);

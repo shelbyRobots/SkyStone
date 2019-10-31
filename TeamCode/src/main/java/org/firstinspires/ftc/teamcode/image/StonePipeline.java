@@ -131,7 +131,7 @@ public class StonePipeline
 		double[] filterContoursSolidity = {0, 100};
 		double filterContoursMaxVertices = 20000.0;
 		double filterContoursMinVertices = 0.0;
-		double filterContoursMinRatio = 1.5;
+		double filterContoursMinRatio = 1.0;
 		double filterContoursMaxRatio = 6.0;
 		filterContours(filterContoursContours,
                 filterContoursMinArea,

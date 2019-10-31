@@ -101,7 +101,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         int initCycle = 0;
         int initSleep = 10;
         timer.reset();
-        while(!isStarted())
+        while(!isStopRequested() && !isStarted())
         {
             if(initCycle % 10 == 0)
             {
@@ -147,6 +147,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         if(det != null) det.cleanupCamera();
     }
 
+    private int grabNum = 0;
+
     private void setup()
     {
         dashboard.displayPrintf(0, "PLEASE WAIT - STARTING - CHECK DEFAULTS");
@@ -158,7 +160,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         ElapsedTime mTimer = new ElapsedTime();
         boolean doMen = false;
-        while(mTimer.seconds() < 5.0)
+        while(!isStopRequested() && mTimer.seconds() < 5.0)
         {
             gpad1.update();
             if(gpad1.just_pressed(ManagedGamepad.Button.A))
@@ -409,7 +411,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             {
                 RobotLog.ii(TAG, "ENCODER TURN %s t=%6.4f", curSeg.getName(),
                         startTimer.seconds());
-                doEncoderTurn(curSeg.getFieldHeading(), segName + " encoderTurn"); //quick but rough
+                //doEncoderTurn(curSeg.getFieldHeading(), segName + " encoderTurn"); //quick but rough
                 RobotLog.ii(TAG, "GYRO TURN %s t=%6.4f", curSeg.getName(),
                         startTimer.seconds());
                 doGyroTurn(curSeg.getFieldHeading(), segName + " gyroTurn");
@@ -564,8 +566,10 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         setStonePoint(segIdx);
     }
 
+
     private void doGrab(int segIdx)
     {
+        grabNum++;
 //        double hdgAdj = 14.0;
 
 //        Point2d curPt = pathSegs.get(segIdx).getTgtPt();
@@ -576,6 +580,9 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         //Rotate arm for red/blue
 
+        if(grabNum == 2) skyBot.putLiftAtStow();
+
+        RobotLog.dd(TAG,"doGrab %s", stonePos);
         if(alliance == Field.Alliance.BLUE)
         {
             if(stonePos == StoneDetector.Position.LEFT)
@@ -593,19 +600,34 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             else skyBot.putArmLeft();
         }
         //Extend arm so fixed gripper is clear of side of bot
+        RobotLog.dd(TAG,"doGrab extend to stage");
         skyBot.putExtendAtStage();
         //Lower arm and open gripper
-        skyBot.putLiftAtGrab();
+        RobotLog.dd(TAG,"doGrab opengripper");
         skyBot.openGripper();
+        RobotLog.dd(TAG,"doGrab lift to grab");
+        skyBot.putLiftAtGrab();
+
         //Extend arm to grab state
+        RobotLog.dd(TAG,"doGrab extend to grab");
         skyBot.putExtendAtGrab();
         //Close gripper
+        RobotLog.dd(TAG,"doGrab closegripper");
         skyBot.closeGripper();
+        sleep(100);
         //Raise arm
-        skyBot.putLiftAtMove();
-        //Rotate arm to forward and possibly retract some
+        RobotLog.dd(TAG,"doGrab lift at stow");
+        skyBot.putLiftAtStow();
+        RobotLog.dd(TAG,"doGrab extend to stage");
         skyBot.putExtendAtStage();
+        //Rotate arm to forward and possibly retract some
+        RobotLog.dd(TAG,"doGrab armforward");
         skyBot.putArmForward();
+        sleep(100);
+        RobotLog.dd(TAG,"doGrab lift at move");
+        skyBot.putLiftAtMove();
+
+
     }
 
     private void setStonePoint(int segIdx)
@@ -626,21 +648,31 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
     {
         RobotLog.dd(TAG, "Dropping stone");
         //rotate arm, lower?, release gripper, return arm
-        skyBot.putLiftAtDrop();
 
+        if(startTimer.seconds() > 26.0)
+        {
+            RobotLog.dd(TAG, "Running out of time - drop now");
+            skyBot.openGripper();
+            sleep(100);
+            return;
+        }
+
+        skyBot.putLiftAtStow();
         if(alliance == Field.Alliance.BLUE)
         {
-            skyBot.putArmHalfRight();
+            skyBot.putArmRight();
         }
         else
         {
-            skyBot.putArmHalfLeft();
+            skyBot.putArmLeft();
 
         }
 
+        skyBot.putExtendAtDrop();
         skyBot.openGripper();
-        skyBot.putLiftAtMove();
+        skyBot.putExtendAtStage();
         skyBot.putArmForward();
+        skyBot.putLiftAtMove();
     }
 
     private void doPlatch()
@@ -661,6 +693,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         {
             skyBot.putHolderAtStow();
         }
+        skyBot.putExtendAtStage();
+        skyBot.putLiftAtMove();
     }
 
     private void doPark()
@@ -943,8 +977,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         }
     }
 
-    private final static double DEF_ENCTRN_PWR  = 0.6;
-    private final static double DEF_GYRTRN_PWR = 0.4;
+    private final static double DEF_ENCTRN_PWR  = 0.8;
+    private final static double DEF_GYRTRN_PWR  = 0.5;
 
     private List<Segment> pathSegs = new ArrayList<>();
 

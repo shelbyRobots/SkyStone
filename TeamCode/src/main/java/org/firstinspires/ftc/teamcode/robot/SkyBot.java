@@ -37,35 +37,35 @@ public class SkyBot extends TilerunnerGtoBot {
     private final double LIFTER_CPOR = LIFTER_CPER * LIFTER_INT_GEAR; //383.6 //145.6 cnts/outShaftRev
     private final double LIFTER_EXT_GEAR = 1.0;
     private final double LIFTER_PITCH = 2.0; //2.0mm/pitch
-    private final int    LIFTER_STARTS = 4; //pitch/rev
+    private final int LIFTER_STARTS = 4; //pitch/rev
     private final double LIFTER_LEAD = LIFTER_PITCH * LIFTER_STARTS; //8 mm/rev
     private final double LIFTER_CPMM = LIFTER_EXT_GEAR * LIFTER_CPOR / LIFTER_LEAD;
     private final double LIFTER_CPI = LIFTER_CPMM * 25.4;
     @SuppressWarnings("FieldCanBeLocal")
-    private final int    LIFTER_THRESH = (int) (0.3 * LIFTER_CPI);
-    private final double LIFTER_STOW =  0.0;
+    private final int LIFTER_THRESH = (int) (0.3 * LIFTER_CPI);
+    private final double LIFTER_STOW = 0.0;
     private final double LIFTER_GRAB = -5.5;
     private final double LIFTER_MOVE = -5.0;
-    private final double LIFTER_REL1 = -3.0;
-    private final double LIFTER_REL2 =  2.0;
+    private final double LIFTER_REL1 = -2.0;
+    private final double LIFTER_REL2 = 0.0;
     private final int LIFT_STOW_CNTS = (int) (LIFTER_CPI * LIFTER_STOW);
     private final int LIFT_GRAB_CNTS = (int) (LIFTER_CPI * LIFTER_GRAB);
     private final int LIFT_MOVE_CNTS = (int) (LIFTER_CPI * LIFTER_MOVE);
     private final int LIFT_REL1_CNTS = (int) (LIFTER_CPI * LIFTER_REL1);
     private final int LIFT_REL2_CNTS = (int) (LIFTER_CPI * LIFTER_REL2);
 
-    public Servo    lplatch    = null;
-    public Servo    rplatch    = null;
+    public Servo lplatch = null;
+    public Servo rplatch = null;
     @SuppressWarnings("FieldCanBeLocal")
     private final double LPLATCH_STOW = 0.02;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double LPLATCH_PRE  = 0.32;
+    private final double LPLATCH_PRE = 0.32;
     @SuppressWarnings("FieldCanBeLocal")
     private final double LPLATCH_GRAB = 0.78;
     @SuppressWarnings("FieldCanBeLocal")
     private final double RPLATCH_STOW = 0.80;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double RPLATCH_PRE  = 0.50;
+    private final double RPLATCH_PRE = 0.50;
     @SuppressWarnings("FieldCanBeLocal")
     private final double RPLATCH_GRAB = 0.04;
 
@@ -74,27 +74,29 @@ public class SkyBot extends TilerunnerGtoBot {
     @SuppressWarnings("FieldCanBeLocal")
     private final double GRIPPER_OPEN = 0.99;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double GRIPPER_PRE  = 0.6;
+    private final double GRIPPER_PRE = 0.6;
     @SuppressWarnings("FieldCanBeLocal")
-    private final double GRIPPER_GRAB = 0.36;
+    private final double GRIPPER_GRAB = 0.32;
 
 
-    private final int    EXTND_COUNTS_PER_MOTOR_REV = 4;
-    private final double EXTND_GEAR_ONE   = 72;
+    private final int EXTND_COUNTS_PER_MOTOR_REV = 4;
+    private final double EXTND_GEAR_ONE = 72;
     private final double EXTND_WHEEL_DIAM = 1.57;
-    private final double EXTND_CPR        = ELEV_COUNTS_PER_MOTOR_REV * ELEV_GEAR_ONE;
-    private final double EXTND_SCALE      = 1.0;
-    public double EXTND_CPI = EXTND_CPR/(Math.PI * EXTND_WHEEL_DIAM)/EXTND_SCALE;
+    private final double EXTND_CPR = ELEV_COUNTS_PER_MOTOR_REV * ELEV_GEAR_ONE;
+    private final double EXTND_SCALE = 1.0;
+    public double EXTND_CPI = EXTND_CPR / (Math.PI * EXTND_WHEEL_DIAM) / EXTND_SCALE;
     private int MIN_EXTND_CNT = 0;
-    private int ARM_EXT_STOW_POS  = (int) ( 0.0 * EXTND_CPI);
-    private int ARM_EXT_STAGE_POS = (int) ( 9.0 * EXTND_CPI);
-    private int ARM_EXT_GRAB_POS  = (int) (14.0 * EXTND_CPI);
-    private int MAX_EXTND_CNT     = (int) (16.0 * EXTND_CPI);
+    private int ARM_EXT_STOW_POS = (int) (0.0 * EXTND_CPI);
+    private int ARM_EXT_SNUG_POS = (int)  (7.0 * EXTND_CPI);
+    private int ARM_EXT_STAGE_POS = (int) (9.0 * EXTND_CPI);
+    private int ARM_EXT_GRAB_POS = (int) (14.0 * EXTND_CPI);
+    private int ARM_EXT_DROP_POS = (int) (17.0 * EXTND_CPI);
+    private int MAX_EXTND_CNT = (int) (18.0 * EXTND_CPI);
 
     int ARMROT_COUNTS_PER_MOTOR_REV = 4;
     double ARMROT_GEAR_ONE = 72.0;
     double ARMROT_CPR = ARMROT_COUNTS_PER_MOTOR_REV * ARMROT_GEAR_ONE;
-    double ARMROT_CPD = ARMROT_CPR /360.0;
+    double ARMROT_CPD = ARMROT_CPR / 360.0;
 //    private int ARM_ROT_FWD = (int) ( 90.0 * ARMROT_CPD);
 //    private int ARM_ROT_RGT = (int) (  0.0 * ARMROT_CPD);
 //    private int ARM_ROT_LFT = (int) (180.0 * ARMROT_CPD);
@@ -104,25 +106,25 @@ public class SkyBot extends TilerunnerGtoBot {
 //    private int ARM_ROT_MAX = (int) (-30.0 * ARMROT_CPD);
 
     //following asumes 270 degree servo range
-    public double ARM_ROT_RGT =  0.16;
-    public double ARM_DRP_RGT =  0.38;
-    public double ARM_ROT_FWD =  0.54;
-    public double ARM_DRP_LFT =  0.76;
-    public double ARM_ROT_LFT =  0.90;
+    public double ARM_ROT_RGT = 0.16;
+    public double ARM_DRP_RGT = 0.32;
+    public double ARM_ROT_FWD = 0.52;
+    public double ARM_DRP_LFT = 0.72;
+    public double ARM_ROT_LFT = 0.88;
 
-    public static double ARM_GRB_RGT_L = 0.22;
-    public static double ARM_GRB_RGT_R = 0.10;
-    public static double ARM_GRB_LFT_L = 0.96;
-    public static double ARM_GRB_LFT_R = 0.84;
+    public static double ARM_GRB_RGT_L = 0.24;
+    public static double ARM_GRB_RGT_R = 0.04;
+    public static double ARM_GRB_LFT_L = 1.00;
+    public static double ARM_GRB_LFT_R = 0.80;
 
-    public double ARM_ROT_MIN =  0.0;
-    public double ARM_ROT_MAX =  1.0;
+    public double ARM_ROT_MIN = 0.0;
+    public double ARM_ROT_MAX = 1.0;
 
     private DigitalChannel armIndexSensor = null;
 
-//    public  DcMotor  armRotate   = null;
-    public Servo    armRotate    = null;
-    public  DcMotor  armExtend   = null;
+    //    public  DcMotor  armRotate   = null;
+    public Servo armRotate = null;
+    public DcMotor armExtend = null;
 
     public SkyBot() {
         super();
@@ -132,8 +134,7 @@ public class SkyBot extends TilerunnerGtoBot {
         CAMERA_Z_IN_BOT = 3.0f * (float) Units.MM_PER_INCH;
     }
 
-    public SkyBot(String name)
-    {
+    public SkyBot(String name) {
         this();
         this.name = name;
     }
@@ -164,19 +165,16 @@ public class SkyBot extends TilerunnerGtoBot {
     public void initArm() //rotate, extend
     {
         RobotLog.dd(TAG, "GTO initArm");
-        try
-        {
+        try {
             armExtend = hwMap.dcMotor.get("armExtend");
 //            armRotate  = hwMap.dcMotor.get("armRotate");
             armRotate = hwMap.servo.get("armRotate");
-            if(armRotate != null) curRotSrvPos = armRotate.getPosition();
+            if (armRotate != null) curRotSrvPos = armRotate.getPosition();
 //            armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armExtend.setDirection(DcMotorSimple.Direction.REVERSE);
             armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             capMap.put("arm", true);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             RobotLog.ee(TAG, "ERROR in initArm\n" + e.toString());
         }
     }
@@ -185,25 +183,19 @@ public class SkyBot extends TilerunnerGtoBot {
     public void initHolder() //Platform grabber
     {
         boolean success = true;
-        try
-        {
+        try {
             rplatch = hwMap.servo.get("rplatch");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return;
         }
 
-        try
-        {
+        try {
             lplatch = hwMap.servo.get("lplatch");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return;
         }
 
-        capMap.put("holder",  true);
+        capMap.put("holder", true);
     }
 
     @Override
@@ -212,16 +204,14 @@ public class SkyBot extends TilerunnerGtoBot {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    private boolean initGripper()
-    {
+    private boolean initGripper() {
         try {
             gripper = hwMap.servo.get("gripper");
 
             //if extended range is wanted (and available) on servo,
             //keep block below
             //if standard range is wanted, comment block below
-            if (gripper.getController() instanceof ServoControllerEx)
-            {
+            if (gripper.getController() instanceof ServoControllerEx) {
                 // Set the rotation servo for extended PWM range
                 ServoControllerEx srvCntrlrEx =
                         (ServoControllerEx) gripper.getController();
@@ -230,20 +220,17 @@ public class SkyBot extends TilerunnerGtoBot {
                         new PwmControl.PwmRange(500, 2500);
                 srvCntrlrEx.setServoPwmRange(gPort, range);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             RobotLog.ee(TAG, "ERROR in initGripper\n" + e.toString());
             return false;
         }
 
-        capMap.put("collector",  true);
+        capMap.put("collector", true);
         return true;
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    private boolean initLifter()
-    {
+    private boolean initLifter() {
         try {
             _liftyBoi = hwMap.dcMotor.get("liftyboi");
 
@@ -252,9 +239,7 @@ public class SkyBot extends TilerunnerGtoBot {
             _liftyBoi.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             _liftyBoi.setPower(0.0f);
             _liftyBoi.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             RobotLog.ee(TAG, "ERROR in initLifter\n" + e.toString());
             return false;
         }
@@ -263,44 +248,38 @@ public class SkyBot extends TilerunnerGtoBot {
         return true;
     }
 
-    public boolean isElevTouchPressed()
-    {
+    public boolean isElevTouchPressed() {
         return false;
     }
 
-    public boolean isArmTouchPressed()
-    {
+    public boolean isArmTouchPressed() {
         return false;
     }
 
     private boolean lastExtndUseCnts = false;
 
-    public void setExtend(double spd, boolean useCnts, boolean override)
-    {
+    public void setExtend(double spd, boolean useCnts, boolean override) {
         double aspd = spd;
 
-        if (armExtend == null)
-        {
+        if (armExtend == null) {
             RobotLog.ee(TAG, "ERROR in setExtend - armExtend null\n");
             return;
         }
 
         int curArmCounts = armExtend.getCurrentPosition();
-        if(useCnts)
-        {
-            if(!lastExtndUseCnts)
-            {
+        if (useCnts) {
+            if (!lastExtndUseCnts) {
                 RobotLog.dd(TAG, "Moving to arm pos %d", curArmCounts);
                 armExtend.setTargetPosition(curArmCounts);
                 armExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armExtend.setPower(aspd);
             }
-        }
-        else
-        {
+        } else {
             armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //if(curArmCounts <= MIN_EXTND_CNT && !override) aspd = 0.0;
-            //if(curArmCounts >= MAX_EXTND_CNT) aspd = 0.0;
+            if (curArmCounts <= MIN_EXTND_CNT && !override) aspd =
+                    Range.clip(aspd, 0, 1.0);
+            if (curArmCounts >= MAX_EXTND_CNT && !override) aspd =
+                    Range.clip(aspd, -1.0, 0.0);
             armExtend.setPower(aspd);
         }
         lastExtndUseCnts = useCnts;
@@ -308,10 +287,9 @@ public class SkyBot extends TilerunnerGtoBot {
 
     public void setExtendPos(int targetPos) //targetPos in counts
     {
-        final double EXT_THRESH = 20;
+        final double EXT_THRESH = 40;
 
-        if(armExtend == null)
-        {
+        if (armExtend == null) {
             RobotLog.ee(TAG, "armExtend is null - fix it");
             return;
         }
@@ -326,8 +304,7 @@ public class SkyBot extends TilerunnerGtoBot {
         armExtend.setPower(armExtSpd);
 
         int curPos = armExtend.getCurrentPosition();
-        while(op.opModeIsActive() && Math.abs(curPos - targetPos) > EXT_THRESH)
-        {
+        while (op.opModeIsActive() && Math.abs(curPos - targetPos) > EXT_THRESH) {
             RobotLog.dd(TAG, "In armExtend.  targetpos=" + targetPos + " curPos=" +
                     curPos);
             curPos = armExtend.getCurrentPosition();
@@ -336,19 +313,26 @@ public class SkyBot extends TilerunnerGtoBot {
         armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void putExtendAtStow()
-    {
+    public void putExtendAtStow() {
         setExtendPos(ARM_EXT_STOW_POS);
     }
 
-    public void putExtendAtStage()
-    {
+    public void putExtendAtStage() {
         setExtendPos(ARM_EXT_STAGE_POS);
     }
 
-    public void putExtendAtGrab()
-    {
+    public void putExtendAtSnug() {
+        setExtendPos(ARM_EXT_SNUG_POS);
+    }
+
+    public void putExtendAtGrab() {
         setExtendPos(ARM_EXT_GRAB_POS);
+    }
+
+    public void putExtendAtDrop()
+
+    {
+        setExtendPos(ARM_EXT_DROP_POS);
     }
 
     public void zeroArmExtend()

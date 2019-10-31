@@ -248,8 +248,8 @@ public class Drivetrain
                 int hiSlow  = rampCntH;
                 int midSlow = rampCntM + colOverCnt/4;
                 int lowSlow = rampCntL + colOverCnt;
-                int remaining = Math.abs(((tgtLpositions.get(0) - lcnt)
-                                        + (tgtRpositions.get(0) - rcnt)) / 2);
+                int remaining = (Math.abs(tgtLpositions.get(0) - lcnt)
+                               + Math.abs(tgtRpositions.get(0) - rcnt)) / 2;
                 if (Math.abs(remaining) < hiSlow)  ppwr = Math.min(ppwr, rampSpdH);
                 if (Math.abs(remaining) < midSlow) ppwr = Math.min(ppwr, rampSpdM);
                 if (Math.abs(remaining) < lowSlow) ppwr = Math.min(ppwr, rampSpdL);
@@ -488,7 +488,7 @@ public class Drivetrain
         initLpower = startPwr;
         initRpower = startPwr;
 
-        int pwrSteps = 5;
+        double pwrSteps = 5.0;
         double pwrLIncr = (pwr - initLpower)/pwrSteps;
         double pwrRIncr = (pwr - initRpower)/pwrSteps;
 
@@ -517,12 +517,14 @@ public class Drivetrain
             {
                 int lcnt = curLpositions.get(0);
                 int rcnt = curRpositions.get(0);
-                int remaining = (Math.abs(tgtLpositions.get(0) - lcnt) +
-                                 Math.abs(tgtRpositions.get(0) - rcnt)) / 2;
-
-                if (Math.abs(remaining) < 960) ppwr = Math.min(ppwr, 0.5);
-                if (Math.abs(remaining) < 480) ppwr = Math.min(ppwr, 0.25);
-                if (Math.abs(remaining) < 240) ppwr = Math.min(ppwr, 0.10);
+                int hiSlow  = rampCntH;
+                int midSlow = rampCntM;
+                int lowSlow = rampCntL;
+                int remaining = (Math.abs(tgtLpositions.get(0) - lcnt)
+                               + Math.abs(tgtRpositions.get(0) - rcnt)) / 2;
+                if (Math.abs(remaining) < hiSlow)  ppwr = Math.min(ppwr, rampSpdH);
+                if (Math.abs(remaining) < midSlow) ppwr = Math.min(ppwr, rampSpdM);
+                if (Math.abs(remaining) < lowSlow) ppwr = Math.min(ppwr, rampSpdL);
             }
             double lpwr = ppwr;
             double rpwr = ppwr;
@@ -1428,12 +1430,12 @@ public class Drivetrain
 
     private boolean busyAnd = false;
     private boolean rampUp = true;
-    private boolean rampDown = true;
+    private boolean rampDown = false;
     private boolean stopIndividualMotorWhenNotBusy = false;
 
     private int tickRate = 10;
     private static final int DEF_BUSYTHRESH = 16;
-    public  static final int TURN_BUSYTHRESH = 10;
+    public  static final int TURN_BUSYTHRESH = 30;
     private static int BUSYTHRESH = DEF_BUSYTHRESH;
 
     private ElapsedTime busyTimer = new ElapsedTime();
@@ -1453,7 +1455,7 @@ public class Drivetrain
 
     private boolean lFirst = true;
 
-    private double turnTimeLimit = 5;
+    private double turnTimeLimit = 3;
 
     private static final String TAG = "SJH_DTRN";
 }

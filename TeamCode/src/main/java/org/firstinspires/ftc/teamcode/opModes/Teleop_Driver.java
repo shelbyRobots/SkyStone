@@ -73,6 +73,68 @@ public class Teleop_Driver extends InitLinearOpMode
         controlArmExtend();
         controlArmRotate();
         controlArmElev();
+
+        boolean doSafeHome = gpad2.just_pressed(ManagedGamepad.Button.A);
+        boolean doSafeDply = gpad2.just_pressed(ManagedGamepad.Button.B);
+        boolean doZero     = gpad2.just_pressed(ManagedGamepad.Button.X);
+        boolean doSafeRght = gpad2.just_pressed(ManagedGamepad.Button.D_RIGHT);
+        boolean doSafeLeft = gpad2.just_pressed(ManagedGamepad.Button.D_LEFT);
+        boolean doSafeFrwd = gpad2.just_pressed(ManagedGamepad.Button.D_UP);
+        boolean doSafeSnug = gpad2.just_pressed(ManagedGamepad.Button.D_DOWN);
+
+        if(doSafeHome)
+        {
+            robot.closeGripper();
+            robot.putLiftAtStow();
+            robot.putExtendAtStow();
+            robot.putArmForward();
+        }
+
+        if(doSafeDply)
+        {
+            robot.closeGripper();
+            robot.putExtendAtStage();
+            robot.putArmForward();
+            robot.putLiftAtGrab();
+        }
+
+        if(doZero)
+        {
+            robot.zeroArmExtend();
+            robot.zeroLift();
+        }
+
+        if(doSafeRght)
+        {
+            robot.closeGripper();
+            robot.putExtendAtStage();
+            robot.putArmRight();
+        }
+
+        if(doSafeLeft)
+        {
+            robot.closeGripper();
+            robot.putExtendAtStage();
+            robot.putArmLeft();
+        }
+
+        if(doSafeFrwd)
+        {
+            robot.closeGripper();
+            robot.putExtendAtStage();
+            robot.putArmForward();
+        }
+
+        if(doSafeSnug)
+        {
+            robot.closeGripper();
+            robot.putExtendAtStage();
+            robot.putArmForward();
+            robot.putLiftAtMove();
+            robot.putExtendAtSnug();
+        }
+
+
     }
 
     private void controlArmExtend()
@@ -88,16 +150,9 @@ public class Teleop_Driver extends InitLinearOpMode
         lastArmTouchPressed = robot.isElevTouchPressed();
 
         double  axtnd        = -gpad2.value(ManagedGamepad.AnalogInput.R_STICK_Y);
-        boolean changeMode   =  false; //gpad2.just_pressed(ManagedGamepad.Button.A);
         boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.R_BUMP);
 
-        if(changeMode)
-        {
-            useExtdCnts = !useExtdCnts;
-            axtnd = 0.5;
-        }
-
-        robot.setExtend(axtnd, useExtdCnts, overrideLims);
+        robot.setExtend(axtnd, false, overrideLims);
 
         dashboard.displayPrintf(4, "extcounts %d", robot.armExtend.getCurrentPosition());
     }
@@ -131,23 +186,32 @@ public class Teleop_Driver extends InitLinearOpMode
 
         aelev  = ishaper.shape(aelev, 0.05);
 
-        //TODO:  add dpad up/down by steps and and safety on continuous ctrl
         robot._liftyBoi.setPower(aelev);
     }
+
+    private boolean doLatch = false;
 
     private void controlLatch()
     {
         if(robot.rplatch == null || robot.lplatch == null) return;
 
-        double  platchPos    =  gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
+        boolean  platchPos    =  gpad1.just_pressed(ManagedGamepad.Button.R_BUMP);
 
-        if(platchPos > 0.5)
-            robot.putHolderAtGrab();
-        else
-            robot.putHolderAtPre();
+        if(platchPos)
+        {
+            doLatch = !doLatch;
+            if(doLatch)
+            {
+                robot.putHolderAtGrab();
+            }
+            else
+            {
+                robot.putHolderAtPre();
+            }
+        }
     }
 
-    boolean gripTog = false;
+    private boolean gripTog = false;
     private void controlGripper()
     {
         boolean grip =  gpad2.just_pressed(ManagedGamepad.Button.L_BUMP);
@@ -169,7 +233,6 @@ public class Teleop_Driver extends InitLinearOpMode
 
         boolean step_driveType    = gpad1.just_pressed(ManagedGamepad.Button.A);
         boolean toggle_float      = gpad1.just_pressed(ManagedGamepad.Button.B);
-        boolean toggle_vel        = gpad1.just_pressed(ManagedGamepad.Button.R_BUMP);
 
         boolean left_step         = gpad1.pressed(ManagedGamepad.Button.D_LEFT);
         boolean right_step        = gpad1.pressed(ManagedGamepad.Button.D_RIGHT);
@@ -207,7 +270,7 @@ public class Teleop_Driver extends InitLinearOpMode
 
         double arcadeTurnScale = 0.5;
 
-        if(toggle_vel) useSetVel = !useSetVel;
+        //if(toggle_vel) useSetVel = !useSetVel;
 
         double step_dist = 2.0;
         double step_spd  = 0.4;
@@ -307,6 +370,8 @@ public class Teleop_Driver extends InitLinearOpMode
         {
             out_left  = maxDPS*left;
             out_right = maxDPS*right;
+            lex = (DcMotorEx)(robot.leftMotors.get(0));
+            rex = (DcMotorEx)(robot.rightMotors.get(0));
             lex.setVelocity(out_left,  AngleUnit.DEGREES);
             rex.setVelocity(out_right, AngleUnit.DEGREES);
         }
