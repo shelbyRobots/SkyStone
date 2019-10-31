@@ -85,13 +85,13 @@ public class SkyBot extends TilerunnerGtoBot {
     private final double EXTND_CPR = ELEV_COUNTS_PER_MOTOR_REV * ELEV_GEAR_ONE;
     private final double EXTND_SCALE = 1.0;
     public double EXTND_CPI = EXTND_CPR / (Math.PI * EXTND_WHEEL_DIAM) / EXTND_SCALE;
-    private int MIN_EXTND_CNT = 0;
+    private int MIN_EXTND_CNT    = 0;
     private int ARM_EXT_STOW_POS = (int) (0.0 * EXTND_CPI);
-    private int ARM_EXT_SNUG_POS = (int)  (7.0 * EXTND_CPI);
+    private int ARM_EXT_SNUG_POS = (int)  (6.0 * EXTND_CPI);
     private int ARM_EXT_STAGE_POS = (int) (9.0 * EXTND_CPI);
-    private int ARM_EXT_GRAB_POS = (int) (14.0 * EXTND_CPI);
+    private int ARM_EXT_GRAB_POS = (int) (12.0 * EXTND_CPI);
     private int ARM_EXT_DROP_POS = (int) (17.0 * EXTND_CPI);
-    private int MAX_EXTND_CNT = (int) (18.0 * EXTND_CPI);
+    private int MAX_EXTND_CNT    = (int) (18.0 * EXTND_CPI);
 
     int ARMROT_COUNTS_PER_MOTOR_REV = 4;
     double ARMROT_GEAR_ONE = 72.0;
