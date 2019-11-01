@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ftclib.FtcChoiceMenu;
 import ftclib.FtcMenu;
@@ -117,7 +119,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                 if (skyBot._liftyBoi != null)
                     dashboard.displayPrintf(14, "ELEV %d", skyBot._liftyBoi.getCurrentPosition());
                 if (skyBot.armExtend != null)
-                    dashboard.displayPrintf(14, "ELEV %d", skyBot.armExtend.getCurrentPosition());
+                    dashboard.displayPrintf(14, "XTND %d", skyBot.armExtend.getCurrentPosition());
 
                 if (robot.colorSensor != null)
                 {
@@ -139,6 +141,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
     private void stopMode()
     {
+        es.shutdownNow();
         if(drvTrn != null) drvTrn.cleanup();
         if(tracker != null) {
             tracker.setFrameQueueSize(0);
@@ -564,25 +567,19 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             CameraDevice.getInstance().setFlashTorchMode(false);
 
         setStonePoint(segIdx);
+        es.submit(new ArmToSnugTask());
     }
 
 
     private void doGrab(int segIdx)
     {
         grabNum++;
-//        double hdgAdj = 14.0;
-
-//        Point2d curPt = pathSegs.get(segIdx).getTgtPt();
-//        double curAng = pathSegs.get(segIdx).angle();
-//        double newHdg = curAng - hdgAdj;
-//        double newHdg = robot.getGyroFhdg() - hdgAdj;
-//        doGyroTurn(newHdg, "scanAdj");
 
         //Rotate arm for red/blue
 
         if(grabNum == 2) skyBot.putLiftAtStow();
 
-        RobotLog.dd(TAG,"doGrab %s", stonePos);
+        RobotLog.dd(TAG,"doGrab Seg %d Pos %s", segIdx, stonePos);
         if(alliance == Field.Alliance.BLUE)
         {
             if(stonePos == StoneDetector.Position.LEFT)
@@ -600,7 +597,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             else skyBot.putArmLeft();
         }
         //Extend arm so fixed gripper is clear of side of bot
-        RobotLog.dd(TAG,"doGrab extend to stage");
+        RobotLog.dd(TAG,"doGrab extend to snug");
         skyBot.putExtendAtSnug();
         //Lower arm and open gripper
         RobotLog.dd(TAG,"doGrab opengripper");
@@ -616,10 +613,10 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         skyBot.closeGripper();
         sleep(100);
         //Raise arm
-        RobotLog.dd(TAG,"doGrab lift at stow");
+        RobotLog.dd(TAG,"doGrab lift to stow");
         skyBot.putLiftAtStow();
-        RobotLog.dd(TAG,"doGrab extend to stage");
-        skyBot.putExtendAtSnug();
+        RobotLog.dd(TAG,"doGrab extend to snug");
+        es.submit(new ArmToSnugTask());
         //Rotate arm to forward and possibly retract some
         RobotLog.dd(TAG,"doGrab armforward");
         skyBot.putArmForward();
@@ -632,44 +629,58 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
     {
         RobotLog.dd(TAG, "Getting stonePt for %s %s %s seg=%d",
                 alliance, startPos, stonePos, segIdx);
-        //TODO: If we are going to move bot we need to determine pts for L/R blocks
-        //      TgtPt could be stoneGrabPt[center].x +/- 8in.
-        //      If we are simply going to rotate grabber arm, no need.
 //        Segment sMin = pathSegs.get(segIdx+1);
 //        Segment sRev = pathSegs.get(segIdx+2);
 //        sMin.setEndPt(tgtPt1);
 //        sRev.setStrtPt(tgtPt1);
     }
 
+    class ArmToSnugTask implements Runnable
+    {
+        public void run()
+        {
+            RobotLog.dd(TAG, "Starting Threaded Move to Snug");
+            skyBot.putExtendAtSnug();
+        }
+    }
+
+    class ArmToStageTask implements Runnable
+    {
+        public void run()
+        {
+            RobotLog.dd(TAG, "Starting Threaded Move to Stage");
+            skyBot.putExtendAtStage();
+        }
+    }
+
     @SuppressWarnings("unused")
     private void doDrop(int segIdx)
     {
-        RobotLog.dd(TAG, "Dropping stone");
+        RobotLog.dd(TAG, "Dropping stone %d", grabNum);
         //rotate arm, lower?, release gripper, return arm
 
         if(startTimer.seconds() > 26.0)
         {
-            RobotLog.dd(TAG, "Running out of time - drop now");
+            RobotLog.dd(TAG, "Running out of time %f - drop now", startTimer.seconds());
             skyBot.openGripper();
-            sleep(100);
             return;
         }
 
         skyBot.putLiftAtStow();
         if(alliance == Field.Alliance.BLUE)
         {
-            skyBot.putArmHalfRight();
+            skyBot.putArmRight();
         }
         else
         {
-            skyBot.putArmHalfLeft();
+            skyBot.putArmLeft();
 
         }
 
         skyBot.putExtendAtDrop();
         skyBot.openGripper();
-        skyBot.putExtendAtStage();
         skyBot.putArmForward();
+        es.submit(new ArmToSnugTask());
         skyBot.putLiftAtMove();
     }
 
@@ -690,11 +701,11 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         if(skyBot != null)
         {
             skyBot.putHolderAtStow();
+            skyBot.putExtendAtStage();
+            skyBot.putArmForward();
+            skyBot.putLiftAtMove();
+            skyBot.putExtendAtSnug();
         }
-        skyBot.putExtendAtStage();
-        skyBot.putArmForward();
-        skyBot.putLiftAtMove();
-        skyBot.putExtendAtSnug();
     }
 
     private void doPark()
@@ -870,7 +881,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         tracker.setFrameQueueSize(0);
         tracker.setActive(false);
 
-        dashboard.displayPrintf(1, "MIN: " + stonePos);
+        dashboard.displayPrintf(1, "POS: " + stonePos);
 
         if (stonePos == StoneDetector.Position.NONE)
         {
@@ -1019,6 +1030,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
     @SuppressWarnings("FieldCanBeLocal")
     private boolean useLight = false;
+
+    private final ExecutorService es = Executors.newSingleThreadExecutor();
 
     private String robotName = "";
     private static final String TAG = "SJH_RRA";

@@ -576,6 +576,8 @@ public class Teleop_Driver extends InitLinearOpMode
             // Pause for metronome tick.
             robot.waitForTick(10);
         }
+
+        es.shutdownNow();
     }
 
     private void printTelem()
