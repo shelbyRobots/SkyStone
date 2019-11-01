@@ -8,13 +8,15 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
-import org.firstinspires.ftc.teamcode.robot.RoRuBot;
 import org.firstinspires.ftc.teamcode.robot.ShelbyBot;
 import org.firstinspires.ftc.teamcode.robot.SkyBot;
 import org.firstinspires.ftc.teamcode.util.Input_Shaper;
 import org.firstinspires.ftc.teamcode.util.ManagedGamepad;
 import org.firstinspires.ftc.teamcode.util.Point2d;
 import org.firstinspires.ftc.teamcode.util.Segment;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @SuppressWarnings("unused")
 @TeleOp(name="TeleopDriver", group="Tele")
@@ -24,8 +26,8 @@ public class Teleop_Driver extends InitLinearOpMode
     private void initPreStart()
     {
         robot.setName(pmgr.getBotName());
-        prevOpModeType = RoRuBot.curOpModeType;
-        RoRuBot.curOpModeType = ShelbyBot.OpModeType.TELE;
+        prevOpModeType = SkyBot.curOpModeType;
+        SkyBot.curOpModeType = ShelbyBot.OpModeType.TELE;
 
         /* Initialize the hardware variables. */
         RobotLog.dd(TAG, "Initialize robot");
@@ -68,11 +70,21 @@ public class Teleop_Driver extends InitLinearOpMode
     private boolean useExtdCnts = false;
     private boolean useRotCnts  = false;
 
+    class ArmTask implements Runnable
+    {
+        public void run()
+        {
+            RobotLog.dd(TAG, "Starting arm control arm");
+            processControllerInputs();
+        }
+    }
+
     private void controlArm()
     {
         controlArmExtend();
         controlArmRotate();
         controlArmElev();
+        controlGripper();
 
         boolean doSafeHome = gpad2.just_pressed(ManagedGamepad.Button.A);
         boolean doSafeDply = gpad2.just_pressed(ManagedGamepad.Button.B);
@@ -153,8 +165,6 @@ public class Teleop_Driver extends InitLinearOpMode
         boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.R_BUMP);
 
         robot.setExtend(axtnd, false, overrideLims);
-
-        dashboard.displayPrintf(4, "extcounts %d", robot.armExtend.getCurrentPosition());
     }
 
     private void controlArmRotate()
@@ -173,15 +183,11 @@ public class Teleop_Driver extends InitLinearOpMode
 
 //        robot.setRotate(arot, useExtdCnts, overrideLims);
         robot.setRotate(arot);
-
-//        dashboard.displayPrintf(4, "rotcounts %d", robot.armRotate.getCurrentPosition());
-        dashboard.displayPrintf(4, "rotspeed %f",arot);
     }
 
     private void controlArmElev()
     {
         if(robot._liftyBoi == null) return;
-
         double  aelev       = -gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
 
         aelev  = ishaper.shape(aelev, 0.05);
@@ -241,9 +247,9 @@ public class Teleop_Driver extends InitLinearOpMode
         boolean fst_dtl           = gpad1.pressed(ManagedGamepad.Button.L_BUMP);
         boolean xfst_dtl          = gpad1.pressed(ManagedGamepad.Button.L_TRIGGER);
 
-        double raw_left     = -gpad1.value(ManagedGamepad.AnalogInput.L_STICK_Y);
-        double raw_right    = -gpad1.value(ManagedGamepad.AnalogInput.R_STICK_Y);
-        double raw_turn     =  gpad1.value(ManagedGamepad.AnalogInput.R_STICK_X);
+        raw_left                  = -gpad1.value(ManagedGamepad.AnalogInput.L_STICK_Y);
+        raw_right                 = -gpad1.value(ManagedGamepad.AnalogInput.R_STICK_Y);
+        raw_turn                  =  gpad1.value(ManagedGamepad.AnalogInput.R_STICK_X);
 
 //        boolean goBox       =  gpad1.just_pressed(ManagedGamepad.Button.L_TRIGGER);
 //        boolean goPit       =  gpad1.just_pressed(ManagedGamepad.Button.R_TRIGGER);
@@ -263,10 +269,6 @@ public class Teleop_Driver extends InitLinearOpMode
         double shp_left  = ishaper.shape(raw_left,  0.1);
         double shp_right = ishaper.shape(raw_right, 0.1);
         double shp_turn  = ishaper.shape(raw_turn, 0.1);
-
-        dashboard.displayPrintf(0, "TMODE " + driveType);
-        dashboard.displayPrintf(1, "L_IN %4.2f", raw_left);
-        dashboard.displayPrintf(2, "R_IN %4.2f", raw_right);
 
         double arcadeTurnScale = 0.5;
 
@@ -384,19 +386,6 @@ public class Teleop_Driver extends InitLinearOpMode
             robot.rightMotors.get(0).setPower(out_right);
         }
 
-        //dashboard.displayPrintf(4, "TURN  %4.2f", turn);
-        //dashboard.displayPrintf(5, "L_OUT %4.2f", left);
-        //dashboard.displayPrintf(6, "R_OUT %4.2f", right);
-        dashboard.displayPrintf(7, "L_CNT %d", robot.leftMotor.getCurrentPosition());
-        dashboard.displayPrintf(8, "R_CNT %d", robot.rightMotor.getCurrentPosition());
-        dashboard.displayPrintf(9, "DTYPE " + driveType);
-        dashboard.displayPrintf(10,"D_DIR " + robot.getDriveDir());
-        dashboard.displayPrintf(11,"Z_PWR " + zeroPwr);
-        dashboard.displayPrintf(12,"RMODE " + robot.leftMotor.getMode());
-        dashboard.displayPrintf(13,"L_DIR " + robot.leftMotor.getDirection());
-        dashboard.displayPrintf(14,"R_DIR " + robot.rightMotor.getDirection());
-        dashboard.displayPrintf(15,"SVEL " + useSetVel);
-
         if(toggle_float)
         {
             if(zeroPwr == DcMotor.ZeroPowerBehavior.BRAKE)
@@ -446,32 +435,15 @@ public class Teleop_Driver extends InitLinearOpMode
 
     private void processControllerInputs()
     {
-//        boolean shiftControls = gpad2.pressed(ManagedGamepad.Button.R_TRIGGER);
-//
-//        if(!shiftControls)
-//        {
-//            controlHolder();
-//            if(lastShift)
-//            {
-//                robot.setArmSpeed(0.0, false);
-//                if(robot.armExtend != null) robot.armExtend.setPower(0.0);
-//                robot.intakeStop();
-//            }
-//        }
-//        else
-//        {
-//            controlArm();
-//        }
-//
-//        lastShift = shiftControls;
+        gpad2.update();
         controlArm();
-        controlLatch();
-        controlGripper();
     }
 
     private void processDriverInputs()
     {
+        gpad1.update();
         controlDrive();
+        controlLatch();
     }
 
     private void doMove(Segment seg)
@@ -523,7 +495,7 @@ public class Teleop_Driver extends InitLinearOpMode
         if(Math.abs(angle) <= 4.0) return;
 
         RobotLog.ii(TAG, "Turn %5.2f", angle);
-        dashboard.displayPrintf(2, "STATE: %s %5.2f", "TURN", angle);
+        dashboard.displayPrintf(8, "STATE: %s %5.2f", "TURN", angle);
         timer.reset();
         dtrn.ctrTurnLinear(angle, 0.6, Drivetrain.TURN_BUSYTHRESH);
         cHdg = robot.getGyroFhdg();
@@ -560,21 +532,12 @@ public class Teleop_Driver extends InitLinearOpMode
         initPreStart();
 
         // Send telemetry message to signify robot waiting;
-        dashboard.displayPrintf(0, "Hello Driver - I am %s", robot.getName());
+        dashboard.displayPrintf(0, "Hello Driver - I'm %s - in init", robot.getName());
 
         // Wait for the game to start (driver presses PLAY)
-        while(!isStarted())
+        while(!isStarted() && !isStopRequested())
         {
-            gpad1.update();
-            gpad2.update();
-//            gpad1.log(1);
-//            gpad2.log(2);
-
-            if(robot.armExtend != null)
-            {
-                dashboard.displayPrintf(5, "ArmPitch cnt %d",
-                        robot.armExtend.getCurrentPosition());
-            }
+            printTelem();
             idle();
         }
 
@@ -605,15 +568,32 @@ public class Teleop_Driver extends InitLinearOpMode
                         teleTimer.seconds());
             }
 
-            gpad1.update();
-            gpad2.update();
-
             processDriverInputs();
-            processControllerInputs();
+            es.submit(new ArmTask());
+
+            printTelem();
 
             // Pause for metronome tick.
             robot.waitForTick(10);
         }
+    }
+
+    private void printTelem()
+    {
+        String ldir = robot.leftMotor.getDirection().toString();
+        String rdir = robot.rightMotor.getDirection().toString();
+        int lc = robot.leftMotor.getCurrentPosition();
+        int rc = robot.rightMotor.getCurrentPosition();
+
+        dashboard.displayPrintf(0, "DMODE %s DDIR %s",driveType, robot.getDriveDir());
+        dashboard.displayPrintf(1, "extcnts  %d", robot.armExtend.getCurrentPosition());
+        dashboard.displayPrintf(2, "elevcnts %d", robot._liftyBoi.getCurrentPosition());
+        dashboard.displayPrintf(3, "rotPos   %f", robot.armRotate.getPosition());
+        dashboard.displayPrintf(4, "L_IN %4.2f LC %d %s", raw_left,  lc, ldir);
+        dashboard.displayPrintf(5, "R_IN %4.2f RC %d %s", raw_right, rc, rdir);
+        dashboard.displayPrintf(6, "T_IN %4.2f", raw_turn);
+        dashboard.displayPrintf(7, "Z_PWR " + zeroPwr);
+        //dashboard.displayPrintf(4, "rotcounts %d", robot.armRotate.getCurrentPosition());
     }
 
     private enum TELEOP_DRIVE_TYPE
@@ -648,6 +628,10 @@ public class Teleop_Driver extends InitLinearOpMode
     private boolean pActive = false;
     private boolean eActive = false;
 
+    private double raw_left;
+    private double raw_right;
+    private double raw_turn;
+
     private boolean lastArmTouchPressed = false;
 
     @SuppressWarnings("FieldCanBeLocal")
@@ -656,6 +640,8 @@ public class Teleop_Driver extends InitLinearOpMode
     private int prevRpitch = 0;
 
     private ShelbyBot.OpModeType prevOpModeType = ShelbyBot.OpModeType.UNKNOWN;
+
+    private final ExecutorService es = Executors.newSingleThreadExecutor();
 
     private ElapsedTime timer = new ElapsedTime();
 
