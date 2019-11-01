@@ -87,10 +87,10 @@ public class SkyBot extends TilerunnerGtoBot {
     public double EXTND_CPI = EXTND_CPR / (Math.PI * EXTND_WHEEL_DIAM) / EXTND_SCALE;
     private int MIN_EXTND_CNT    = 0;
     private int ARM_EXT_STOW_POS = (int) (0.0 * EXTND_CPI);
-    private int ARM_EXT_SNUG_POS = (int)  (6.0 * EXTND_CPI);
+    private int ARM_EXT_SNUG_POS = (int)  (7.5 * EXTND_CPI);
     private int ARM_EXT_STAGE_POS = (int) (9.0 * EXTND_CPI);
     private int ARM_EXT_GRAB_POS = (int) (12.0 * EXTND_CPI);
-    private int ARM_EXT_DROP_POS = (int) (17.0 * EXTND_CPI);
+    private int ARM_EXT_DROP_POS = (int) (15.0 * EXTND_CPI);
     private int MAX_EXTND_CNT    = (int) (18.0 * EXTND_CPI);
 
     int ARMROT_COUNTS_PER_MOTOR_REV = 4;
@@ -299,7 +299,7 @@ public class SkyBot extends TilerunnerGtoBot {
         armExtend.setTargetPosition(targetPos);
         armExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        double armExtSpd = 0.7;
+        double armExtSpd = 0.9;
 
         armExtend.setPower(armExtSpd);
 
@@ -474,7 +474,7 @@ public class SkyBot extends TilerunnerGtoBot {
         _liftyBoi.setTargetPosition(targetPos);
         _liftyBoi.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        double liftSpd = 0.6;
+        double liftSpd = 0.85;
 
         _liftyBoi.setTargetPosition(targetPos);
         _liftyBoi.setPower(liftSpd);
