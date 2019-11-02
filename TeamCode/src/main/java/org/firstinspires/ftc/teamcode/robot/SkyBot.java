@@ -40,15 +40,17 @@ public class SkyBot extends TilerunnerGtoBot {
     private final int LIFTER_STARTS = 4; //pitch/rev
     private final double LIFTER_LEAD = LIFTER_PITCH * LIFTER_STARTS; //8 mm/rev
     private final double LIFTER_CPMM = LIFTER_EXT_GEAR * LIFTER_CPOR / LIFTER_LEAD;
-    private final double LIFTER_CPI = LIFTER_CPMM * 25.4;
+    public final double LIFTER_CPI = LIFTER_CPMM * 25.4;
     @SuppressWarnings("FieldCanBeLocal")
-    private final int LIFTER_THRESH = (int) (0.3 * LIFTER_CPI);
+    private final int LIFTER_THRESH = (int) (0.2 * LIFTER_CPI);
     private final double LIFTER_STOW = 0.0;
+    private final double LIFTER_SAFE = -1.0;
     private final double LIFTER_GRAB = -5.5;
     private final double LIFTER_MOVE = -5.0;
     private final double LIFTER_REL1 = -2.0;
     private final double LIFTER_REL2 = 0.0;
     private final int LIFT_STOW_CNTS = (int) (LIFTER_CPI * LIFTER_STOW);
+    private final int LIFT_SAFE_CNTS = (int) (LIFTER_CPI * LIFTER_SAFE);
     private final int LIFT_GRAB_CNTS = (int) (LIFTER_CPI * LIFTER_GRAB);
     private final int LIFT_MOVE_CNTS = (int) (LIFTER_CPI * LIFTER_MOVE);
     private final int LIFT_REL1_CNTS = (int) (LIFTER_CPI * LIFTER_REL1);
@@ -321,6 +323,10 @@ public class SkyBot extends TilerunnerGtoBot {
         setExtendPos(ARM_EXT_STAGE_POS);
     }
 
+    public void putExtendAtStageIfLow() {
+        if(getLiftPos() < LIFT_SAFE_CNTS ) setExtendPos(ARM_EXT_STAGE_POS);
+    }
+
     public void putExtendAtSnug() {
         setExtendPos(ARM_EXT_SNUG_POS);
     }
@@ -339,6 +345,7 @@ public class SkyBot extends TilerunnerGtoBot {
     {
         if(armExtend == null) return;
         armExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     private boolean lastRotUseCnts = false;
@@ -527,6 +534,7 @@ public class SkyBot extends TilerunnerGtoBot {
     {
         if(_liftyBoi == null) return;
         _liftyBoi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void putLiftAtGrab()

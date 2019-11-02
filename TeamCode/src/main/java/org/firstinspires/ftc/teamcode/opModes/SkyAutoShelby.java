@@ -653,35 +653,45 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         }
     }
 
+    class ArmToDropTask implements Runnable
+    {
+        public void run()
+        {
+            RobotLog.dd(TAG, "Starting Threaded Move to Drop");
+            skyBot.putExtendAtDrop();
+        }
+    }
+
     @SuppressWarnings("unused")
     private void doDrop(int segIdx)
     {
         RobotLog.dd(TAG, "Dropping stone %d", grabNum);
         //rotate arm, lower?, release gripper, return arm
 
-        if(startTimer.seconds() > 26.0)
+        if(startTimer.seconds() > 28.0)
         {
             RobotLog.dd(TAG, "Running out of time %f - drop now", startTimer.seconds());
             skyBot.openGripper();
             return;
         }
 
+        es.submit(new ArmToDropTask());
         skyBot.putLiftAtStow();
         if(alliance == Field.Alliance.BLUE)
         {
-            skyBot.putArmRight();
+            if(startPos != Route.StartPos.START_3) skyBot.putArmRight();
+            else skyBot.putArmHalfLeft();
         }
         else
         {
-            skyBot.putArmLeft();
-
+            if(startPos != Route.StartPos.START_3) skyBot.putArmLeft();
+            else skyBot.putArmHalfRight();
         }
 
-        skyBot.putExtendAtDrop();
         skyBot.openGripper();
         skyBot.putArmForward();
         es.submit(new ArmToSnugTask());
-        skyBot.putLiftAtMove();
+        if(startTimer.seconds() < 29.5) skyBot.putLiftAtMove();
     }
 
     private void doPlatch()
@@ -940,6 +950,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         startPosMenu.addChoice("Start_1", Route.StartPos.START_1, true, allianceMenu);
         startPosMenu.addChoice("Start_2", Route.StartPos.START_2, false, allianceMenu);
+        startPosMenu.addChoice("Start_3", Route.StartPos.START_3, false, allianceMenu);
 
         allianceMenu.addChoice("RED",  Field.Alliance.RED,  true, parkMenu);
         allianceMenu.addChoice("BLUE", Field.Alliance.BLUE, false, parkMenu);

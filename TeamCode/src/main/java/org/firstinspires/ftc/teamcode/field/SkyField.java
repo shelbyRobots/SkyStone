@@ -52,8 +52,9 @@ public class SkyField extends Field
 
     static final Point2d RGPA = new Point2d("RGPA", -36.5,  -39.0); //R
     static final Point2d RGPB = new Point2d("RGPB", -60.0,  -39.0); //R
-    static final Point2d RDPA = new Point2d("RDPA",  36.0,  -39.0); //R
-    static final Point2d RDPB = new Point2d("RDPB",  12.0,  -39.0); //R
+    static final Point2d RDPA = new Point2d("RDPA",  44.0,  -39.0); //R
+    static final Point2d RDPB = new Point2d("RDPB",  32.0,  -39.0); //R
+    static final Point2d RDPC = new Point2d("RDPC",  25.0,  -39.0);
 
     static final Point2d RTP1 = new Point2d("RTP1", -34.25,  -39.0); //R
     static final Point2d RTP2 = new Point2d("RTP2",  36.0,  -38.0); //R
@@ -67,7 +68,7 @@ public class SkyField extends Field
     static final Point2d RDP1 = new Point2d("RDP1",  36.0,  -33.0); //R
     static final Point2d RDP2 = new Point2d("RDP1", RDP1); //R
 
-    static final Point2d RPP1 = new Point2d("RPP1",   0.0,  -39.0); //R
+    static final Point2d RPP1 = new Point2d("RPP1",   7.0,  -39.0); //R
     //platch
     static final Point2d RBS1 = new Point2d( "RBS1", 36.0, -61.5);
     static final Point2d RBP1 = new Point2d( "RBP1", 36.0, -50.0);

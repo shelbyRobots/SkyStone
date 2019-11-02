@@ -58,13 +58,7 @@ public class Teleop_Driver extends InitLinearOpMode
 
     private void initPostStart()
     {
-//        robot.zeroArmPitch();
-//        robot.zeroArmExtend();
-//        robot.armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        robot.armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //if(prevOpModeType == ShelbyBot.OpModeType.AUTO) robot.threadputHolderAtPrelatch();
-        //robot.stowMarker();
-        //robot.stowParker();
+        robot.putHolderAtGrab();
     }
 
     private boolean useExtdCnts = false;
@@ -119,28 +113,28 @@ public class Teleop_Driver extends InitLinearOpMode
         if(doSafeRght)
         {
             robot.closeGripper();
-            robot.putExtendAtStage();
+            robot.putExtendAtStageIfLow();
             robot.putArmRight();
         }
 
         if(doSafeLeft)
         {
             robot.closeGripper();
-            robot.putExtendAtStage();
+            robot.putExtendAtStageIfLow();
             robot.putArmLeft();
         }
 
         if(doSafeFrwd)
         {
             robot.closeGripper();
-            robot.putExtendAtStage();
+            robot.putExtendAtStageIfLow();
             robot.putArmForward();
         }
 
         if(doSafeSnug)
         {
             robot.closeGripper();
-            robot.putExtendAtStage();
+            robot.putExtendAtStageIfLow();
             robot.putArmForward();
             robot.putLiftAtMove();
             robot.putExtendAtSnug();
@@ -220,7 +214,8 @@ public class Teleop_Driver extends InitLinearOpMode
     private boolean gripTog = false;
     private void controlGripper()
     {
-        boolean grip =  gpad2.just_pressed(ManagedGamepad.Button.L_BUMP);
+        boolean grip =  gpad2.just_pressed(ManagedGamepad.Button.L_BUMP) ||
+                        gpad2.just_pressed(ManagedGamepad.Button.R_TRIGGER);
 
         if(grip) gripTog = !gripTog;
 
@@ -586,10 +581,12 @@ public class Teleop_Driver extends InitLinearOpMode
         String rdir = robot.rightMotor.getDirection().toString();
         int lc = robot.leftMotor.getCurrentPosition();
         int rc = robot.rightMotor.getCurrentPosition();
+        int lcnts = robot._liftyBoi.getCurrentPosition();
+        int ecnts = robot.armExtend.getCurrentPosition();
 
         dashboard.displayPrintf(0, "DMODE %s DDIR %s",driveType, robot.getDriveDir());
-        dashboard.displayPrintf(1, "extcnts  %d", robot.armExtend.getCurrentPosition());
-        dashboard.displayPrintf(2, "elevcnts %d", robot._liftyBoi.getCurrentPosition());
+        dashboard.displayPrintf(1, "extcnts  %d %f", ecnts, ecnts/robot.EXTND_CPI);
+        dashboard.displayPrintf(2, "elevcnts %d %f", lcnts, lcnts/robot.LIFTER_CPI);
         dashboard.displayPrintf(3, "rotPos   %f", robot.armRotate.getPosition());
         dashboard.displayPrintf(4, "L_IN %4.2f LC %d %s", raw_left,  lc, ldir);
         dashboard.displayPrintf(5, "R_IN %4.2f RC %d %s", raw_right, rc, rdir);
