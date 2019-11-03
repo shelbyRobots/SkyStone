@@ -46,12 +46,14 @@ public class SkyBot extends TilerunnerGtoBot {
     private final double LIFTER_STOW = 0.0;
     private final double LIFTER_SAFE = -1.0;
     private final double LIFTER_GRAB = -5.5;
+    private final double LIFTER_LOW  = -5.5;
     private final double LIFTER_MOVE = -5.0;
     private final double LIFTER_REL1 = -2.0;
     private final double LIFTER_REL2 = 0.0;
     private final int LIFT_STOW_CNTS = (int) (LIFTER_CPI * LIFTER_STOW);
     private final int LIFT_SAFE_CNTS = (int) (LIFTER_CPI * LIFTER_SAFE);
     private final int LIFT_GRAB_CNTS = (int) (LIFTER_CPI * LIFTER_GRAB);
+    private final int LIFT_LOW_CNTS  = (int) (LIFTER_CPI * LIFTER_LOW);
     private final int LIFT_MOVE_CNTS = (int) (LIFTER_CPI * LIFTER_MOVE);
     private final int LIFT_REL1_CNTS = (int) (LIFTER_CPI * LIFTER_REL1);
     private final int LIFT_REL2_CNTS = (int) (LIFTER_CPI * LIFTER_REL2);
@@ -114,10 +116,10 @@ public class SkyBot extends TilerunnerGtoBot {
     public double ARM_DRP_LFT = 0.72;
     public double ARM_ROT_LFT = 0.88;
 
-    public static double ARM_GRB_RGT_L = 0.24;
-    public static double ARM_GRB_RGT_R = 0.04;
+    public static double ARM_GRB_RGT_L = 0.23;
+    public static double ARM_GRB_RGT_R = 0.03;
     public static double ARM_GRB_LFT_L = 1.00;
-    public static double ARM_GRB_LFT_R = 0.80;
+    public static double ARM_GRB_LFT_R = 0.84;
 
     public double ARM_ROT_MIN = 0.0;
     public double ARM_ROT_MAX = 1.0;
@@ -383,7 +385,7 @@ public class SkyBot extends TilerunnerGtoBot {
 
     public void setRotate (double scale)
     {
-        double baseScale = 0.025;
+        double baseScale = 0.040;
         curRotSrvPos = armRotate.getPosition();
         curRotSrvPos = Range.clip(curRotSrvPos + baseScale * scale, -1.0, 1.0);
         RobotLog.dd(TAG,"Setting armRotate to %f", curRotSrvPos);
@@ -540,6 +542,11 @@ public class SkyBot extends TilerunnerGtoBot {
     public void putLiftAtGrab()
     {
         setLiftPos(LIFT_GRAB_CNTS);
+    }
+
+    public void putLiftAtLow()
+    {
+        setLiftPos(LIFT_LOW_CNTS);
     }
 
     public void putLiftAtStow()

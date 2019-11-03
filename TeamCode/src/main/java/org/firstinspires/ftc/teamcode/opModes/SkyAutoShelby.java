@@ -300,7 +300,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         RobotLog.ii(TAG, "IHDG %4.2f", initHdg);
 
-        skyBot.putHolderAtStow();
+        skyBot.putHolderAtPre();
         skyBot.stowGripper();
         if(alliance == Field.Alliance.BLUE)
         {
@@ -608,10 +608,11 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         //Extend arm to grab state
         RobotLog.dd(TAG,"doGrab extend to grab");
         skyBot.putExtendAtGrab();
+        skyBot.putLiftAtLow();
         //Close gripper
         RobotLog.dd(TAG,"doGrab closegripper");
         skyBot.closeGripper();
-        sleep(100);
+        sleep(250);
         //Raise arm
         RobotLog.dd(TAG,"doGrab lift to stow");
         skyBot.putLiftAtStow();
@@ -679,14 +680,20 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         skyBot.putLiftAtStow();
         if(alliance == Field.Alliance.BLUE)
         {
-            if(startPos != Route.StartPos.START_3) skyBot.putArmRight();
-            else skyBot.putArmHalfLeft();
+            if(startPos == Route.StartPos.START_1) skyBot.putArmRight();
+            else if(startPos == Route.StartPos.START_3) skyBot.putArmHalfLeft();
+            else if(startPos == Route.StartPos.START_4) skyBot.putArmForward();
+            else if(startPos == Route.StartPos.START_5) skyBot.putArmForward();
+
         }
         else
         {
-            if(startPos != Route.StartPos.START_3) skyBot.putArmLeft();
-            else skyBot.putArmHalfRight();
+            if(startPos == Route.StartPos.START_1) skyBot.putArmLeft();
+            else if(startPos == Route.StartPos.START_3) skyBot.putArmHalfRight();
+            else if(startPos == Route.StartPos.START_4) skyBot.putArmForward();
+            else if(startPos == Route.StartPos.START_5) skyBot.putArmForward();
         }
+        sleep(750);
 
         skyBot.openGripper();
         skyBot.putArmForward();
@@ -951,6 +958,9 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         startPosMenu.addChoice("Start_1", Route.StartPos.START_1, true, allianceMenu);
         startPosMenu.addChoice("Start_2", Route.StartPos.START_2, false, allianceMenu);
         startPosMenu.addChoice("Start_3", Route.StartPos.START_3, false, allianceMenu);
+        startPosMenu.addChoice("Start_4", Route.StartPos.START_4, false, allianceMenu);
+        startPosMenu.addChoice("Start_5", Route.StartPos.START_5, false, allianceMenu);
+
 
         allianceMenu.addChoice("RED",  Field.Alliance.RED,  true, parkMenu);
         allianceMenu.addChoice("BLUE", Field.Alliance.BLUE, false, parkMenu);
