@@ -89,6 +89,7 @@ public class SkyBot extends TilerunnerGtoBot {
     private final double EXTND_CPR = ELEV_COUNTS_PER_MOTOR_REV * ELEV_GEAR_ONE;
     private final double EXTND_SCALE = 1.0;
     public double EXTND_CPI = EXTND_CPR / (Math.PI * EXTND_WHEEL_DIAM) / EXTND_SCALE;
+    private final int EXT_THRESH = (int) (0.667 * EXTND_CPI);
     private int MIN_EXTND_CNT    = 0;
     private int ARM_EXT_STOW_POS = (int) (0.0 * EXTND_CPI);
     private int ARM_EXT_SNUG_POS = (int)  (7.5 * EXTND_CPI);
@@ -97,37 +98,42 @@ public class SkyBot extends TilerunnerGtoBot {
     private int ARM_EXT_DROP_POS = (int) (15.0 * EXTND_CPI);
     private int MAX_EXTND_CNT    = (int) (18.0 * EXTND_CPI);
 
-    int ARMROT_COUNTS_PER_MOTOR_REV = 4;
-    double ARMROT_GEAR_ONE = 72.0;
-    double ARMROT_CPR = ARMROT_COUNTS_PER_MOTOR_REV * ARMROT_GEAR_ONE;
-    double ARMROT_CPD = ARMROT_CPR / 360.0;
-//    private int ARM_ROT_FWD = (int) ( 90.0 * ARMROT_CPD);
-//    private int ARM_ROT_RGT = (int) (  0.0 * ARMROT_CPD);
-//    private int ARM_ROT_LFT = (int) (180.0 * ARMROT_CPD);
-//    private int ARM_DRP_RGT = (int) ( 45.0 * ARMROT_CPD);
-//    private int ARM_DRP_LFT = (int) (135.0 * ARMROT_CPD);
-//    private int ARM_ROT_MIN = (int) (210.0 * ARMROT_CPD);
-//    private int ARM_ROT_MAX = (int) (-30.0 * ARMROT_CPD);
+    private static int ARMROT_COUNTS_PER_MOTOR_REV = 28;
+    private static double ARMROT_GEAR_ONE = 13.7;
+    private static double ARMROT_GEAR_EXT = 2.0;
+    private static double ARMROT_CPR = ARMROT_COUNTS_PER_MOTOR_REV * ARMROT_GEAR_ONE * ARMROT_GEAR_EXT;
+    private static double ARMROT_CPD = ARMROT_CPR / 360.0;
+    public int ARM_ROT_FWD = (int) (  0.0 * ARMROT_CPD);
+    public int ARM_ROT_RGT = (int) (-90.0 * ARMROT_CPD);
+    public int ARM_ROT_LFT = (int) ( 90.0 * ARMROT_CPD);
+    public int ARM_DRP_RGT = (int) (-45.0 * ARMROT_CPD);
+    public int ARM_DRP_LFT = (int) ( 45.0 * ARMROT_CPD);
+    private int ARM_ROT_MIN = (int) (-135.0 * ARMROT_CPD);
+    private int ARM_ROT_MAX = (int) ( 135.0 * ARMROT_CPD);
+    public static int ARM_GRB_RGT_L = (int) ( -60.0 * ARMROT_CPD);
+    public static int ARM_GRB_RGT_R = (int) (-120.0 * ARMROT_CPD);
+    public static int ARM_GRB_LFT_L = (int) ( 120.0 * ARMROT_CPD);
+    public static int ARM_GRB_LFT_R = (int) (  60.0 * ARMROT_CPD);
 
     //following asumes 270 degree servo range
-    public double ARM_ROT_RGT = 0.16;
-    public double ARM_DRP_RGT = 0.32;
-    public double ARM_ROT_FWD = 0.52;
-    public double ARM_DRP_LFT = 0.72;
-    public double ARM_ROT_LFT = 0.88;
+    //public double ARM_ROT_RGT = 0.16;
+    //public double ARM_DRP_RGT = 0.32;
+    //public double ARM_ROT_FWD = 0.52;
+    //public double ARM_DRP_LFT = 0.72;
+    //public double ARM_ROT_LFT = 0.88;
 
-    public static double ARM_GRB_RGT_L = 0.23;
-    public static double ARM_GRB_RGT_R = 0.03;
-    public static double ARM_GRB_LFT_L = 1.00;
-    public static double ARM_GRB_LFT_R = 0.84;
+//    public static double ARM_GRB_RGT_L = 0.23;
+//    public static double ARM_GRB_RGT_R = 0.03;
+//    public static double ARM_GRB_LFT_L = 1.00;
+//    public static double ARM_GRB_LFT_R = 0.84;
 
-    public double ARM_ROT_MIN = 0.0;
-    public double ARM_ROT_MAX = 1.0;
+//    public double ARM_ROT_MIN = 0.0;
+//    public double ARM_ROT_MAX = 1.0;
 
     private DigitalChannel armIndexSensor = null;
 
-    //    public  DcMotor  armRotate   = null;
-    public Servo armRotate = null;
+    public  DcMotor  armRotate   = null;
+    //public Servo armRotate = null;
     public DcMotor armExtend = null;
 
     public SkyBot() {
@@ -171,10 +177,10 @@ public class SkyBot extends TilerunnerGtoBot {
         RobotLog.dd(TAG, "GTO initArm");
         try {
             armExtend = hwMap.dcMotor.get("armExtend");
-//            armRotate  = hwMap.dcMotor.get("armRotate");
-            armRotate = hwMap.servo.get("armRotate");
-            if (armRotate != null) curRotSrvPos = armRotate.getPosition();
-//            armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armRotate  = hwMap.dcMotor.get("armRotate");
+//            armRotate = hwMap.servo.get("armRotate");
+//            if (armRotate != null) curRotSrvPos = armRotate.getPosition();
+            armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armExtend.setDirection(DcMotorSimple.Direction.REVERSE);
             armExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             capMap.put("arm", true);
@@ -291,8 +297,6 @@ public class SkyBot extends TilerunnerGtoBot {
 
     public void setExtendPos(int targetPos) //targetPos in counts
     {
-        final double EXT_THRESH = 40;
-
         if (armExtend == null) {
             RobotLog.ee(TAG, "armExtend is null - fix it");
             return;
@@ -354,7 +358,7 @@ public class SkyBot extends TilerunnerGtoBot {
 
     public void setRotate(double spd, boolean useCnts, boolean override)
     {
-//        double aspd = spd;
+        double aspd = spd;
 
         if (armRotate == null)
         {
@@ -362,40 +366,40 @@ public class SkyBot extends TilerunnerGtoBot {
             return;
         }
 
-//        int curArmCounts = armRotate.getCurrentPosition();
-//        if(useCnts)
-//        {
-//            if(!lastRotUseCnts)
-//            {
-//                RobotLog.dd(TAG, "Moving to arm pos %d", curArmCounts);
-//                armRotate.setTargetPosition(curArmCounts);
-//                armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                armRotate.setPower(aspd);
-//            }
-//        }
-//        else
-//        {
-//            armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            if(curArmCounts <= ARM_ROT_MIN && !override) aspd = 0.0;
-//            if(curArmCounts >= ARM_ROT_MAX && !override) aspd = 0.0;
-//            armRotate.setPower(aspd);
-//        }
+        int curArmCounts = armRotate.getCurrentPosition();
+        if(useCnts)
+        {
+            if(!lastRotUseCnts)
+            {
+                RobotLog.dd(TAG, "Moving to arm pos %d", curArmCounts);
+                armRotate.setTargetPosition(curArmCounts);
+                armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armRotate.setPower(aspd);
+            }
+        }
+        else
+        {
+            armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            if(curArmCounts <= ARM_ROT_MIN && !override) aspd = 0.0;
+            if(curArmCounts >= ARM_ROT_MAX && !override) aspd = 0.0;
+            armRotate.setPower(aspd);
+        }
         lastRotUseCnts = useCnts;
     }
 
-    public void setRotate (double scale)
-    {
-        double baseScale = 0.040;
-        curRotSrvPos = armRotate.getPosition();
-        curRotSrvPos = Range.clip(curRotSrvPos + baseScale * scale, -1.0, 1.0);
-        RobotLog.dd(TAG,"Setting armRotate to %f", curRotSrvPos);
-        armRotate.setPosition(curRotSrvPos);
-    }
+//    public void setRotate (double scale)
+//    {
+//        double baseScale = 0.040;
+//        curRotSrvPos = armRotate.getPosition();
+//        curRotSrvPos = Range.clip(curRotSrvPos + baseScale * scale, -1.0, 1.0);
+//        RobotLog.dd(TAG,"Setting armRotate to %f", curRotSrvPos);
+//        armRotate.setPosition(curRotSrvPos);
+//    }
 
     //public void setRotatePos(int targetPos)
     public void setRotatePos(double targetPos)
     {
-//        final double ROT_THRESH = 4;
+        final double ROT_THRESH = 2*ARMROT_CPD;
 //
         if(armRotate == null)
         {
@@ -404,36 +408,33 @@ public class SkyBot extends TilerunnerGtoBot {
         }
 
         RobotLog.dd(TAG, "armRotate to %f", targetPos);
-        armRotate.setPosition(targetPos);
-//
-//        armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//        double armRotSpd = 0.3;
-//
-//        armRotate.setTargetPosition(targetPos);
-//        armRotate.setPower(armRotSpd);
-//
-//        while(op.opModeIsActive())
-//        {
-//            RobotLog.dd(TAG, "In armRotate.  targetpos=" + targetPos + " curPos=" +
-//                    armExtend.getCurrentPosition());
-//            if(Math.abs(armRotate.getCurrentPosition() - targetPos) < ROT_THRESH)
-//            {
-//                armRotate.setPower(0.0);
-//                break;
-//            }
-//        }
-//        armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //armRotate.setPosition(targetPos);
+
+        armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        double armRotSpd = 0.3;
+
+        armRotate.setTargetPosition((int)targetPos);
+        armRotate.setPower(armRotSpd);
+
+        while(op.opModeIsActive())
+        {
+            RobotLog.dd(TAG, "In armRotate.  targetpos=" + targetPos + " curPos=" +
+                    armExtend.getCurrentPosition());
+            if(Math.abs(armRotate.getCurrentPosition() - targetPos) < (int)ROT_THRESH)
+            {
+                armRotate.setPower(0.0);
+                break;
+            }
+        }
+        armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void putArmForward()   { setRotatePos(ARM_ROT_FWD); }
     public void putArmLeft()      { setRotatePos(ARM_ROT_LFT); }
     public void putArmRight()     { setRotatePos(ARM_ROT_RGT); }
     public void putArmHalfLeft()  { setRotatePos(ARM_DRP_LFT); }
-    public void putArmHalfRight()
-    {
-        setRotatePos(ARM_DRP_RGT);
-    }
+    public void putArmHalfRight() { setRotatePos(ARM_DRP_RGT); }
 
     public void zeroArmRotate()
     {

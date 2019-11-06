@@ -369,7 +369,7 @@ public class SkyAutoTest extends InitLinearOpMode implements FtcMenu.MenuButtons
             if(gpad1.just_pressed(ManagedGamepad.Button.D_DOWN))
             {
                 if(skyBot.armRotate == null) return;
-                double curPos = skyBot.armRotate.getPosition();
+                int curPos = skyBot.armRotate.getCurrentPosition();
                 if(curPos == skyBot.ARM_ROT_LFT)
                     skyBot.putArmHalfLeft();
                 else if(curPos == skyBot.ARM_DRP_LFT)

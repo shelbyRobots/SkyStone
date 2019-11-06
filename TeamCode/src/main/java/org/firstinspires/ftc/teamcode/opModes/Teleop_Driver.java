@@ -167,7 +167,7 @@ public class Teleop_Driver extends InitLinearOpMode
 
         double  arot         =  -gpad2.value(ManagedGamepad.AnalogInput.R_STICK_X);
 //        boolean changeMode   =  gpad2.just_pressed(ManagedGamepad.Button.B);
-//        boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.L_BUMP);
+        boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.R_BUMP);
 
 //        if(changeMode)
 //        {
@@ -175,8 +175,8 @@ public class Teleop_Driver extends InitLinearOpMode
 //            arot = 0.5;
 //        }
 
-//        robot.setRotate(arot, useExtdCnts, overrideLims);
-        robot.setRotate(arot);
+        robot.setRotate(arot, useExtdCnts, overrideLims);
+//        robot.setRotate(arot);
     }
 
     private void controlArmElev()
@@ -278,7 +278,7 @@ public class Teleop_Driver extends InitLinearOpMode
         if(fst_dtl) detail_speed = 0.3;
         if(xfst_dtl) detail_speed = 0.5;
 
-        double maxIPS = 40.0;
+        double maxIPS = 50.0;
         double maxRPS = maxIPS/(4.0*Math.PI);
         double maxDPS = maxRPS*360.0;
 
@@ -581,13 +581,17 @@ public class Teleop_Driver extends InitLinearOpMode
         String rdir = robot.rightMotor.getDirection().toString();
         int lc = robot.leftMotor.getCurrentPosition();
         int rc = robot.rightMotor.getCurrentPosition();
-        int lcnts = robot._liftyBoi.getCurrentPosition();
-        int ecnts = robot.armExtend.getCurrentPosition();
+        int lcnts = 0;
+        if(robot._liftyBoi != null) robot._liftyBoi.getCurrentPosition();
+        int ecnts = 0;
+        if(robot.armExtend != null) robot.armExtend.getCurrentPosition();
+        int acnts = 0;
+        if(robot.armRotate != null) robot.armRotate.getCurrentPosition();
 
         dashboard.displayPrintf(0, "DMODE %s DDIR %s",driveType, robot.getDriveDir());
         dashboard.displayPrintf(1, "extcnts  %d %f", ecnts, ecnts/robot.EXTND_CPI);
         dashboard.displayPrintf(2, "elevcnts %d %f", lcnts, lcnts/robot.LIFTER_CPI);
-        dashboard.displayPrintf(3, "rotPos   %f", robot.armRotate.getPosition());
+        dashboard.displayPrintf(3, "rotPos   %d", acnts);
         dashboard.displayPrintf(4, "L_IN %4.2f LC %d %s", raw_left,  lc, ldir);
         dashboard.displayPrintf(5, "R_IN %4.2f RC %d %s", raw_right, rc, rdir);
         dashboard.displayPrintf(6, "T_IN %4.2f", raw_turn);
