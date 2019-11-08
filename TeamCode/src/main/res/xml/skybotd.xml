@@ -15,6 +15,7 @@
             <Servo name="rplatch" port="1" />
             <Servo name="gripper" port="2" />
             <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
+            <REV_VL53L0X_RANGE_SENSOR name="dist1" port="1" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

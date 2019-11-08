@@ -874,6 +874,15 @@ public class Drivetrain
 
     private double getSteer(double error, double PCoeff)
     {
+//        double maxSteerAng = 45.0;
+//        double minSteerAng = 5.0;
+//        double maxStr = 1.0;
+//        double minStr = minGyroTurnSpeed;
+//        double slope = (maxStr - minStr)/(maxSteerAng - minSteerAng);
+//        double str =  slope * Math.abs(error);
+//        str = Range.clip(str, minStr, maxStr);
+//        str *= Math.signum(error);
+//        return str;
         return Range.clip(error * PCoeff, -1, 1);
     }
 
@@ -1328,7 +1337,7 @@ public class Drivetrain
 
     private static final double Kp_GyrCorrection = 0.008;
     private static final double Kp_EncCorrection = 0.01;
-    public  static       double Kp_GyroTurn      = 0.04;
+    public  static       double Kp_GyroTurn      = 0.03;
     private static final double Kd_GyroTurn      = 0.001;
     private static final double THRESH = Math.toRadians(0.004);
 
