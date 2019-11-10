@@ -88,6 +88,7 @@ public class Teleop_Driver extends InitLinearOpMode
         boolean doSafeLeft = gpad2.just_pressed(ManagedGamepad.Button.D_LEFT);
         boolean doSafeFrwd = gpad2.just_pressed(ManagedGamepad.Button.D_UP);
         boolean doSafeSnug = gpad2.just_pressed(ManagedGamepad.Button.D_DOWN);
+        boolean doSetupElv = gpad2.just_pressed(ManagedGamepad.Button.L_TRIGGER);
 
         if(doSafeHome)
         {
@@ -141,6 +142,10 @@ public class Teleop_Driver extends InitLinearOpMode
             robot.putExtendAtSnug();
         }
 
+        if(doSetupElv)
+        {
+            robot.setLiftPos((int)(4.0 * robot.LIFTER_CPI));
+        }
 
     }
 

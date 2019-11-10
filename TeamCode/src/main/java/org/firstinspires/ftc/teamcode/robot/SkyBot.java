@@ -52,7 +52,7 @@ public class SkyBot extends TilerunnerGtoBot {
     private final double LIFTER_LOW  = -4.0;
     private final double LIFTER_MOVE = -3.75;
     private final double LIFTER_REL1 = -1.5;
-    private final double LIFTER_REL2 =  2.0;
+    private final double LIFTER_REL2 =  1.0;
     private final double LIFTER_MAX  =  2.0;
     public final int LIFT_STOW_CNTS = (int) (LIFTER_CPI * LIFTER_STOW);
     private final int LIFT_SAFE_CNTS = (int) (LIFTER_CPI * LIFTER_SAFE);
@@ -535,7 +535,7 @@ public class SkyBot extends TilerunnerGtoBot {
         _liftyBoi.setTargetPosition(targetPos);
         _liftyBoi.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        double liftSpd = 0.9;
+        double liftSpd = 0.95;
 
         _liftyBoi.setTargetPosition(targetPos);
         _liftyBoi.setPower(liftSpd);
