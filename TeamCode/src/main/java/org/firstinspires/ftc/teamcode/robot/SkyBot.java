@@ -303,7 +303,7 @@ public class SkyBot extends TilerunnerGtoBot {
         {
             if (!lastExtndUseCnts)
             {
-                RobotLog.dd(TAG, "Moving to arm pos %d", curArmCounts);
+                RobotLog.dd(TAG, "Moving to arm pos %d %f", curArmCounts, curArmCounts/ARMROT_CPD);
                 armExtend.setTargetPosition(curArmCounts);
                 armExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armExtend.setPower(aspd);
@@ -328,7 +328,7 @@ public class SkyBot extends TilerunnerGtoBot {
             return;
         }
 
-        RobotLog.dd(TAG, "armExtend to %d", targetPos);
+        RobotLog.dd(TAG, "armExtend to %d %f", targetPos, EXTND_CPI);
 
         armExtend.setTargetPosition(targetPos);
         armExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -446,7 +446,7 @@ public class SkyBot extends TilerunnerGtoBot {
             return;
         }
 
-        RobotLog.dd(TAG, "armRotate to %f", rotPos);
+        RobotLog.dd(TAG, "armRotate to %d %f", (int)rotPos, rotPos/ARMROT_CPD);
         //armRotate.setPosition(targetPos);
 
         armRotate.setPower(0.0);
@@ -529,7 +529,7 @@ public class SkyBot extends TilerunnerGtoBot {
             return;
         }
 
-        RobotLog.dd(TAG, "liftyboi to %d", targetPos);
+        RobotLog.dd(TAG, "liftyboi to %d %f", targetPos, targetPos/LIFTER_CPI);
 
         _liftyBoi.setPower(0.0);
         _liftyBoi.setTargetPosition(targetPos);
@@ -753,7 +753,6 @@ public class SkyBot extends TilerunnerGtoBot {
         //armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //_liftyBoi.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RobotLog.dd(TAG, "moveArmTo " + liftPos + " " + rotPos + " " + extndPos);
     }
 
     public void putHolderAtStow()

@@ -820,17 +820,6 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
     private void doPark()
     {
         RobotLog.dd(TAG, "Parking bot");
-        if(skyBot != null)
-        {
-            int hoverCounts = -5000; //-(int)(20 * robot.ARM_CPD);
-
-            RobotLog.dd(TAG, "Moving to arm pos %d from %d", hoverCounts, 0);
-            //extend arm if needed
-        }
-        else
-        {
-            RobotLog.dd(TAG, "No skyRobot - can't extend arm");
-        }
     }
 
     private void doMove(Segment seg)
