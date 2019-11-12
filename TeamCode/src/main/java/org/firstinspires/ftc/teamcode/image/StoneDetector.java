@@ -29,7 +29,7 @@ public class StoneDetector extends Detector {
     private static final String TAG = "SJH_SCD";
 
     @SuppressWarnings("FieldCanBeLocal")
-    private boolean saveSizedImage  = true;
+    private boolean saveSizedImage  = false;
     @SuppressWarnings("FieldCanBeLocal")
     private boolean saveMaskedImage = false;
     @SuppressWarnings("FieldCanBeLocal")

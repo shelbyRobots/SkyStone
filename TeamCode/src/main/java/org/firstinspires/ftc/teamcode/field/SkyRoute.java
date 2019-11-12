@@ -42,8 +42,10 @@ public class SkyRoute extends Route
             addPoint(points, fwd, 0.60, 1.00, encType, scan, SkyField.RIS1);
             addPoint(points, fwd, 0.60, 1.00, encType, none, SkyField.RTP1);
             addPoint(points, rev, 0.50, 1.00, encType, grab, SkyField.RGPA);
+            //addPoint(points, fwd, 0.80, 1.00, encType, align, SkyField.RDPE);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPA);
             addPoint(points, rev, 0.80, 1.00, encType, grab, SkyField.RGPB);
+            //addPoint(points, fwd, 0.80, 1.00, encType, align, SkyField.RDPE);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPB);
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }

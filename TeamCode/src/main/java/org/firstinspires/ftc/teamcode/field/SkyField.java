@@ -28,10 +28,10 @@ public class SkyField extends Field
 
     //Red Route > Left
     //Red Left Start Point 1
-    static final Point2d RLS1 = new Point2d("RLS1", -34.25,  -61.5);
+    static final Point2d RLS1 = new Point2d("RLS1", -34.5,  -61.5);
 
     //Red Scan Pt (Image Scan Pt)
-    static final Point2d RIS1 = new Point2d("RIS1", -34.25,  -50.0);
+    static final Point2d RIS1 = new Point2d("RIS1", -34.5,  -50.0);
     //includes offset for veh center. actual
 
     //Red Stone Points (Stone center location on field)
@@ -42,15 +42,15 @@ public class SkyField extends Field
     static final Point2d RSP5 = new Point2d("RSP5", -35.5,  -21.0); //R
     static final Point2d RSP6 = new Point2d("RSP6", -28.0,  -21.0); //R
 
-    static final Point2d RGPA = new Point2d("RGPA", -35.0,  -39.0); //R
+    static final Point2d RGPA = new Point2d("RGPA", -34.62,  -39.0); //R
     static final Point2d RGPB = new Point2d("RGPB", -58.5,  -39.0); //R
     static final Point2d RDPA = new Point2d("RDPA",  38.0,  -39.0); //R
     static final Point2d RDPB = new Point2d("RDPB",  32.0,  -39.0); //R
     static final Point2d RDPC = new Point2d("RDPC",  25.0,  -39.0);
     static final Point2d RDPD = new Point2d("RDPD",  36.0,  -39.0);
-    static final Point2d RDPE = new Point2d("RDPE",  12.0,  -39.0);
+    static final Point2d RDPE = new Point2d("RDPE",  14.0,  -39.0);
 
-    static final Point2d RTP1 = new Point2d("RTP1", -34.25, -39.0); //R
+    static final Point2d RTP1 = new Point2d("RTP1", -34.5, -39.0); //R
     static final Point2d RPP1 = new Point2d("RPP1",   7.0,  -39.0); //R
 
     //platch

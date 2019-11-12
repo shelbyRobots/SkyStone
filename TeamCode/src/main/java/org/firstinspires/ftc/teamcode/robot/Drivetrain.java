@@ -447,7 +447,7 @@ public class Drivetrain
             double deltaErr = (error - lastGyroError)/gyroFrameTime.seconds();
             double d = Kd_GyroTurn * deltaErr;
             gyroFrameTime.reset();
-            steer = getSteer(error, Kp_GyroTurn);
+            steer = getTurnSteer(error);
             rightSpeed  = pwr * steer;
             if(useDterm)
             {
@@ -884,6 +884,19 @@ public class Drivetrain
 //        str *= Math.signum(error);
 //        return str;
         return Range.clip(error * PCoeff, -1, 1);
+    }
+
+    private double getTurnSteer(double error)
+    {
+        double maxSteerAng = 45.0;
+        double minSteerAng = 5.0;
+        double maxStr = 1.0;
+        double minStr = minGyroTurnSpeed;
+        double slope = (maxStr - minStr)/(maxSteerAng - minSteerAng);
+        double str =  slope * Math.abs(error);
+        str = Range.clip(str, minStr, maxStr);
+        str *= Math.signum(error);
+        return str;
     }
 
     public void setInitValues()
