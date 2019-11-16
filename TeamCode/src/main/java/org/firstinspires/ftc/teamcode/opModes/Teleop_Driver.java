@@ -193,7 +193,9 @@ public class Teleop_Driver extends InitLinearOpMode
         if(robot._liftyBoi == null) return;
         double  aelev       = -gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
 
-        aelev  = ishaper.shape(aelev);
+        //aelev  = ishaper.shape(aelev);
+        if(Math.abs(aelev) > 0.05 && robot._liftyBoi.getMode() != DcMotor.RunMode.RUN_USING_ENCODER)
+        robot._liftyBoi.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         robot._liftyBoi.setPower(aelev);
     }
