@@ -591,10 +591,31 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         tsk.setElevPos(skyBot.LIFT_STOW_CNTS);
         tsk.setXtndPos(skyBot.ARM_EXT_SNUG_POS);
         tsk.setArotPos(getArmGrabRot());
-        tsk.setElevDly(0.0);
-        tsk.setXtndDly(0.0);
-        tsk.setArotDly(0.0);
+        tsk.setElevDly(0.01);
+        tsk.setXtndDly(0.01);
+        tsk.setArotDly(0.01);
         es.submit(tsk);
+    }
+
+    private double getArmDropRot()
+    {
+        double rotPos = 0.0;
+        if(alliance == Field.Alliance.BLUE)
+        {
+            if(startPos == Route.StartPos.START_1)      rotPos = skyBot.ARM_DRP_RGT;
+            else if(startPos == Route.StartPos.START_3) rotPos = skyBot.ARM_DRP_LFT;
+            else if(startPos == Route.StartPos.START_4) rotPos = skyBot.ARM_ROT_FWD;
+            else if(startPos == Route.StartPos.START_5) rotPos = skyBot.ARM_ROT_FWD;
+
+        }
+        else
+        {
+            if(startPos == Route.StartPos.START_1)      rotPos = skyBot.ARM_DRP_LFT;
+            else if(startPos == Route.StartPos.START_3) rotPos = skyBot.ARM_DRP_RGT;
+            else if(startPos == Route.StartPos.START_4) rotPos = skyBot.ARM_ROT_FWD;
+            else if(startPos == Route.StartPos.START_5) rotPos = skyBot.ARM_ROT_FWD;
+        }
+        return rotPos;
     }
 
     private double getArmGrabRot()
@@ -655,26 +676,45 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         sleep(250);
 
         //Raise arm
-        RobotLog.dd(TAG,"doGrab lift to MOVE, rot to Stone, extend to SNUG at " +
+        RobotLog.dd(TAG,"doGrab lift to MOVE, rot to Stone, extend to STAGE at " +
                 startTimer.seconds());
 
         skyBot.moveArmToLoc(skyBot.LIFT_MOVE_CNTS,
                 getArmGrabRot(),
                 skyBot.ARM_EXT_STAGE_POS);
 
-        RobotLog.dd(TAG,"doGrab lift to MOVE, rot to FWD, extend to SNUG at " +
+        RobotLog.dd(TAG,"doGrab lift to MOVE, rot to FWD, extend to STAGE at " +
                 startTimer.seconds());
 
         skyBot.moveArmToLoc(skyBot.LIFT_MOVE_CNTS,
                 skyBot.ARM_ROT_FWD,
-                skyBot.ARM_EXT_SNUG_POS);
+                skyBot.ARM_EXT_STAGE_POS);
 
-//        RobotLog.dd(TAG,"doGrab lift to HIGH, rot to FWD, extend to SNUG at " +
-//                startTimer.seconds());
-//        RobotLog.dd(TAG,"doGrab aRot FWD at " + startTimer.seconds());
-//        skyBot.moveArmToLoc(skyBot.LIFT_REL2_CNTS,
-//                skyBot.ARM_ROT_FWD,
-//                skyBot.ARM_EXT_SNUG_POS);
+        RobotLog.dd(TAG,"doGrab threaded lift to MOVE, rot to FWD, extend to SNUG at " +
+                startTimer.seconds());
+        MoveArmTask tsk = new MoveArmTask();
+        tsk.setElevPos(skyBot.LIFT_MOVE_CNTS);
+        tsk.setArotPos(skyBot.ARM_ROT_FWD);
+        tsk.setXtndPos(skyBot.ARM_EXT_SNUG_POS);
+        tsk.setElevDly(0.0);
+        tsk.setXtndDly(0.0);
+        tsk.setArotDly(0.0);
+        tsk.setAutoCross(false);
+        tsk.setAutoX(0.0);
+        es.submit(tsk);
+
+        Segment nxtSeg = pathSegs.get(segIdx+1);
+        Segment.Action nxtAct = nxtSeg.getAction();
+        if(nxtAct == Segment.Action.DROP)
+        {
+            MoveArmTask crossTsk = new MoveArmTask();
+            crossTsk.setElevPos(skyBot.LIFT_REL1_CNTS);
+            crossTsk.setXtndDly(skyBot.ARM_EXT_DROP_POS);
+            crossTsk.setArotPos(getArmDropRot());
+            crossTsk.setAutoCross(true);
+            crossTsk.setAutoX(9.0);
+            es.submit(crossTsk);
+        }
     }
 
     private void setStonePoint(int segIdx)
@@ -695,15 +735,30 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         private double elevDly = 0;
         private double xtndDly = 0;
         private double arotDly = 0;
+        private boolean autoCross = false;
+        private double autoX = 0.0;
+
         void setElevPos(double pos) {this.elevPos = pos;}
         void setXtndPos(double pos) {this.xtndPos = pos;}
         void setArotPos(double pos) {this.arotPos = pos;}
         void setElevDly(double dly) {this.elevDly = dly;}
         void setXtndDly(double dly) {this.xtndDly = dly;}
         void setArotDly(double dly) {this.arotDly = dly;}
+        void setAutoCross(boolean autoCross) {this.autoCross = autoCross;}
+        void setAutoX  (double x)   {this.autoX = x;}
 
         public void run()
         {
+            double startX = drvTrn.getEstPos().getX();
+            double curX = startX;
+            if(autoCross)
+            {
+                while((startX < 0.0 && curX < autoX) || (startX > 0.0 && curX > autoX))
+                {
+                    sleep(20);
+                    curX = drvTrn.getEstPos().getX();
+                }
+            }
             RobotLog.dd(TAG, "Starting Threaded Arm Move");
             skyBot.moveArmToLoc(elevPos, arotPos, xtndPos, elevDly, arotDly, xtndDly);
         }
@@ -751,38 +806,14 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             return;
         }
 
-        double rotPos = 0.0;
-        if(alliance == Field.Alliance.BLUE)
+        //early out on start1 - remove this when we have enough time
+        if(startPos == Route.StartPos.START_1 && grabNum == 2)
         {
-            if(startPos == Route.StartPos.START_1)
-            {
-                rotPos = skyBot.ARM_DRP_RGT;
-                if(grabNum == 2)
-                {
-                    skyBot.openGripper();
-                    return;
-                }
-            }
-            else if(startPos == Route.StartPos.START_3) rotPos = skyBot.ARM_DRP_LFT;
-            else if(startPos == Route.StartPos.START_4) rotPos = skyBot.ARM_ROT_FWD;
-            else if(startPos == Route.StartPos.START_5) rotPos = skyBot.ARM_ROT_FWD;
+            skyBot.openGripper();
+            return;
+        }
 
-        }
-        else
-        {
-            if(startPos == Route.StartPos.START_1)
-            {
-                rotPos = skyBot.ARM_DRP_LFT;
-                if (grabNum == 2)
-                {
-                    skyBot.openGripper();
-                    return;
-                }
-            }
-            else if(startPos == Route.StartPos.START_3) rotPos = skyBot.ARM_DRP_RGT;
-            else if(startPos == Route.StartPos.START_4) rotPos = skyBot.ARM_ROT_FWD;
-            else if(startPos == Route.StartPos.START_5) rotPos = skyBot.ARM_ROT_FWD;
-        }
+        double rotPos = getArmDropRot();
 
         RobotLog.dd(TAG,"doGrab lift to DRP, rot to drop, extend to DROP at " +
                 startTimer.seconds());
@@ -791,9 +822,39 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         RobotLog.dd(TAG,"doGrab lift to MOVE, rot to FWD, extend to SNUG at " +
                 startTimer.seconds());
 
+        sleep(250);
+
         skyBot.openGripper();
 
         skyBot.moveArmToLoc(skyBot.LIFT_MOVE_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_DROP_POS, 0, 0.0, 0);
+
+        if(grabNum == 2) {
+            RobotLog.dd(TAG, "doGrab threaded lift to MOVE, rot to FWD, extend to SNUG at " +
+                    startTimer.seconds());
+            MoveArmTask tsk = new MoveArmTask();
+            tsk.setElevPos(skyBot.LIFT_MOVE_CNTS);
+            tsk.setArotPos(skyBot.ARM_ROT_FWD);
+            tsk.setXtndPos(skyBot.ARM_EXT_SNUG_POS);
+            tsk.setElevDly(0.0);
+            tsk.setXtndDly(0.0);
+            tsk.setArotDly(0.0);
+            es.submit(tsk);
+        }
+
+        Segment nxtSeg = pathSegs.get(segIdx+1);
+        Segment.Action nxtAct = nxtSeg.getAction();
+        if(nxtAct == Segment.Action.GRAB)
+        {
+            RobotLog.dd(TAG, "doGrab threaded auto lift to STOW, rot to STN, extend to SNUG at " +
+                    startTimer.seconds());
+            MoveArmTask crossTsk = new MoveArmTask();
+            crossTsk.setElevPos(skyBot.LIFT_STOW_CNTS);
+            crossTsk.setXtndDly(skyBot.ARM_EXT_SNUG_POS);
+            crossTsk.setArotPos(getArmGrabRot());
+            crossTsk.setAutoCross(true);
+            crossTsk.setAutoX(-12.0);
+            es.submit(crossTsk);
+        }
     }
 
     private void doPlatch()
