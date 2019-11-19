@@ -304,7 +304,7 @@ public class SkyBot extends TilerunnerGtoBot {
             if (!lastExtndUseCnts)
             {
                 RobotLog.dd(TAG, "Moving to arm pos %d %f",
-                        curArmCounts, curArmCounts/ARMROT_CPD);
+                        curArmCounts, curArmCounts/EXTND_CPI);
                 armExtend.setTargetPosition(curArmCounts);
                 armExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armExtend.setPower(aspd);
@@ -343,7 +343,7 @@ public class SkyBot extends TilerunnerGtoBot {
 
         double armExtSpd = 0.95;
         if(targetPos < curPos) armExtSpd = -armExtSpd;
-        else if (Math.abs(targetPos - curPos) < EXTND_CPI) armExtSpd = 0.0;
+        else if (Math.abs(targetPos - curPos) < EXT_THRESH) armExtSpd = 0.0;
 
         armExtend.setPower(armExtSpd);
     }
@@ -368,7 +368,7 @@ public class SkyBot extends TilerunnerGtoBot {
             RobotLog.dd(TAG, "In armExtend.  targetpos=" + targetPos + " curPos=" +
                     curPos);
 
-            if(Math.abs(armExtend.getCurrentPosition() - targetPos) < LIFTER_THRESH)
+            if(Math.abs(armExtend.getCurrentPosition() - targetPos) < EXT_THRESH)
             {
                 armExtend.setPower(0.2);
                 armExtend.setTargetPosition(targetPos);
@@ -376,7 +376,7 @@ public class SkyBot extends TilerunnerGtoBot {
             }
             curPos = armExtend.getCurrentPosition();
         }
-        armExtend.setPower(0.0);
+        armExtend.setPower(0.2);
         armExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
@@ -557,7 +557,7 @@ public class SkyBot extends TilerunnerGtoBot {
 
         double liftSpd = 0.95;
         if(targetPos - curPos < 0) liftSpd = -liftSpd;
-        else if (Math.abs(targetPos - curPos) < LIFTER_CPI) liftSpd = 0.0;
+        else if (Math.abs(targetPos - curPos) < LIFTER_THRESH) liftSpd = 0.0;
 
         _liftyBoi.setPower(liftSpd);
     }
@@ -671,8 +671,8 @@ public class SkyBot extends TilerunnerGtoBot {
         ElapsedTime liftTimer = new ElapsedTime();
         ElapsedTime rotTimer = new ElapsedTime();
 
-        double extendTimeout = 4.0;
-        double liftTimeLimit = 4.0;
+        double extendTimeout = 2.5;
+        double liftTimeLimit = 2.5;
 
         int curExtPos = armExtend.getCurrentPosition();
         int curLiftPos = _liftyBoi.getCurrentPosition();
@@ -759,6 +759,7 @@ public class SkyBot extends TilerunnerGtoBot {
                     arotCompleteTime = rotTimer.seconds();
                     RobotLog.dd(TAG, "Completed rotate in " + arotCompleteTime + "s");
                     arotDone = true;
+                    armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 else
                 {

@@ -51,7 +51,7 @@ public class SkyField extends Field
     static final Point2d RDPE = new Point2d("RDPE",  14.0,  -39.0);
 
     static final Point2d RTP1 = new Point2d("RTP1", -34.5, -39.0); //R
-    static final Point2d RPP1 = new Point2d("RPP1",   7.0,  -39.0); //R
+    static final Point2d RPP1 = new Point2d("RPP1",   5.0, -39.0); //R
 
     //platch
     static final Point2d RBS1 = new Point2d( "RBS1", 36.0, -61.5);

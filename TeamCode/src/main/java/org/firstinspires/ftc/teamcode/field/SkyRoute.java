@@ -36,7 +36,7 @@ public class SkyRoute extends Route
         Segment.TargetType encType = Segment.TargetType.ENCODER;
         Segment.TargetType colType = Segment.TargetType.COLOR;
 
-        if(startPos == StartPos.START_1)
+        if(startPos == StartPos.START_1)  //MAIN AUTON - UNMOVED PLATFORM
         {
             points.add(SkyField.RLS1);
             addPoint(points, fwd, 0.60, 1.00, encType, scan, SkyField.RIS1);
@@ -44,10 +44,10 @@ public class SkyRoute extends Route
             addPoint(points, rev, 0.50, 1.00, encType, grab, SkyField.RGPA);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPA);
             addPoint(points, rev, 0.80, 1.00, encType, grab, SkyField.RGPB);
-            addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPE);
+            addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPB);
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }
-        else if(startPos == StartPos.START_2)
+        else if(startPos == StartPos.START_2)  //PLATCH AUTON
         {
             points.add(SkyField.RBS1);
             addPoint(points, fwd, 0.75, 1.00, encType, none, SkyField.RBP1);
@@ -57,7 +57,7 @@ public class SkyRoute extends Route
             addPoint(points, rev, 0.60, 1.00, encType, rtct, SkyField.RBP5);
             addPoint(points, rev, 0.50, 1.00, encType, park, SkyField.RBP6);
         }
-        else if(startPos == StartPos.START_3)
+        else if(startPos == StartPos.START_3)  //PLATFORM MOVED w/o turn
         {
             points.add(SkyField.RLS1);
             addPoint(points, fwd, 0.60, 1.00, encType, scan, SkyField.RIS1);
@@ -68,7 +68,7 @@ public class SkyRoute extends Route
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPC);
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }
-        else if(startPos == StartPos.START_4)
+        else if(startPos == StartPos.START_4) //PLATFORM MOVED AND TURNED
         {
             points.add(SkyField.RLS1);
             addPoint(points, fwd, 0.60, 1.00, encType, scan, SkyField.RIS1);
@@ -80,7 +80,7 @@ public class SkyRoute extends Route
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }
 
-        else if(startPos == StartPos.START_5)
+        else if(startPos == StartPos.START_5)  //JUST DROP IN ZONE
         {
             points.add(SkyField.RLS1);
             addPoint(points, fwd, 0.60, 1.00, encType, scan, SkyField.RIS1);
@@ -92,9 +92,7 @@ public class SkyRoute extends Route
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }
 
-
-
-            return points;
+        return points;
     }
 
     public SkyRoute(PositionOption startPos,
