@@ -354,7 +354,7 @@ public class Teleop_Driver extends InitLinearOpMode
                     case ARCADE_DRIVE:
                         left = shp_right;
                         right = left;
-                        turn = (1 - Math.abs(left)) * turn;
+                        turn = (1 - Math.abs(left)) * shp_turn;
                         if(turn < 0.95) turn *= arcadeTurnScale;
                         left  += turn;
                         right -= turn;
