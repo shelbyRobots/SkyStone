@@ -648,8 +648,10 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         RobotLog.dd(TAG,"doGrab lift to STOW, rot to Stone, extend to SNUG at " +
                 startTimer.seconds());
 
+        double armAng = getArmGrabRot();
+
         skyBot.moveArmToLoc(skyBot.LIFT_STOW_CNTS,
-                            getArmGrabRot(),
+                            armAng,
                             skyBot.ARM_EXT_SNUG_POS);
 
         //Lower arm and open gripper
@@ -660,14 +662,14 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                 startTimer.seconds());
 
         skyBot.moveArmToLoc(skyBot.LIFT_GRAB_CNTS,
-                getArmGrabRot(),
+                armAng,
                 skyBot.ARM_EXT_SNUG_POS);
 
         RobotLog.dd(TAG,"doGrab lift to GRAB, rot to Stone, extend to GRAB at " +
                 startTimer.seconds());
 
         skyBot.moveArmToLoc(skyBot.LIFT_GRAB_CNTS,
-                            getArmGrabRot(),
+                            armAng,
                             skyBot.ARM_EXT_GRAB_POS);
 
         //Close gripper
@@ -680,7 +682,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                 startTimer.seconds());
 
         skyBot.moveArmToLoc(skyBot.LIFT_MOVE_CNTS,
-                getArmGrabRot(),
+                armAng,
                 skyBot.ARM_EXT_STAGE_POS);
 
         RobotLog.dd(TAG,"doGrab lift to MOVE, rot to FWD, extend to STAGE at " +
@@ -812,7 +814,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         skyBot.openGripper();
 
-        skyBot.moveArmToLoc(skyBot.LIFT_MOVE_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_DROP_POS);
+        skyBot.moveArmToLoc(skyBot.LIFT_MOVE_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_DROP_POS, 0.5, 0.0, 0.0);
 
         if(grabNum == 2)
         {
