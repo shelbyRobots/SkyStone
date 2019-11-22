@@ -602,7 +602,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         double rotPos = 0.0;
         if(alliance == Field.Alliance.BLUE)
         {
-            if(startPos == Route.StartPos.START_1)      rotPos = skyBot.ARM_DRP_RGT;
+            if(startPos == Route.StartPos.START_1)      rotPos = skyBot.ARM_ROT_RGT;
             else if(startPos == Route.StartPos.START_3) rotPos = skyBot.ARM_DRP_LFT;
             else if(startPos == Route.StartPos.START_4) rotPos = skyBot.ARM_ROT_FWD;
             else if(startPos == Route.StartPos.START_5) rotPos = skyBot.ARM_ROT_FWD;
@@ -610,14 +610,13 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         }
         else
         {
-            if(startPos == Route.StartPos.START_1)      rotPos = skyBot.ARM_DRP_LFT;
+            if(startPos == Route.StartPos.START_1)      rotPos = skyBot.ARM_ROT_LFT;
             else if(startPos == Route.StartPos.START_3) rotPos = skyBot.ARM_DRP_RGT;
             else if(startPos == Route.StartPos.START_4) rotPos = skyBot.ARM_ROT_FWD;
             else if(startPos == Route.StartPos.START_5) rotPos = skyBot.ARM_ROT_FWD;
         }
         return rotPos;
     }
-
     private double getArmGrabRot()
     {
         double aRot;
@@ -701,7 +700,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             crossTsk.setXtndDly(skyBot.ARM_EXT_DROP_POS);
             crossTsk.setArotPos(getArmDropRot());
             crossTsk.setAutoCross(true);
-            crossTsk.setAutoX(10.0);
+            crossTsk.setAutoX(6.0);
             es.submit(crossTsk);
         }
     }
@@ -814,7 +813,8 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         skyBot.openGripper();
 
-        skyBot.moveArmToLoc(skyBot.LIFT_MOVE_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_DROP_POS, 0.5, 0.0, 0.0);
+        skyBot.moveArmToLoc(skyBot.LIFT_REL1_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_STAGE_POS, 0.0, 0.4, 0.0);
+        skyBot.moveArmToLoc(skyBot.LIFT_MOVE_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_STAGE_POS, 0.0, 0.0, 0.0);
 
         if(grabNum == 2)
         {

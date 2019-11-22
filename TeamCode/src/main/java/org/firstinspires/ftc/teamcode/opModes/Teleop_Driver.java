@@ -110,6 +110,7 @@ public class Teleop_Driver extends InitLinearOpMode
         {
             robot.zeroArmExtend();
             robot.zeroLift();
+            robot.zeroArmRotate();
         }
 
         if(doSafeRght)
