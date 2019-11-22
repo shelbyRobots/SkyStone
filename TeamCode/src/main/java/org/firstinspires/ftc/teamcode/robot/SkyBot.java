@@ -108,7 +108,7 @@ public class SkyBot extends TilerunnerGtoBot {
     private double ARMROT_GEAR_EXT = 2.0;
     private double ARMROT_CPR = ARMROT_COUNTS_PER_MOTOR_REV * ARMROT_GEAR_ONE * ARMROT_GEAR_EXT;
     public double ARMROT_CPD = ARMROT_CPR / 360.0;
-    private final double ROT_THRESH = 4.0*ARMROT_CPD;
+    private final double ROT_THRESH = 2.5*ARMROT_CPD;
     public int ARM_ROT_FWD = (int) (  0.0 * ARMROT_CPD);
     public int ARM_ROT_RGT = (int) (-90.0 * ARMROT_CPD);
     public int ARM_ROT_LFT = (int) ( 90.0 * ARMROT_CPD);
@@ -685,9 +685,9 @@ public class SkyBot extends TilerunnerGtoBot {
         boolean xtndDone = false;
         boolean arotDone = false;
 
-        double liftCompleteTime = 0;
-        double xtndCompleteTime = 0;
-        double arotCompleteTime = 0;
+        double liftCompleteTime;
+        double xtndCompleteTime;
+        double arotCompleteTime;
 
         while (op.opModeIsActive())
         {
@@ -773,6 +773,7 @@ public class SkyBot extends TilerunnerGtoBot {
             if(arotDone && liftDone && xtndDone)
             {
                 armIsMoving = false;
+                RobotLog.dd(TAG, "Completed moveArmToLoc");
                 break;
             }
         }
