@@ -98,7 +98,8 @@ public class SkyBot extends TilerunnerGtoBot {
     private int MIN_EXTND_CNT    = 0;
     private int ARM_EXT_STOW_POS = (int)  (0.0 * EXTND_CPI);
     public  int ARM_EXT_SNUG_POS = (int)  (7.8 * EXTND_CPI);
-    public  int ARM_EXT_STAGE_POS = (int) (9.3 * EXTND_CPI);
+    public  int ARM_EXT_STAGE_POS = (int) (9.5 * EXTND_CPI);
+    public  int ARM_EXT_PUSH_POS = (int) (12.0 * EXTND_CPI);
     public  int ARM_EXT_GRAB_POS = (int) (14.0 * EXTND_CPI);
     public  int ARM_EXT_DROP_POS = (int) (16.0 * EXTND_CPI);
     private int MAX_EXTND_CNT    = (int) (18.0 * EXTND_CPI);
@@ -117,8 +118,8 @@ public class SkyBot extends TilerunnerGtoBot {
     private int ARM_ROT_MIN = (int) (-135.0 * ARMROT_CPD);
     private int ARM_ROT_MAX = (int) ( 135.0 * ARMROT_CPD);
     public int ARM_GRB_RGT_L = (int) ( -67.0 * ARMROT_CPD);
-    public int ARM_GRB_RGT_R = (int) (-113.0 * ARMROT_CPD);
-    public int ARM_GRB_LFT_L = (int) ( 113.0 * ARMROT_CPD);
+    public int ARM_GRB_RGT_R = (int) (-115.0 * ARMROT_CPD);
+    public int ARM_GRB_LFT_L = (int) ( 115.0 * ARMROT_CPD);
     public int ARM_GRB_LFT_R = (int) (  67.0 * ARMROT_CPD);
 
     //following asumes 270 degree servo range

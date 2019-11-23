@@ -145,7 +145,7 @@ public class Teleop_Driver extends InitLinearOpMode
 
         if(doSetupElv)
         {
-            robot.setLiftPos((int)(4.0 * robot.LIFTER_CPI));
+            robot.setLiftPos((int)(3.9 * robot.LIFTER_CPI));
         }
 
     }
