@@ -651,7 +651,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         double armAng = getArmGrabRot();
 
-        skyBot.moveArmToLoc(skyBot.LIFT_STOW_CNTS, armAng, skyBot.ARM_EXT_SNUG_POS, 0.0, 0.2, 0.0);
+        skyBot.moveArmToLoc(skyBot.LIFT_STOW_CNTS, armAng, skyBot.ARM_EXT_SNUG_POS, 0.0, 0.0, 0.0);
 
         //Lower arm and open gripper
         RobotLog.dd(TAG,"doGrab opengripper");
@@ -701,7 +701,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         skyBot.closeGripper();
         sleep(250);
 
-        boolean postPush = true;
+        boolean postPush = false;
         if(alliance == Field.Alliance.BLUE && stonePos == StoneDetector.Position.LEFT ||
                 alliance == Field.Alliance.RED  && stonePos == StoneDetector.Position.RIGHT)
         {
@@ -878,7 +878,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         skyBot.openGripper();
 
-        sleep(250);
+        sleep(400);
         skyBot.closeGripper();
 
         skyBot.moveArmToLoc(skyBot.LIFT_REL1_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_STAGE_POS, 0.0, 0.0, 0.0);
@@ -907,7 +907,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                         startTimer.seconds());
                 MoveArmTask crossTsk = new MoveArmTask();
                 crossTsk.setElevPos(skyBot.LIFT_STOW_CNTS);
-                crossTsk.setXtndPos(skyBot.ARM_EXT_SNUG_POS);
+                crossTsk.setXtndPos(skyBot.ARM_EXT_STAGE_POS);
                 crossTsk.setArotPos(getArmGrabRot());
                 crossTsk.setAutoCross(true);
                 crossTsk.setAutoX(-18.0);

@@ -337,15 +337,19 @@ public class SkyBot extends TilerunnerGtoBot {
 
         armExtend.setPower(0.0);
         armExtend.setTargetPosition(targetPos);
+        double armExtSpd = 0.95;
+
         if(targetPos > curPos)
             armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         else
+        {
             armExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armExtSpd = -armExtSpd;
+        }
 
-        double armExtSpd = 0.95;
-        if(targetPos < curPos) armExtSpd = -armExtSpd;
-        else if (Math.abs(targetPos - curPos) < EXT_THRESH) armExtSpd = 0.0;
+        if (Math.abs(targetPos - curPos) < EXT_THRESH) armExtSpd = 0.0;
 
+        RobotLog.dd(TAG, "armExtend to %d %f pwr:", targetPos, EXTND_CPI, armExtSpd);
         armExtend.setPower(armExtSpd);
     }
 
@@ -732,7 +736,7 @@ public class SkyBot extends TilerunnerGtoBot {
                 {
                     armExtend.setTargetPosition((int)extndPos);
                     armExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    armExtend.setPower(0.2);
+                    armExtend.setPower(0.4);
                     xtndCompleteTime = extendTimer.seconds();
                     RobotLog.dd(TAG, "Completed extend in " + xtndCompleteTime + "s");
                     xtndDone = true;
