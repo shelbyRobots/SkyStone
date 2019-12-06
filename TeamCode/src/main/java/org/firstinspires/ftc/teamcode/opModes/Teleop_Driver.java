@@ -81,7 +81,7 @@ public class Teleop_Driver extends InitLinearOpMode
         controlArmElev();
         controlGripper();
 
-        boolean doSafeHome = gpad2.just_pressed(ManagedGamepad.Button.A);
+        boolean doSafeHome = gpad2.just_pressed(ManagedGamepad.Button.A) && !gamepad2.start;
         boolean doSafeDply = gpad2.just_pressed(ManagedGamepad.Button.B) && !gamepad2.start;
         boolean doZero     = gpad2.just_pressed(ManagedGamepad.Button.X);
         boolean doSafeRght = gpad2.just_pressed(ManagedGamepad.Button.D_RIGHT);
@@ -246,7 +246,7 @@ public class Teleop_Driver extends InitLinearOpMode
         boolean toggle_vel        = gpad1.just_pressed(ManagedGamepad.Button.R_TRIGGER);
 
         boolean step_driveType    = gpad1.just_pressed(ManagedGamepad.Button.A) && !gamepad1.start;
-        boolean toggle_float      = gpad1.just_pressed(ManagedGamepad.Button.B);
+        boolean toggle_float      = gpad1.just_pressed(ManagedGamepad.Button.B) && !gamepad1.start;
 
         boolean left_step         = gpad1.pressed(ManagedGamepad.Button.D_LEFT);
         boolean right_step        = gpad1.pressed(ManagedGamepad.Button.D_RIGHT);

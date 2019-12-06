@@ -35,21 +35,23 @@ public class SkyField extends Field
     //includes offset for veh center. actual
 
     //Red Stone Points (Stone center location on field)
-    static final Point2d RSP1 = new Point2d("RSP1", -68.0,  -21.0); //R
-    static final Point2d RSP2 = new Point2d("RSP2", -60.0,  -21.0); //R
-    static final Point2d RSP3 = new Point2d("RSP3", -52.0,  -21.0); //R
-    static final Point2d RSP4 = new Point2d("RSP4", -44.0,  -21.0); //R
-    static final Point2d RSP5 = new Point2d("RSP5", -35.5,  -21.0); //R
-    static final Point2d RSP6 = new Point2d("RSP6", -28.0,  -21.0); //R
+    static final Point2d RSP1 = new Point2d("RSP1", -66.5,   -21.0); //R
+    static final Point2d RSP2 = new Point2d("RSP2", -58.5,   -21.0); //R
+    static final Point2d RSP3 = new Point2d("RSP3", -50.5,   -21.0); //R
+    static final Point2d RSP4 = new Point2d("RSP4", -42.5,   -21.0); //R
+    static final Point2d RSP5 = new Point2d("RSP5", -34.5,   -21.0); //R
+    static final Point2d RSP6 = new Point2d("RSP6", -26.5,   -21.0); //R
 
     static final Point2d RGPA = new Point2d("RGPA", -34.62,  -39.0); //R
-    static final Point2d RGPB = new Point2d("RGPB", -58.5,  -39.0); //R
-    static final Point2d RDPA = new Point2d("RDPA",  42.0,  -39.0); //R
-    static final Point2d RDPB = new Point2d("RDPB",  32.0,  -39.0); //R
-    static final Point2d RDPC = new Point2d("RDPC",  25.0,  -39.0);
-    static final Point2d RDPD = new Point2d("RDPD",  35.0,  -39.0);
-    static final Point2d RDPF = new Point2d("RDPF",  31.0,  -39.0);
-    static final Point2d RDPE = new Point2d("RDPE",  14.0,  -39.0);
+    static final Point2d RGPB = new Point2d("RGPB", -58.5,   -39.0); //R
+    static final Point2d RAPA = new Point2d("RAPA", -33.5,   -39.0); //R
+    static final Point2d RAPB = new Point2d("RAPB", -35.0,   -39.0); //R
+    static final Point2d RDPA = new Point2d("RDPA",  42.0,   -39.0); //R
+    static final Point2d RDPB = new Point2d("RDPB",  32.0,   -39.0); //R
+    static final Point2d RDPC = new Point2d("RDPC",  18.0,   -39.0);
+    static final Point2d RDPD = new Point2d("RDPD",  35.0,   -39.0);
+    static final Point2d RDPF = new Point2d("RDPF",  31.0,   -39.0);
+    static final Point2d RDPE = new Point2d("RDPE",  14.0,   -39.0);
 
     static final Point2d RTP1 = new Point2d("RTP1", -34.5, -39.0); //R
     static final Point2d RPP1 = new Point2d("RPP1",   5.0, -39.0); //R

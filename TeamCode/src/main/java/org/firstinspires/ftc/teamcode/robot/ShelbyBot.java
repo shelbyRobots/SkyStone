@@ -228,6 +228,24 @@ public class ShelbyBot
                         pid.p, pid.i, pid.d, pid.f);
             }
 
+            if (leftMotor instanceof DcMotorEx)
+            {
+                DcMotorEx lex = (DcMotorEx) leftMotor;
+                PIDFCoefficients pid;
+                pid = lex.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+                pid.p = 6.0;
+                lex.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pid);
+            }
+
+            if (rightMotor instanceof DcMotorEx)
+            {
+                DcMotorEx rex = (DcMotorEx) rightMotor;
+                PIDFCoefficients pid;
+                pid = rex.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+                pid.p = 6.0;
+                rex.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pid);
+            }
+
             capMap.put("drivetrain", true);
         }
         catch (Exception e)

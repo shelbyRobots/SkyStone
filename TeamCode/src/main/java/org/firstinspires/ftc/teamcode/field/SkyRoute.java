@@ -26,13 +26,13 @@ public class SkyRoute extends Route
 
         Segment.Action none    = Segment.Action.NOTHING;
         Segment.Action scan    = Segment.Action.SCAN_IMAGE;
-        Segment.Action align   = Segment.Action.SET_ALIGN;
+        Segment.Action algn    = Segment.Action.SET_ALIGN;
         Segment.Action drop    = Segment.Action.DROP;
 
         Segment.Action park    = Segment.Action.PARK;
         Segment.Action push    = Segment.Action.PUSH;
         Segment.Action rtct    = Segment.Action.RETRACT;
-        Segment.Action grab   = Segment.Action.GRAB;
+        Segment.Action grab    = Segment.Action.GRAB;
         Segment.TargetType encType = Segment.TargetType.ENCODER;
         Segment.TargetType colType = Segment.TargetType.COLOR;
 
@@ -42,8 +42,10 @@ public class SkyRoute extends Route
             addPoint(points, fwd, 0.60, 1.00, encType, scan, SkyField.RIS1);
             addPoint(points, fwd, 0.60, 1.00, encType, none, SkyField.RTP1);
             addPoint(points, rev, 0.50, 1.00, encType, grab, SkyField.RGPA);
+            addPoint(points, fwd, 0.80, 1.00, encType, algn, SkyField.RAPA);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPA);
             addPoint(points, rev, 0.80, 1.00, encType, grab, SkyField.RGPB);
+            addPoint(points, fwd, 0.80, 1.00, encType, algn, SkyField.RAPB);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPB);
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }
@@ -76,7 +78,7 @@ public class SkyRoute extends Route
             addPoint(points, rev, 0.50, 1.00, encType, grab, SkyField.RGPA);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPD);
             addPoint(points, rev, 0.80, 1.00, encType, grab, SkyField.RGPB);
-            addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPF);
+            addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPD);
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }
 
