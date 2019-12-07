@@ -428,7 +428,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                     curSeg.getFieldHeading());
             drvTrn.logData(true, segName + " " + segLogStr);
 
-            if (curSeg.getLength() >= 0.1)
+            if (curSeg.getLength() >= 0.01)
             {
                 RobotLog.ii(TAG, "ENCODER TURN %s t=%6.4f", curSeg.getName(),
                         startTimer.seconds());
@@ -436,8 +436,10 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
                 RobotLog.ii(TAG, "GYRO TURN %s t=%6.4f", curSeg.getName(),
                         startTimer.seconds());
                 doGyroTurn(curSeg.getFieldHeading(), segName + " gyroTurn");
+            }
 
-
+            if (curSeg.getLength() >= 0.1)
+            {
                 RobotLog.ii(TAG, "MOVE %s t=%6.4f", curSeg.getName(),
                         startTimer.seconds());
                 doMove(curSeg);
@@ -803,6 +805,21 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         }
     }
 
+    private void parkArm()
+    {
+        RobotLog.dd(TAG, "doDrop threaded lift to MOVE, rot to FWD, extend to SNUG at " +
+                startTimer.seconds());
+        MoveArmTask tsk = new MoveArmTask();
+        tsk.setElevPos(skyBot.LIFT_MOVE_CNTS);
+        tsk.setArotPos(skyBot.ARM_ROT_FWD);
+        tsk.setXtndPos(skyBot.ARM_EXT_SNUG_POS);
+        tsk.setElevDly(0.0);
+        tsk.setXtndDly(0.0);
+        tsk.setArotDly(0.0);
+        RobotLog.dd(TAG, "doDrop submitting non-delay task");
+        es.submit(tsk);
+    }
+
     private void doDrop(int segIdx)
     {
         RobotLog.dd(TAG, "Dropping stone %d on seg %d at %f", grabNum, segIdx, startTimer.seconds());
@@ -812,12 +829,14 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         {
             RobotLog.dd(TAG, "Running out of time %f - drop now", startTimer.seconds());
             skyBot.openGripper();
+            parkArm();
             return;
         }
 
         if(startPos == Route.StartPos.START_5)
         {
             skyBot.openGripper();
+            parkArm();
             return;
         }
 
@@ -830,30 +849,23 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         RobotLog.dd(TAG,"doDrop lift to MOVE, rot to FWD, extend to SNUG at " +
                 startTimer.seconds());
 
-        sleep(100);
+        sleep(10);
 
         skyBot.openGripper();
 
-        double tmpRot = skyBot.ARM_DRP_LFT;
-        if(alliance == Field.Alliance.BLUE) tmpRot = skyBot.ARM_DRP_RGT;
+        sleep(50);
 
-        skyBot.moveArmToLoc(skyBot.LIFT_STOW_CNTS, tmpRot, skyBot.ARM_EXT_SNUG_POS);
-        skyBot.closeGripper();
+        //double tmpRot = skyBot.ARM_DRP_LFT;
+        //if(alliance == Field.Alliance.BLUE) tmpRot = skyBot.ARM_DRP_RGT;
+
+        skyBot.moveArmToLoc(skyBot.LIFT_STOW_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_SNUG_POS,
+                      0.0, 0.0, 0.0, -1, 0.5);
+        //skyBot.closeGripper();
         skyBot.moveArmToLoc(skyBot.LIFT_MOVE_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_SNUG_POS);
 
         if(grabNum == 2)
         {
-            RobotLog.dd(TAG, "doDrop threaded lift to MOVE, rot to FWD, extend to SNUG at " +
-                    startTimer.seconds());
-            MoveArmTask tsk = new MoveArmTask();
-            tsk.setElevPos(skyBot.LIFT_MOVE_CNTS);
-            tsk.setArotPos(skyBot.ARM_ROT_FWD);
-            tsk.setXtndPos(skyBot.ARM_EXT_SNUG_POS);
-            tsk.setElevDly(0.0);
-            tsk.setXtndDly(0.0);
-            tsk.setArotDly(0.0);
-            RobotLog.dd(TAG, "doDrop submitting non-delay task");
-            es.submit(tsk);
+            parkArm();
         }
         else
         {

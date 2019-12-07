@@ -42,9 +42,9 @@ public class SkyField extends Field
     static final Point2d RSP5 = new Point2d("RSP5", -34.5,   -21.0); //R
     static final Point2d RSP6 = new Point2d("RSP6", -26.5,   -21.0); //R
 
-    static final Point2d RGPA = new Point2d("RGPA", -34.62,  -39.0); //R
+    static final Point2d RGPA = new Point2d("RGPA", -34.52,  -39.0); //R
     static final Point2d RGPB = new Point2d("RGPB", -58.5,   -39.0); //R
-    static final Point2d RAPA = new Point2d("RAPA", -33.5,   -39.0); //R
+    static final Point2d RAPA = new Point2d("RAPA", -34.52,  -39.0); //R
     static final Point2d RAPB = new Point2d("RAPB", -35.0,   -39.0); //R
     static final Point2d RDPA = new Point2d("RDPA",  42.0,   -39.0); //R
     static final Point2d RDPB = new Point2d("RDPB",  32.0,   -39.0); //R

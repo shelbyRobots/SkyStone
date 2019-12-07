@@ -112,7 +112,8 @@ public class SkyBot extends TilerunnerGtoBot {
     private double ARMROT_GEAR_EXT = 2.0;
     private double ARMROT_CPR = ARMROT_COUNTS_PER_MOTOR_REV * ARMROT_GEAR_ONE * ARMROT_GEAR_EXT;
     public double ARMROT_CPD = ARMROT_CPR / 360.0;
-    private final double ROT_THRESH = 8.0*ARMROT_CPD;
+    private final double ROT_THRESH = 3.0*ARMROT_CPD;
+    private final double ROT_PID_THRESH = 8.0*ARMROT_CPD;
     public int ARM_ROT_FWD = (int) (  0.0 * ARMROT_CPD);
     public int ARM_ROT_RGT = (int) (-90.0 * ARMROT_CPD);
     public int ARM_ROT_LFT = (int) ( 90.0 * ARMROT_CPD);
@@ -127,6 +128,8 @@ public class SkyBot extends TilerunnerGtoBot {
 
     public int ARM_EXT_RGT_R = (int) (-100.0 * ARMROT_CPD);
     public int ARM_EXT_LFT_L = (int) ( 100.0 * ARMROT_CPD);
+    public int ARM_EXT_RGT_L = (int) (-80.0 * ARMROT_CPD);
+    public int ARM_EXT_LFT_R = (int) ( 80.0 * ARMROT_CPD);
 
     //following asumes 270 degree servo range
     //public double ARM_ROT_RGT = 0.16;
@@ -485,7 +488,7 @@ public class SkyBot extends TilerunnerGtoBot {
         armRotate.setTargetPosition((int)rotPos);
         armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        double armRotSpd = 0.5;
+        double armRotSpd = 0.35;
         armRotate.setPower(armRotSpd);
     }
     //public void setRotatePos(int targetPos)
@@ -679,12 +682,20 @@ public class SkyBot extends TilerunnerGtoBot {
     public void moveArmToLoc(double liftPos, double rotPos, double extndPos,
                              double liftDly, double rotDly, double extndDly)
     {
+        moveArmToLoc(liftPos, rotPos, extndPos, liftDly, rotDly, extndDly, 0, 0.0);
+    }
+
+    public void moveArmToLoc(double liftPos, double rotPos, double extndPos,
+                             double liftDly, double rotDly, double extndDly,
+                             int gripAct,    double gripDly)
+    {
         armIsMoving = true;
         RobotLog.dd(TAG, "moveArmTo " + liftPos + " " + rotPos + " " + extndPos);
 
         ElapsedTime extendTimer = new ElapsedTime();
         ElapsedTime liftTimer = new ElapsedTime();
         ElapsedTime rotTimer = new ElapsedTime();
+        ElapsedTime grpTimer = new ElapsedTime();
 
         double extendTimeout = 2.5;
         double liftTimeLimit = 2.5;
@@ -696,6 +707,7 @@ public class SkyBot extends TilerunnerGtoBot {
         boolean liftStarted = false;
         boolean xtndStarted = false;
         boolean arotStarted = false;
+        boolean gripStarted = false;
         boolean liftDone = false;
         boolean xtndDone = false;
         boolean arotDone = false;
@@ -706,6 +718,13 @@ public class SkyBot extends TilerunnerGtoBot {
 
         while (op.opModeIsActive())
         {
+            if(grpTimer.seconds() > gripDly && !gripStarted)
+            {
+                gripStarted = true;
+                if(gripAct == 1) openGripper();
+                else if (gripAct == -1) closeGripper();
+            }
+
             if(liftTimer.seconds() > liftDly && !liftStarted)
             {
                 liftStarted = true;

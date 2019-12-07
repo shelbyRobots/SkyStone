@@ -65,8 +65,10 @@ public class SkyRoute extends Route
             addPoint(points, fwd, 0.60, 1.00, encType, scan, SkyField.RIS1);
             addPoint(points, fwd, 0.60, 1.00, encType, none, SkyField.RTP1);
             addPoint(points, rev, 0.50, 1.00, encType, grab, SkyField.RGPA);
+            addPoint(points, fwd, 0.80, 1.00, encType, algn, SkyField.RAPA);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPC);
             addPoint(points, rev, 0.80, 1.00, encType, grab, SkyField.RGPB);
+            addPoint(points, fwd, 0.80, 1.00, encType, algn, SkyField.RAPB);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPC);
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }
@@ -76,8 +78,10 @@ public class SkyRoute extends Route
             addPoint(points, fwd, 0.60, 1.00, encType, scan, SkyField.RIS1);
             addPoint(points, fwd, 0.60, 1.00, encType, none, SkyField.RTP1);
             addPoint(points, rev, 0.50, 1.00, encType, grab, SkyField.RGPA);
+            addPoint(points, fwd, 0.80, 1.00, encType, algn, SkyField.RAPA);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPD);
             addPoint(points, rev, 0.80, 1.00, encType, grab, SkyField.RGPB);
+            addPoint(points, fwd, 0.80, 1.00, encType, algn, SkyField.RAPB);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPD);
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }
@@ -88,8 +92,10 @@ public class SkyRoute extends Route
             addPoint(points, fwd, 0.60, 1.00, encType, scan, SkyField.RIS1);
             addPoint(points, fwd, 0.60, 1.00, encType, none, SkyField.RTP1);
             addPoint(points, rev, 0.50, 1.00, encType, grab, SkyField.RGPA);
+            addPoint(points, fwd, 0.80, 1.00, encType, algn, SkyField.RAPA);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPE);
             addPoint(points, rev, 0.80, 1.00, encType, grab, SkyField.RGPB);
+            addPoint(points, fwd, 0.80, 1.00, encType, algn, SkyField.RAPB);
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPE);
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }
