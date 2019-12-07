@@ -176,7 +176,7 @@ public class Teleop_Driver extends InitLinearOpMode
         boolean changeMode   =  gpad2.just_pressed(ManagedGamepad.Button.Y);
         boolean overrideLims =  gpad2.pressed(ManagedGamepad.Button.R_BUMP);
 
-        double rscale = 0.45;
+        double rscale = 0.25;
 
         if(changeMode)
         {
