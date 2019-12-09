@@ -488,7 +488,7 @@ public class SkyBot extends TilerunnerGtoBot {
         armRotate.setTargetPosition((int)rotPos);
         armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        double armRotSpd = 0.35;
+        double armRotSpd = 0.30;
         armRotate.setPower(armRotSpd);
     }
     //public void setRotatePos(int targetPos)
@@ -787,13 +787,13 @@ public class SkyBot extends TilerunnerGtoBot {
             }
             else if (arotStarted && !arotDone)
             {
-                if(Math.abs(curRotPos - rotPos) < ROT_THRESH)
+                if(Math.abs(curRotPos - rotPos) < ROT_PID_THRESH)
                 {
                     //armRotate.setPower(0.1);
                     arotCompleteTime = rotTimer.seconds();
                     RobotLog.dd(TAG, "Completed rotate in " + arotCompleteTime + "s");
                     arotDone = true;
-                    armRotate.setPower(0.4);
+                    armRotate.setPower(0.3);
                     armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 else

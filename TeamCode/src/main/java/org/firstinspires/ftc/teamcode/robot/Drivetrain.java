@@ -864,9 +864,8 @@ public class Drivetrain
 
     private double getGyroError(double tgtHdg)
     {
-        double robotError;
         double gHdg = curHdg;
-        robotError = tgtHdg - gHdg;
+        double robotError = tgtHdg - gHdg;
         while (robotError > 180)   robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;
@@ -874,28 +873,18 @@ public class Drivetrain
 
     private double getSteer(double error, double PCoeff)
     {
-//        double maxSteerAng = 45.0;
-//        double minSteerAng = 5.0;
-//        double maxStr = 1.0;
-//        double minStr = minGyroTurnSpeed;
-//        double slope = (maxStr - minStr)/(maxSteerAng - minSteerAng);
-//        double str =  slope * Math.abs(error);
-//        str = Range.clip(str, minStr, maxStr);
-//        str *= Math.signum(error);
-//        return str;
         return Range.clip(error * PCoeff, -1, 1);
     }
 
     private double getTurnSteer(double error)
     {
-        double maxSteerAng = 45.0;
-        double minSteerAng = 5.0;
-        double maxStr = 1.0;
-        double minStr = minGyroTurnSpeed;
-        double slope = (maxStr - minStr)/(maxSteerAng - minSteerAng);
-        double str =  slope * Math.abs(error);
-        str = Range.clip(str, minStr, maxStr);
-        str *= Math.signum(error);
+        double sign = Math.signum(error);
+        double absError = Math.abs(error);
+        if      (absError >= maxStrAng) return sign * maxStr;
+        else if (absError <= minStrAng) return sign * minStr;
+
+        double str =  strSlope * absError + strB;
+        str = Range.clip(str, minStr, maxStr) * sign;
         return str;
     }
 
@@ -1415,7 +1404,14 @@ public class Drivetrain
     private double printTimeout = 0.05;
 
     private double minSpeed = 0.1;
-    private double minGyroTurnSpeed = 0.10;
+    private double minGyroTurnSpeed = 0.12;
+
+    private double maxStrAng = 35.0;
+    private double minStrAng = 5.0;
+    private double maxStr = 1.0;
+    private double minStr = minGyroTurnSpeed;
+    private double strSlope = (maxStr - minStr)/(maxStrAng - minStrAng);
+    private double strB = maxStr - strSlope * maxStrAng;
 
     private CommonUtil com;
     private LinearOpMode op;

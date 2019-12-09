@@ -842,12 +842,9 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
 
         double rotPos = getArmDropRot();
 
-        RobotLog.dd(TAG,"doDrop lift to DRP, rot to drop, extend to DROP at " +
+        RobotLog.dd(TAG,"doDrop lift to STOW, rot to drop, extend to DROP at " +
                 startTimer.seconds());
         skyBot.moveArmToLoc(skyBot.LIFT_STOW_CNTS, rotPos, skyBot.ARM_EXT_DROP_POS, 0, 0.2, 0.2);
-
-        RobotLog.dd(TAG,"doDrop lift to MOVE, rot to FWD, extend to SNUG at " +
-                startTimer.seconds());
 
         sleep(10);
 
@@ -858,9 +855,15 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         //double tmpRot = skyBot.ARM_DRP_LFT;
         //if(alliance == Field.Alliance.BLUE) tmpRot = skyBot.ARM_DRP_RGT;
 
+        RobotLog.dd(TAG,"doDrop lift to STOW, rot to FWD, extend to SNUG at " +
+                startTimer.seconds() + " closeGrip");
+
         skyBot.moveArmToLoc(skyBot.LIFT_STOW_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_SNUG_POS,
-                      0.0, 0.0, 0.0, -1, 0.5);
-        //skyBot.closeGripper();
+                      0.0, 0.0, 0.0, -1, 0.25);
+
+        RobotLog.dd(TAG,"doDrop lift to MOVE, rot to FWD, extend to SNUG at " +
+                startTimer.seconds());
+
         skyBot.moveArmToLoc(skyBot.LIFT_MOVE_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_SNUG_POS);
 
         if(grabNum == 2)
