@@ -35,6 +35,8 @@ public class SkyBot extends TilerunnerGtoBot {
     //201mm / 8mm/rev = 25.125rev
     //25.125rev * 145.6 cpr = 3658 counts
 
+    public DcMotor parkMotor = null;
+
     private final double LIFTER_CPER = 28; //quad encoder cnts/encoder rev
     private final double LIFTER_INT_GEAR = 3.7; //13.7;  // 5.2;
     private final double LIFTER_CPOR = LIFTER_CPER * LIFTER_INT_GEAR; //383.6 //145.6 cnts/outShaftRev
@@ -175,6 +177,7 @@ public class SkyBot extends TilerunnerGtoBot {
         initSensors(initDirSensor);
         initArm();
         initHolder();
+        initParker();
         initCapabilities();
     }
 
@@ -273,8 +276,10 @@ public class SkyBot extends TilerunnerGtoBot {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    private boolean initLifter() {
-        try {
+    private boolean initLifter()
+    {
+        try
+        {
             _liftyBoi = hwMap.dcMotor.get("liftyboi");
 
             _liftyBoi.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -282,12 +287,33 @@ public class SkyBot extends TilerunnerGtoBot {
             _liftyBoi.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             _liftyBoi.setPower(0.0f);
             _liftyBoi.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             RobotLog.ee(TAG, "ERROR in initLifter\n" + e.toString());
             return false;
         }
 
         capMap.put("lifter", true);
+        return true;
+    }
+
+    private boolean initParker()
+    {
+        try
+        {
+            parkMotor = hwMap.dcMotor.get("parkyboi");
+
+            parkMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            //_liftyBoi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            parkMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            parkMotor.setPower(0.0f);
+            parkMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } catch (Exception e)
+        {
+            RobotLog.ee(TAG, "ERROR in parkyboi\n" + e.toString());
+            return false;
+        }
+
         return true;
     }
 

@@ -223,6 +223,15 @@ public class Teleop_Driver extends InitLinearOpMode
         }
     }
 
+    private void controlParker()
+    {
+        if(robot.parkMotor == null || driveType == TELEOP_DRIVE_TYPE.TANK_DRIVE) return;
+
+        double pDrive  = -gpad1.value(ManagedGamepad.AnalogInput.L_STICK_Y);
+
+        robot.parkMotor.setPower(pDrive);
+    }
+
     private boolean gripTog = false;
     private void controlGripper()
     {
@@ -452,6 +461,7 @@ public class Teleop_Driver extends InitLinearOpMode
         gpad1.update();
         controlDrive();
         controlLatch();
+        controlParker();
     }
 
     private void doMove(Segment seg)
