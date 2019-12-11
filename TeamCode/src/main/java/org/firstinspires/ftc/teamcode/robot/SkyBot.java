@@ -95,7 +95,7 @@ public class SkyBot extends TilerunnerGtoBot {
     private final int EXTND_COUNTS_PER_MOTOR_REV = 4;
     private final double EXTND_GEAR_ONE = 72;
     private final double EXTND_WHEEL_DIAM = 1.57;
-    private final double EXTND_CPR = ELEV_COUNTS_PER_MOTOR_REV * ELEV_GEAR_ONE;
+    private final double EXTND_CPR = EXTND_COUNTS_PER_MOTOR_REV * EXTND_GEAR_ONE;
     private final double EXTND_SCALE = 1.0;
     public double EXTND_CPI = EXTND_CPR / (Math.PI * EXTND_WHEEL_DIAM) / EXTND_SCALE;
     private final int EXT_THRESH = (int) (0.667 * EXTND_CPI);
@@ -147,6 +147,19 @@ public class SkyBot extends TilerunnerGtoBot {
 
 //    public double ARM_ROT_MIN = 0.0;
 //    public double ARM_ROT_MAX = 1.0;
+
+    private final int PRKR_COUNTS_PER_MOTOR_REV = 4;
+    private final double PRKR_GEAR_ONE = 72;
+    private final double PRKR_WHEEL_DIAM = 2.25;
+    private final double PRKR_CPR = PRKR_COUNTS_PER_MOTOR_REV * PRKR_GEAR_ONE;
+    private final double PRKR_SCALE = 1.0;
+    public double PRKR_CPI = PRKR_CPR / (Math.PI * PRKR_WHEEL_DIAM) / PRKR_SCALE;
+    private final int PRKR_THRESH = (int) (1.0 * PRKR_CPI);
+    private int PRKR_EXTND_CNT    = 0;
+    private int PRKR_STOW_POS =  (int)  (0.0 * EXTND_CPI);
+    public  int PRKR_SHRT_POS =  (int)  (6.0 * EXTND_CPI);
+    public  int PRKR_MID_POS  =  (int)  (12.0 * EXTND_CPI);
+    public  int PRKR_LNG_POS  =  (int)  (24.0 * EXTND_CPI);
 
     private DigitalChannel armIndexSensor = null;
 
@@ -297,6 +310,7 @@ public class SkyBot extends TilerunnerGtoBot {
         return true;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean initParker()
     {
         try
@@ -457,6 +471,96 @@ public class SkyBot extends TilerunnerGtoBot {
         armExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    private void startParkerMove(int targetPos)
+    {
+        if (parkMotor == null) {
+            RobotLog.ee(TAG, "parker is null - fix it");
+            return;
+        }
+
+        int curPos = parkMotor.getCurrentPosition();
+
+        RobotLog.dd(TAG, "parkMotor to %d %f", targetPos, PRKR_CPI);
+
+        parkMotor.setPower(0.0);
+        parkMotor.setTargetPosition(targetPos);
+        double parkerSpd = 0.95;
+
+        if (Math.abs(targetPos - curPos) < PRKR_THRESH) parkerSpd = 0.0;
+        parkMotor.setTargetPosition(targetPos);
+
+        if(targetPos > curPos)
+            parkMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        else
+        {
+            parkMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            parkerSpd = -parkerSpd;
+        }
+
+        if (Math.abs(targetPos - curPos) < PRKR_THRESH) parkerSpd = 0.0;
+
+        RobotLog.dd(TAG, "parker to %d %f pwr: %f", targetPos, PRKR_CPI, parkerSpd);
+        parkMotor.setPower(parkerSpd);
+    }
+
+    public void setParkerPos(int targetPos) //targetPos in counts
+    {
+        if (parkMotor == null)
+        {
+            RobotLog.ee(TAG, "parker is null - fix it");
+            return;
+        }
+
+        startParkerMove(targetPos);
+
+        int curPos = parkMotor.getCurrentPosition();
+        while (op.opModeIsActive() &&
+                Math.abs(curPos - targetPos) > PRKR_THRESH)
+        {
+            RobotLog.dd(TAG, "In setParkerPos.  targetpos=" + targetPos + " curPos=" +
+                    curPos);
+
+            curPos = parkMotor.getCurrentPosition();
+            if(Math.abs(curPos - targetPos) < PRKR_THRESH)
+            {
+                parkMotor.setPower(0.8);
+                parkMotor.setTargetPosition(targetPos);
+                break;
+            }
+
+        }
+
+        parkMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void zeroParker()
+    {
+        if(parkMotor == null) return;
+        parkMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        parkMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void putParkHome()   { setParkerPos(PRKR_STOW_POS); }
+    public void putParkShrt()   { setParkerPos(PRKR_SHRT_POS); }
+    public void putParkMid()    { setParkerPos(PRKR_MID_POS); }
+    public void putParkLong()   { setParkerPos(PRKR_LNG_POS); }
+
+    public void threadedParkLong()
+    {
+        class ParkRunnable implements Runnable
+        {
+            public void run()
+            {
+                putParkLong();
+            }
+        }
+
+        ParkRunnable mr = new ParkRunnable();
+        Thread parkThread = new Thread(mr, "parkThread");
+        parkThread.start();
+
+    }
+
     private boolean lastRotUseCnts = false;
 
     public void setRotate(double spd, boolean useCnts, boolean override)
@@ -531,7 +635,7 @@ public class SkyBot extends TilerunnerGtoBot {
         while(op.opModeIsActive())
         {
             RobotLog.dd(TAG, "In armRotate.  targetpos=" + targetPos + " curPos=" +
-                    armExtend.getCurrentPosition());
+                    armRotate.getCurrentPosition());
             if(Math.abs(armRotate.getCurrentPosition() - targetPos) < (int)ROT_THRESH)
             {
                 break;

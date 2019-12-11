@@ -771,6 +771,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
             if(!getOut)
             {
                 RobotLog.dd(TAG, "Starting Threaded Arm Move");
+                if(grabNum == 2) skyBot.threadedParkLong();
                 skyBot.moveArmToLoc(elevPos, arotPos, xtndPos, elevDly, arotDly, xtndDly);
                 RobotLog.dd(TAG, "Completed Threaded Arm Move");
             }
