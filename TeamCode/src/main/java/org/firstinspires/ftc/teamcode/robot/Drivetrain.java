@@ -1404,9 +1404,9 @@ public class Drivetrain
     private double printTimeout = 0.05;
 
     private double minSpeed = 0.1;
-    private double minGyroTurnSpeed = 0.12;
+    private double minGyroTurnSpeed = 0.10;
 
-    private double maxStrAng = 35.0;
+    private double maxStrAng = 40.0;
     private double minStrAng = 5.0;
     private double maxStr = 1.0;
     private double minStr = minGyroTurnSpeed;
