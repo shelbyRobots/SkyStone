@@ -119,8 +119,8 @@ public class SkyBot extends TilerunnerGtoBot {
     public int ARM_ROT_FWD = (int) (  0.0 * ARMROT_CPD);
     public int ARM_ROT_RGT = (int) (-90.0 * ARMROT_CPD);
     public int ARM_ROT_LFT = (int) ( 90.0 * ARMROT_CPD);
-    public int ARM_DRP_RGT = (int) (-45.0 * ARMROT_CPD);
-    public int ARM_DRP_LFT = (int) ( 45.0 * ARMROT_CPD);
+    public int ARM_DRP_RGT = (int) (-25.0 * ARMROT_CPD);
+    public int ARM_DRP_LFT = (int) ( 25.0 * ARMROT_CPD);
     private int ARM_ROT_MIN = (int) (-135.0 * ARMROT_CPD);
     private int ARM_ROT_MAX = (int) ( 135.0 * ARMROT_CPD);
     public int ARM_GRB_RGT_L = (int) ( -65.0 * ARMROT_CPD);

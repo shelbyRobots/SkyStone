@@ -837,6 +837,7 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         if(startPos == Route.StartPos.START_5)
         {
             skyBot.openGripper();
+            sleep(750);
             parkArm();
             return;
         }
@@ -856,11 +857,14 @@ public class SkyAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButto
         //double tmpRot = skyBot.ARM_DRP_LFT;
         //if(alliance == Field.Alliance.BLUE) tmpRot = skyBot.ARM_DRP_RGT;
 
+        int closeAct = 0;
+        if(startPos == Route.StartPos.START_1) closeAct = -1;
+
         RobotLog.dd(TAG,"doDrop lift to STOW, rot to FWD, extend to SNUG at " +
                 startTimer.seconds() + " closeGrip");
 
         skyBot.moveArmToLoc(skyBot.LIFT_STOW_CNTS, skyBot.ARM_ROT_FWD, skyBot.ARM_EXT_SNUG_POS,
-                      0.0, 0.0, 0.0, -1, 0.25);
+                      0.0, 0.0, 0.0, closeAct, 0.25);
 
         RobotLog.dd(TAG,"doDrop lift to MOVE, rot to FWD, extend to SNUG at " +
                 startTimer.seconds());
