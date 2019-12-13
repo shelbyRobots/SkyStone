@@ -65,6 +65,9 @@ public class SkyField extends Field
     static final Point2d RBP5 = new Point2d( "RBP5", 42.0, -52.0); //unlatch
     static final Point2d RBP6 = new Point2d( "RBP6",  4.0, -60.0);
 
+    static final Point2d RPPS = new Point2d( "RPPS",  9.0, -61.5);
+    static final Point2d RPP6 = new Point2d( "RPP6",  0.0, -61.5);
+
 
     private static final int ALNC_RED = 0;
     private static final int ALNC_BLU = 1;

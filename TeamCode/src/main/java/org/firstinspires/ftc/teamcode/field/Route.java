@@ -162,7 +162,8 @@ public abstract class Route
         START_2,
         START_3,
         START_4,
-        START_5
+        START_5,
+        START_6
     }
 
     public enum ParkPos implements PositionOption

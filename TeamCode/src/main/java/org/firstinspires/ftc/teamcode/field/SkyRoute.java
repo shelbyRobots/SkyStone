@@ -35,7 +35,6 @@ public class SkyRoute extends Route
         Segment.Action grab    = Segment.Action.GRAB;
         Segment.TargetType encType = Segment.TargetType.ENCODER;
         Segment.TargetType colType = Segment.TargetType.COLOR;
-
         if(startPos == StartPos.START_1)  //MAIN AUTON - UNMOVED PLATFORM
         {
             points.add(SkyField.RLS1);
@@ -99,6 +98,13 @@ public class SkyRoute extends Route
             addPoint(points, fwd, 0.80, 1.00, encType, drop, SkyField.RDPE);
             addPoint(points, rev, 0.80, 1.00, encType, park, SkyField.RPP1);
         }
+
+        else if(startPos == StartPos.START_6)  //JUST DROP IN ZONE
+        {
+            points.add(SkyField.RPPS);
+            addPoint(points, fwd, 0.60, 1.00, encType, park, SkyField.RPP6);
+        }
+
 
         return points;
     }
