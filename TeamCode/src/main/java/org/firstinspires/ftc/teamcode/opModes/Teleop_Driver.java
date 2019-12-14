@@ -294,13 +294,18 @@ public class Teleop_Driver extends InitLinearOpMode
         double step_dist = 2.0;
         double step_spd  = 0.4;
         double step_ang  = 5.0;
+        double drvScale = 1.0;
 
         double fHdg = robot.getGyroFhdg();
         double detail_speed = 0.18;
         if(fst_dtl) detail_speed = 0.3;
-        if(xfst_dtl) detail_speed = 0.5;
+        if(xfst_dtl)
+        {
+            detail_speed = 0.5;
+            drvScale = 1.25;
+        }
 
-        double maxIPS = 50.0;
+        double maxIPS = 50.0 * drvScale;
         double maxRPS = maxIPS/(4.0*Math.PI);
         double maxDPS = maxRPS*360.0;
 
