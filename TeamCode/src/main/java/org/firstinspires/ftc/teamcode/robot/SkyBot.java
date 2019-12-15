@@ -159,7 +159,7 @@ public class SkyBot extends TilerunnerGtoBot {
     private int PRKR_STOW_POS =  (int)  (0.0 * EXTND_CPI);
     public  int PRKR_SHRT_POS =  (int)  (6.0 * EXTND_CPI);
     public  int PRKR_MID_POS  =  (int)  (12.0 * EXTND_CPI);
-    public  int PRKR_LNG_POS  =  (int)  (24.0 * EXTND_CPI);
+    public  int PRKR_LNG_POS  =  (int)  (30.0 * EXTND_CPI);
 
     private DigitalChannel armIndexSensor = null;
 
