@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -33,7 +32,7 @@ public class RampMotorTest extends LinearOpMode {
     private static final String TAG = "SJH_RMT";
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         DcMotor left_drive = null;
         DcMotor right_drive = null;
@@ -69,24 +68,43 @@ public class RampMotorTest extends LinearOpMode {
         // Wait for the start button
         telemetry.addData(">", "Press Start to run Motors." );
         telemetry.update();
-        PIDCoefficients pcu = lex.getPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        PIDCoefficients pcn = lex.getPIDCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+
+        PIDFCoefficients pcu = null;
+        PIDFCoefficients pcn = null;
+        int ltpt = 0;
+        int rtpt = 0;
+        double lspd;
+        double rspd;
+
+        if (lex != null)
+        {
+            pcu = lex.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+            pcn = lex.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+            ltpt = lex.getTargetPositionTolerance();
+        }
+        if (rex != null)
+        {
+            rtpt = rex.getTargetPositionTolerance();
+        }
+
         while(!isStarted())
         {
             if(left_drive != null)
             {
                 telemetry.addData("LCNT", "%d", left_drive.getCurrentPosition());
-                telemetry.addData("LTP", "%d", lex.getTargetPositionTolerance());
-                telemetry.addData("PCU", "P:%4.2f I:%4.2f D:%4.2f",
-                        pcu.p, pcu.i, pcu.d);
-                telemetry.addData("PCN", "P:%4.2f I:%4.2f D:%4.2f",
-                        pcn.p, pcn.i, pcn.d);
-
             }
             if(right_drive != null)
             {
                 telemetry.addData("RCNT", "%d", right_drive.getCurrentPosition());
-                telemetry.addData("RTP", "%d", rex.getTargetPositionTolerance());
+            }
+            if (pcu != null && pcn != null)
+            {
+                telemetry.addData("LTP", "%d", ltpt);
+                telemetry.addData("RTP", "%d", rtpt);
+                telemetry.addData("PCU", "P:%4.2f I:%4.2f D:%4.2f F:%4.2f",
+                        pcu.p, pcu.i, pcu.d, pcu.f);
+                telemetry.addData("PCN", "P:%4.2f I:%4.2f D:%4.2f F:%4.2f",
+                        pcn.p, pcn.i, pcn.d, pcn.f);
             }
             telemetry.update();
             sleep(10);
@@ -102,7 +120,7 @@ public class RampMotorTest extends LinearOpMode {
                 power += INCREMENT ;
                 if (power >= MAX_FWD ) {
                     power = MAX_FWD;
-                    rampUp = !rampUp;   // Switch ramp direction
+                    rampUp = false;   // Switch ramp direction
                 }
             }
             else {
@@ -110,42 +128,49 @@ public class RampMotorTest extends LinearOpMode {
                 power -= INCREMENT ;
                 if (power <= MAX_REV ) {
                     power = MAX_REV;
-                    rampUp = !rampUp;  // Switch ramp direction
+                    rampUp = true;  // Switch ramp direction
                 }
             }
 
             // Display the current value
             telemetry.addData("Motor Power", "%5.2f", power);
 
-            if(left_drive != null)
+            if(left_drive != null && lex !=null)
             {
                 int curLeft = left_drive.getCurrentPosition();
-                double lspd = lex.getVelocity(AngleUnit.DEGREES);
+
                 telemetry.addData("LCNT", "%d", curLeft);
                 telemetry.addData("LLST", "%d", curLeft - lastLeft);
-                telemetry.addData("LSPD", "%4.2f", lspd);
                 RobotLog.dd(TAG, "Power %4.2f LCounts %d", lastPower, curLeft - lastLeft);
                 lastLeft = curLeft;
             }
-            if(right_drive != null)
+            if(lex != null)
+            {
+                lspd = lex.getVelocity(AngleUnit.DEGREES);
+                telemetry.addData("LSPD", "%4.2f", lspd);
+            }
+            if(right_drive != null && rex != null)
             {
                 int curRight = right_drive.getCurrentPosition();
-                double rspd = rex.getVelocity(AngleUnit.DEGREES);
                 telemetry.addData("RCNT", "%d", curRight);
                 telemetry.addData("RLST", "%d", curRight - lastRight);
-                telemetry.addData("RSPD", "%4.2f", rspd);
                 RobotLog.dd(TAG, "Power %4.2f RCounts %d", lastPower, curRight - lastRight);
                 lastRight = curRight;
+            }
+            if(rex != null)
+            {
+                rspd = rex.getVelocity(AngleUnit.DEGREES);
+                telemetry.addData("RSPD", "%4.2f", rspd);
             }
 
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
 
             // Set the motor to the new power and pause;
-            //if(left_drive !=null) left_drive.setPower(power);
-            //if(right_drive != null) right_drive.setPower(power);
-            if(left_drive !=null)   lex.setVelocity(1500, AngleUnit.DEGREES);
-            if(right_drive != null) rex.setVelocity(1500, AngleUnit.DEGREES);
+            if(left_drive !=null) left_drive.setPower(power);
+            if(right_drive != null) right_drive.setPower(power);
+            //if(lex !=null)   lex.setVelocity(1500, AngleUnit.DEGREES);
+            //if(rex != null) rex.setVelocity(1500, AngleUnit.DEGREES);
             lastPower = power;
             sleep(CYCLE_MS);
             idle();
