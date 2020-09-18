@@ -20,7 +20,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.util.CommonUtil;
 import org.firstinspires.ftc.teamcode.util.Point2d;
@@ -40,8 +39,8 @@ public class ImageTracker
 {
     public ImageTracker(Field field)
     {
-        com = CommonUtil.getInstance();
-        dashboard = com.getDashboard();
+        cmu = CommonUtil.getInstance();
+        dashboard = cmu.getDashboard();
         this.field = field;
         setupVuforia();
         //setTrackableCorners();
@@ -54,9 +53,9 @@ public class ImageTracker
 
     private void setupVuforia()
     {
-        vInit = com.getVuforiaInitializer();
+        vInit = cmu.getVuforiaInitializer();
         trackables = vInit.setupTrackables(field);
-        vuforia = com.getVuforiaLocalizer();
+        vuforia = cmu.getVuforiaLocalizer();
     }
 
     public RelicRecoveryVuMark getKeyLoc() {return keyLoc;}
@@ -332,7 +331,7 @@ public class ImageTracker
 
         Bitmap bitmap = Bitmap.createBitmap(fullImage, minX, minY, w, h);
 
-        String fileName = "sbh_test_" + imgNum++ + ".png";
+        String fileName = "img_test_" + imgNum++ + ".png";
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         //String directoryPath  = Environment.getExternalStorageDirectory().getPath() +
         //                                "/FIRST/DataLogger";
@@ -372,12 +371,13 @@ public class ImageTracker
         //local coords to pixel coordinates in camera image.
         //To do this, use the inverse of the raw pose matrix and the corner
         //locations from the printed picture size
-        //SBH_fix5.5 CameraCalibration camCal = vuforia.getCameraCalibration();
+        com.vuforia.CameraCalibration camCal =
+                com.vuforia.CameraDevice.getInstance().getCameraCalibration();
 
         List<Vec2F> trackableImageCorners = new ArrayList<>(4);
         for(Vec3F vpt : trackableCorners)
         {
-            //SBH_fix5.5 trackableImageCorners.add(Tool.projectPoint(camCal, rawPoseMx, vpt));
+            trackableImageCorners.add(Tool.projectPoint(camCal, rawPoseMx, vpt));
         }
 
         //These are trackable corners in camera pixel space
@@ -410,12 +410,13 @@ public class ImageTracker
         if (poseTransposed == null) return null;
         rawPoseMx.setData(Arrays.copyOfRange(poseTransposed.getData(), 0, 12));
 
-        //SBH_fix5.5 CameraCalibration camCal = vuforia.getCameraCalibration();
+        com.vuforia.CameraCalibration camCal =
+                com.vuforia.CameraDevice.getInstance().getCameraCalibration();
 
         List<Vec2F> cropImageCorners = new ArrayList<>(4);
         for(Vec3F vpt : cropCorners)
         {
-            //SBH_fix5.5 cropImageCorners.add(Tool.projectPoint(camCal, rawPoseMx, vpt));
+            cropImageCorners.add(Tool.projectPoint(camCal, rawPoseMx, vpt));
         }
 
         List<Point2d> cropPixelCorners = new ArrayList<>(Arrays.asList(
@@ -444,11 +445,14 @@ public class ImageTracker
         trackableSheetCorners.clear();
         trackableCorners.clear();
 
+        int htw = target_width/2;
+        int hth = target_height/2;
+
         //These are trackable corners in trackable sheet space - using Point2d for naming
-        trackableSheetCorners.add(new Point2d("TSTL", -target_width /2,  target_height /2));
-        trackableSheetCorners.add(new Point2d("TSTR",  target_width /2,  target_height /2));
-        trackableSheetCorners.add(new Point2d("TSBR",  target_width /2, -target_height /2));
-        trackableSheetCorners.add(new Point2d("TSBL", -target_width /2, -target_height /2));
+        trackableSheetCorners.add(new Point2d("TSTL", -htw,  hth));
+        trackableSheetCorners.add(new Point2d("TSTR",  htw,  hth));
+        trackableSheetCorners.add(new Point2d("TSBR",  htw, -hth));
+        trackableSheetCorners.add(new Point2d("TSBL", -htw, -hth));
 
         for(Point2d pt : trackableSheetCorners)
         {
@@ -492,7 +496,7 @@ public class ImageTracker
 
     private int target_width  = Field.target_width;
     private int target_height = Field.target_height;
-    CommonUtil com;
+    CommonUtil cmu;
     private Field field;
     private VuforiaLocalizer vuforia;
     private VuforiaLocalizer.Parameters parameters;
