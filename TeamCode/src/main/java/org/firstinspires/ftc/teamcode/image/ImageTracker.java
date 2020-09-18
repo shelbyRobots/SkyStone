@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 
 import com.qualcomm.robotcore.util.RobotLog;
-import com.vuforia.CameraCalibration;
 import com.vuforia.Image;
 import com.vuforia.Matrix34F;
 import com.vuforia.PIXEL_FORMAT;
@@ -21,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.util.CommonUtil;
 import org.firstinspires.ftc.teamcode.util.Point2d;
@@ -372,12 +372,12 @@ public class ImageTracker
         //local coords to pixel coordinates in camera image.
         //To do this, use the inverse of the raw pose matrix and the corner
         //locations from the printed picture size
-        CameraCalibration camCal = vuforia.getCameraCalibration();
+        //SBH_fix5.5 CameraCalibration camCal = vuforia.getCameraCalibration();
 
         List<Vec2F> trackableImageCorners = new ArrayList<>(4);
         for(Vec3F vpt : trackableCorners)
         {
-            trackableImageCorners.add(Tool.projectPoint(camCal, rawPoseMx, vpt));
+            //SBH_fix5.5 trackableImageCorners.add(Tool.projectPoint(camCal, rawPoseMx, vpt));
         }
 
         //These are trackable corners in camera pixel space
@@ -410,12 +410,12 @@ public class ImageTracker
         if (poseTransposed == null) return null;
         rawPoseMx.setData(Arrays.copyOfRange(poseTransposed.getData(), 0, 12));
 
-        CameraCalibration camCal = vuforia.getCameraCalibration();
+        //SBH_fix5.5 CameraCalibration camCal = vuforia.getCameraCalibration();
 
         List<Vec2F> cropImageCorners = new ArrayList<>(4);
         for(Vec3F vpt : cropCorners)
         {
-            cropImageCorners.add(Tool.projectPoint(camCal, rawPoseMx, vpt));
+            //SBH_fix5.5 cropImageCorners.add(Tool.projectPoint(camCal, rawPoseMx, vpt));
         }
 
         List<Point2d> cropPixelCorners = new ArrayList<>(Arrays.asList(

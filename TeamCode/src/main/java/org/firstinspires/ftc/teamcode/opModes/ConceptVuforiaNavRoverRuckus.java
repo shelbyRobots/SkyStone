@@ -347,6 +347,7 @@ public class ConceptVuforiaNavRoverRuckus extends LinearOpMode {
             ((VuforiaTrackableDefaultListener)trackable.getListener()).setPhoneInformation(phoneLocationOnRobot, parameters.cameraDirection);
         }
 
+        /* SBH_fix5.5
         CameraCalibration camCal = vuforia.getCameraCalibration();
         Vec4F distParam = camCal.getDistortionParameters();
         Vec2F camFov    = camCal.getFieldOfViewRads();
@@ -363,9 +364,11 @@ public class ConceptVuforiaNavRoverRuckus extends LinearOpMode {
         RobotLog.dd(TAG, "CamFlen %f %f", camFlen.getData()[0], camFlen.getData()[1]);
         RobotLog.dd(TAG, "CamPpt %f %f", camPpt.getData()[0], camPpt.getData()[1]);
         RobotLog.dd(TAG, "CamSize %f %f", camSize.getData()[0], camSize.getData()[1]);
+        */
 
         /* Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
+        /*SBH_fix5.5
         telemetry.addData("A", "DistortionParams %f %f %f %f",
                 distParam.getData()[0],
                 distParam.getData()[1],
@@ -375,6 +378,7 @@ public class ConceptVuforiaNavRoverRuckus extends LinearOpMode {
         telemetry.addData("C", "CamFlen %f %f", camFlen.getData()[0], camFlen.getData()[1]);
         telemetry.addData("D", "CamPpt %f %f", camPpt.getData()[0], camPpt.getData()[1]);
         telemetry.addData("E","CamSize %f %f", camSize.getData()[0], camSize.getData()[1]);
+        */
 
         telemetry.addData("F", "RedOnFld: " + format(redFootprintLocationOnField, EXTRINSIC, XYZ));
 
@@ -386,6 +390,7 @@ public class ConceptVuforiaNavRoverRuckus extends LinearOpMode {
         telemetry.addData("G", "camOnBot: " + format(camOnBot, EXTRINSIC, XYZ));
         telemetry.update();
 
+        /* SBH_fix5.5
         telemetry.addData("A", "DistortionParams %f %f %f %f",
                 distParam.getData()[0],
                 distParam.getData()[1],
@@ -397,6 +402,8 @@ public class ConceptVuforiaNavRoverRuckus extends LinearOpMode {
         RobotLog.dd(TAG,"CamSize %f %f", camSize.getData()[0], camSize.getData()[1]);
         RobotLog.dd(TAG, "RedOnFld: " + format(redFootprintLocationOnField, EXTRINSIC, XYZ));
         RobotLog.dd(TAG, "camOnBot: " + format(camOnBot, EXTRINSIC, XYZ));
+        */
+
         CameraDevice.getInstance().setFlashTorchMode(true) ;
         waitForStart();
 
