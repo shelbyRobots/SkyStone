@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.opModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -22,8 +20,6 @@ public class MecanumTeleop extends InitLinearOpMode
     @SuppressWarnings("FieldCanBeLocal")
     private boolean fieldAlign = false;
     private boolean useSetVel = true;
-
-    private ElapsedTime resetTimer = new ElapsedTime();
 
     private TilerunnerMecanumBot robot = new TilerunnerMecanumBot();
 
@@ -57,8 +53,7 @@ public class MecanumTeleop extends InitLinearOpMode
         // Send telemetry message to signify robot waiting;
         dashboard.displayPrintf(0, "Hello Driver - I'm %s", robot.getName());
 
-        while (!isStarted())
-        {
+        while (!isStarted()) {
             gpad1.update();
             gpad2.update();
             gpad1.log(1);
@@ -66,17 +61,7 @@ public class MecanumTeleop extends InitLinearOpMode
             idle();
         }
 
-//        boolean pActive = false;
-        boolean eActive = false;
-
         RobotLog.dd(TAG, "Mecanum_Driver starting");
-
-        if(robot.elevMotor != null)
-        {
-            robot.elevMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.elevMotor.setPower(0.0);
-            robot.elevMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
 
         while (opModeIsActive())
         {
@@ -95,17 +80,6 @@ public class MecanumTeleop extends InitLinearOpMode
             boolean decr = gpad1.just_pressed(ManagedGamepad.Button.L_BUMP);
             boolean toggleVel = gpad1.just_pressed(ManagedGamepad.Button.Y);
 
-            boolean lowerElev         = gpad2.just_pressed(ManagedGamepad.Button.D_DOWN);
-            boolean raiseElev         = gpad2.just_pressed(ManagedGamepad.Button.D_UP);
-            boolean holdElev          = gpad2.just_pressed(ManagedGamepad.Button.D_LEFT);
-
-            boolean gripper_open_par  = gpad2.pressed(ManagedGamepad.Button.A);
-            boolean gripper_open      = gpad2.pressed(ManagedGamepad.Button.B);
-
-            boolean toggle_jflicker   = gpad2.just_pressed(ManagedGamepad.Button.Y);
-
-            double elev         = -gpad2.value(ManagedGamepad.AnalogInput.R_STICK_Y);
-
             //boolean step_driveType = gpad1.just_pressed(ManagedGamepad.Button.A);
 
             int l = 1;
@@ -115,7 +89,6 @@ public class MecanumTeleop extends InitLinearOpMode
             double lr_x = ishaper.shape(raw_lr_x, 0.1);
             double fb_y = ishaper.shape(raw_fb_y, 0.1);
             double turn = ishaper.shape(raw_turn, 0.1);
-            elev = ishaper.shape(elev, 0.1);
 
             dashboard.displayPrintf(l++, "SHP LR_X %4.2f FB_Y %4.2f TRN %4.2f",
                     lr_x, fb_y, turn);
@@ -158,10 +131,13 @@ public class MecanumTeleop extends InitLinearOpMode
             dashboard.displayPrintf(l++, "DIR %4.2f FALGN %s USEVEL %s",
                     direction, fieldAlign, useSetVel);
 
-            double lf = speed * Math.sin(direction + Math.PI / 4.0) + turn;
-            double rf = speed * Math.cos(direction + Math.PI / 4.0) - turn;
-            double lr = speed * Math.cos(direction + Math.PI / 4.0) + turn;
-            double rr = speed * Math.sin(direction + Math.PI / 4.0) - turn;
+            double spdSin = speed * Math.sin(direction + Math.PI / 4.0);
+            double spdCos = speed * Math.cos(direction + Math.PI / 4.0);
+
+            double lf = spdSin + turn;
+            double rf = spdCos - turn;
+            double lr = spdCos + turn;
+            double rr = spdSin - turn;
 
             double max = Math.max(Math.max(Math.abs(lf), Math.abs(rf)),
                     Math.max(Math.abs(lr), Math.abs(rr)));
@@ -211,135 +187,8 @@ public class MecanumTeleop extends InitLinearOpMode
                 dashboard.displayPrintf(l, "OUT: lf %4.2f rf %4.2f lr %4.2f rr %4.2f",
                         lf, rf, lr, rr);
             }
-
-            if(Math.abs(elev) > 0.001)
-            {
-                eActive = false;
-            }
-
-            boolean isBottom = robot.isElevTouchPressed();
-
-            int curElevPos = robot.elevMotor.getCurrentPosition();
-            if(!eActive)
-            {
-                robot.elevMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                int minElev = robot.liftPositions.get(0) + 20;
-                if(curElevPos < minElev && elev < 0.0)
-                    elev = 0.0;
-//                if(curElevPos > maxElev && elev > 0.0)
-//                    elev = 0.0;
-                if(isBottom) elev = 0.0;
-                robot.elevMotor.setPower(elev);
-            }
-
-            int nextDown = 0;
-            int nextUp   = 1;
-            int ethresh  = (int)(1.5 * robot.ELEV_CPI);
-
-            for(int eIdx = 0; eIdx < robot.liftPositions.size() - 1; eIdx++)
-            {
-                if(raiseElev && curElevPos + ethresh >= robot.liftPositions.get(eIdx))
-                {
-                    nextUp = eIdx + 1;
-                }
-            }
-
-            for(int eIdx = robot.liftPositions.size() - 1; eIdx > 0; eIdx--)
-            {
-                if(lowerElev && curElevPos - ethresh <= robot.liftPositions.get(eIdx))
-                {
-                    nextDown = eIdx - 1;
-                }
-            }
-
-            nextDown = Math.max(0, nextDown);
-            nextUp   = Math.min(robot.liftPositions.size() - 1, nextUp);
-
-            if(lowerElev && !isBottom)
-            {
-                int dPos = robot.liftPositions.get(nextDown);
-                RobotLog.dd(TAG, "LowerElev. curPos=%d nextDown=%d dPos=%d",
-                        curElevPos, nextDown, dPos);
-
-                robot.elevMotor.setTargetPosition(dPos);
-                robot.elevMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elev = 0.35;
-                robot.elevMotor.setPower(elev);
-                eActive = true;
-            }
-            else if(raiseElev)
-            {
-                int uPos = robot.liftPositions.get(nextUp);
-                RobotLog.dd(TAG, "RaiseElev. curPos=%d nextUp=%d uPos=%d",
-                        curElevPos, nextUp, uPos);
-
-                robot.elevMotor.setTargetPosition(uPos);
-                robot.elevMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elev = 0.55;
-                robot.elevMotor.setPower(elev);
-                eActive = true;
-            }
-            else if (holdElev)
-            {
-                robot.elevMotor.setTargetPosition(curElevPos);
-                robot.elevMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elev = 0.65;
-                robot.elevMotor.setPower(elev);
-                eActive = true;
-            }
-
-            if(isBottom && resetTimer.seconds() > 1.0)
-            {
-                robot.elevMotor.setPower(0.0);
-                robot.elevMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.elevMotor.setTargetPosition(0);
-                robot.elevMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elev = 0.25;
-                robot.elevMotor.setPower(elev);
-                eActive = true;
-                resetTimer.reset();
-            }
-
-            // Gripper (a: Somewhat Open, b: all the way open, neither: closed)
-            if (gripper_open)
-            {
-                robot.openGripper();
-            }
-            else if (gripper_open_par)
-            {
-                robot.partialGripper();
-            }
-            else
-            {
-                robot.closeGripper();
-            }
-
-            // Jewel Flicker (y: toggles between up and down positions)
-            if (toggle_jflicker)
-            {
-                currentFlickerState = (currentFlickerState == FlickerState.DOWN) ?
-                        FlickerState.UP : FlickerState.DOWN;
-
-                switch (currentFlickerState)
-                {
-                    case DOWN:
-                        //robot.jflicker.setPosition(TilerunnerMecanumBot.JFLICKER_DOWN_POS);
-                        robot.deployFlicker();
-                        break;
-                    case UP:
-                        //robot.jflicker.setPosition(TilerunnerMecanumBot.JFLICKER_UP_POS);
-                        robot.raiseFlicker();
-                        break;
-                }
-            }
         }
     }
 
     private Drivetrain dtrn = new Drivetrain();
-
-//    private enum PitchState { PITCH_UP, PITCH_DOWN }
-//    private PitchState currentPitchState = PitchState.PITCH_UP;
-
-    private enum FlickerState { UP, DOWN }
-    private FlickerState currentFlickerState = FlickerState.UP;
 }
