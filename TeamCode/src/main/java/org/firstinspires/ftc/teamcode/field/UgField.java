@@ -27,13 +27,30 @@ public class UgField extends Field
     private static final int RGHT  = 2;
 
     //Red Route > Left
-    //Red Right Start Point 1
+    //Red (Left/Right) Start Points
     static final Point2d RRS1 = new Point2d("RRS1", -61.5,  -48);
-    //Red Left Start Point 1
     static final Point2d RLS1 = new Point2d("RLS1", -61.5,  -24);
-    //Red Scan Pt (Image Scan Pt)
-    static final Point2d RIS1 = new Point2d("RIS1", -34.5,  -50.0);
+
+    //Red (Left/Right) Scan Pt's (Image Scan Pt)
+    static final Point2d RLSP = new Point2d("RLSP", -55.0,  -24);
+    static final Point2d RRSP = new Point2d("RRSP", -55.0,  -48);
+
+    //Red (Left/Right) Dodge Points
+    static final Point2d RLDP = new Point2d("RLDP", -55.0, -19);
+    static final Point2d RRDP = new Point2d("RRDP", -55.0, -53);
+
+
+    //Red Right Wobble (A/B/C)
+    static final Point2d RRWA = new Point2d("RRWA", -10.0,-53);
+    static final Point2d RRWB = new Point2d("RRWB",  14.0,-53);
+    static final Point2d RRWC = new Point2d("RRWC",  38.0,-53);
+
+    //Red Left Wobble (A/B/C)
+    static final Point2d RLWA = new Point2d("RLWA", -10.0,-19);
+    static final Point2d RLWB = new Point2d("RLWB",  14.0,-19);
+    static final Point2d RLWC = new Point2d("RLWC",  38.0,-19);
     //includes offset for veh center. actual
+
 
     //Red Stone Points (Stone center location on field)
 //    static final Point2d RSP1 = new Point2d("RSP1", -66.5,   -21.0); //R
