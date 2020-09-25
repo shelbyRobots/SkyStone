@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
 
 import org.firstinspires.ftc.teamcode.field.Field;
-import org.firstinspires.ftc.teamcode.field.UgField;
 import org.firstinspires.ftc.teamcode.field.PositionOption;
 import org.firstinspires.ftc.teamcode.field.Route;
-import org.firstinspires.ftc.teamcode.field.SkyRoute;
+import org.firstinspires.ftc.teamcode.field.UgField;
+import org.firstinspires.ftc.teamcode.field.UgRoute;
 import org.firstinspires.ftc.teamcode.image.Detector;
 import org.firstinspires.ftc.teamcode.image.ImageTracker;
 import org.firstinspires.ftc.teamcode.image.StoneDetector;
@@ -260,7 +260,7 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
         RobotLog.ii(TAG, "BOT      %s", robotName);
 
         //TODO: CHANGE to UgRoute
-        Route pts = new SkyRoute(startPos, alliance, robotName);
+        Route pts = new UgRoute(startPos, alliance, robotName);
 
         pathSegs.addAll(Arrays.asList(pts.getSegments()));
 

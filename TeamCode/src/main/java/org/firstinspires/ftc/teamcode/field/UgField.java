@@ -36,21 +36,28 @@ public class UgField extends Field
     static final Point2d RRSP = new Point2d("RRSP", -55.0,  -48);
 
     //Red (Left/Right) Dodge Points
-    static final Point2d RLDP = new Point2d("RLDP", -55.0, -19);
-    static final Point2d RRDP = new Point2d("RRDP", -55.0, -53);
+    static final Point2d RLDP = new Point2d("RLDP", -12.0, -19);
+    static final Point2d RRDP = new Point2d("RRDP", -12.0, -53);
 
 
     //Red Right Wobble (A/B/C)
-    static final Point2d RRWA = new Point2d("RRWA", -10.0,-53);
-    static final Point2d RRWB = new Point2d("RRWB",  14.0,-53);
-    static final Point2d RRWC = new Point2d("RRWC",  38.0,-53);
+    static final Point2d RRWA = new Point2d("RRWA", 0.0,-53);
+    static final Point2d RRWB = new Point2d("RRWB",  24.0,-36);
+    static final Point2d RRWC = new Point2d("RRWC",  48.0,-53);
 
     //Red Left Wobble (A/B/C)
-    static final Point2d RLWA = new Point2d("RLWA", -10.0,-19);
-    static final Point2d RLWB = new Point2d("RLWB",  14.0,-19);
-    static final Point2d RLWC = new Point2d("RLWC",  38.0,-19);
+    static final Point2d RLWA = new Point2d("RLWA", 0.0,-53);
+    static final Point2d RLWB = new Point2d("RLWB",  24.0,-36);
+    static final Point2d RLWC = new Point2d("RLWC",  48.0,-53);
     //includes offset for veh center. actual
 
+    static final Point2d RRPA = new Point2d("RRPA",  0.0,-53);
+    static final Point2d RRPB = new Point2d("RRPB",  0.0,-48);
+    static final Point2d RRPC = new Point2d("RRPC",  0.0,-53);
+
+    static final Point2d RLPA = new Point2d("RLPA",  0.0,-53);
+    static final Point2d RLPB = new Point2d("RLPB",  0.0,-24);
+    static final Point2d RLPC = new Point2d("RLPC",  0.0,-24);
 
     //Red Stone Points (Stone center location on field)
 //    static final Point2d RSP1 = new Point2d("RSP1", -66.5,   -21.0); //R

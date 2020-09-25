@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.util.Input_Shaper;
 import org.firstinspires.ftc.teamcode.util.ManagedGamepad;
 
 @TeleOp(name = "Mecanum")
-@Disabled
+//@Disabled
 public class MecanumTeleop extends InitLinearOpMode
 {
     @SuppressWarnings("RedundantThrows")
@@ -22,7 +22,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
         robot.setName(pmgr.getBotName());
         robot.init(this);
-        robot.setDriveDir(ShelbyBot.DriveDir.INTAKE);
+        //robot.setDriveDir(ShelbyBot.DriveDir.INTAKE);
         RobotLog.dd(TAG, "Start Hdg %.2f", robot.getAutonEndHdg());
 
         dashboard.displayPrintf(0, "%s is ready", robot.getName());
@@ -69,7 +69,7 @@ public class MecanumTeleop extends InitLinearOpMode
                     lr_x, fb_y, turn);
 
             if      (incr && dSpd + dStp <= 1.0) dSpd += dStp;
-            else if (decr && dSpd - dStp >= 1.0) dSpd -= dStp;
+            else if (decr && dSpd - dStp >= 0.0) dSpd -= dStp;
 
             if (lft || rgt || fwd || bak)
             {

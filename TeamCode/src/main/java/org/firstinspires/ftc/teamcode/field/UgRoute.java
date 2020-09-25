@@ -40,14 +40,16 @@ public class UgRoute extends Route
             points.add(UgField.RRS1);
             addPoint(points, fwd, 0.60, 1.00, encType, scan, UgField.RRSP);
             addPoint(points, fwd, 0.60, 1.00, encType, none, UgField.RRDP);
-            addPoint(points, rev, 0.50, 1.00, encType, drop, UgField.RRWA);
+            addPoint(points, fwd, 0.50, 1.00, encType, drop, UgField.RRWA);
+            addPoint(points, rev, 0.50, 1.00, encType, drop, UgField.RRPA);
         }
         else if(startPos == StartPos.START_2)  //Left Start
         {
-            points.add(SkyField.RBS1);
+            points.add(UgField.RLS1);
             addPoint(points, fwd, 0.75, 1.00, encType, scan, UgField.RLSP);
             addPoint(points, fwd, 0.75, 1.00, encType, none, UgField.RLDP);
             addPoint(points, fwd, 0.50, 1.00, encType, drop, UgField.RLWA);
+            addPoint(points, rev, 0.50, 1.00, encType, park, UgField.RLPA);
         }
 //        else if(startPos == StartPos.START_3)  //PLATFORM MOVED w/o turn
 //        {

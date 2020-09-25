@@ -25,7 +25,7 @@ public class TilerunnerMecanumBot extends TilerunnerGtoBot
         name= "MEC";
 
         COUNTS_PER_MOTOR_REV = 28;
-        DRIVE_GEARS = new double[]{40.0, 1.0};
+        DRIVE_GEARS = new double[]{19.2, 1.0};
 
         WHEEL_DIAMETER_INCHES = 4.0;
         TUNE = 1.00;
@@ -40,8 +40,8 @@ public class TilerunnerMecanumBot extends TilerunnerGtoBot
         CAMERA_Y_IN_BOT = 0.0f * (float)Units.MM_PER_INCH;
         CAMERA_Z_IN_BOT = 0.0f * (float)Units.MM_PER_INCH;
 
-        LEFT_DIR  = DcMotorSimple.Direction.FORWARD;
-        RIGHT_DIR = DcMotorSimple.Direction.REVERSE;
+        LEFT_DIR  = DcMotorSimple.Direction.REVERSE;
+        RIGHT_DIR = DcMotorSimple.Direction.FORWARD;
 
         gyroInverted = false;
     }
