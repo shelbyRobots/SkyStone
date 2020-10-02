@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opModes;
 import android.graphics.Bitmap;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -101,10 +103,15 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
                 dashboard.displayPrintf(0, "HDG %4.2f FHDG %4.2f", shdg, fhdg);
                 dashboard.displayPrintf(10, "GyroReady %s RGyroReady %s",
                         gyroReady, robot.gyroReady);
-                if (robot.leftMotor != null && robot.rightMotor != null)
-                    dashboard.displayPrintf(11, "LENC %d RENC %d",
-                            robot.leftMotor.getCurrentPosition(), robot.rightMotor.getCurrentPosition());
-
+                StringBuilder motStr = new StringBuilder("ENCs:");
+                for (Map.Entry<String, DcMotor> e : robot.motors.entrySet())
+                {
+                    motStr.append(" ");
+                    motStr.append(e.getKey());
+                    motStr.append(":");
+                    motStr.append(e.getValue().getCurrentPosition());
+                }
+                dashboard.displayText(11, motStr.toString());
                 if (robot.colorSensor != null)
                 {
                     int r = robot.colorSensor.red();
@@ -133,8 +140,6 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
         }
         if(det != null) det.cleanupCamera();
     }
-
-    private int grabNum = 0;
 
     private void setup()
     {
@@ -165,18 +170,8 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
 
         dashboard.displayPrintf(0, "INITIALIZING");
 
-        String teleopName = "TeleopDriver";
-
-        if(robotName.equals("MEC"))
-        {
-            robot = new TilerunnerMecanumBot();
-            teleopName = "Mecanum";
-        }
-        else
-        {
-            //robot = new SkyBot(robotName);
-            //skyBot = (SkyBot)robot;
-        }
+        final String teleopName = "Mecanum";
+        robot = new TilerunnerMecanumBot();
 
         dashboard.displayPrintf(1, "Prefs Done");
 
@@ -259,7 +254,6 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
         RobotLog.ii(TAG, "DELAY    %4.2f", delay);
         RobotLog.ii(TAG, "BOT      %s", robotName);
 
-        //TODO: CHANGE to UgRoute
         Route pts = new UgRoute(startPos, alliance, robotName);
 
         pathSegs.addAll(Arrays.asList(pts.getSegments()));
@@ -528,7 +522,7 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
 
     private void doScan(int segIdx)
     {
-        RobotLog.dd(TAG, "doScan");
+        RobotLog.dd(TAG, "doScan" + " segIdx:" + segIdx);
 
         if(useLight)
             CameraDevice.getInstance().setFlashTorchMode(true) ;
@@ -539,25 +533,12 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
         if(useLight)
             CameraDevice.getInstance().setFlashTorchMode(false);
 
-        //setringPoint(segIdx);
-
-        //TODO: set ring point based on scan result
-
-//        MoveArmTask tsk = new MoveArmTask();
-//        tsk.setElevPos(skyBot.LIFT_STOW_CNTS);
-//        tsk.setXtndPos(skyBot.ARM_EXT_SNUG_POS);
-//        tsk.setArotPos(getArmGrabRot());
-//        tsk.setElevDly(0.01);
-//        tsk.setXtndDly(0.01);
-//        tsk.setArotDly(0.01);
-//        tsk.setAutoCross(false);
-//        RobotLog.dd(TAG, "doScan submitting non-delay task");
-//        es.submit(tsk);
+        setRingPoint(segIdx);
     }
 
     private void doGrab(int segIdx)
     {
-
+        RobotLog.dd(TAG, "doGrab seg %d at %f", segIdx, startTimer.seconds());
     }
 
     private void setRingPoint(int segIdx)
@@ -570,95 +551,19 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
 //        sRev.setStrtPt(tgtPt1);
     }
 
-    class MoveArmTask implements Runnable
-    {
-//        private double elevPos; // = skyBot._liftyBoi.getCurrentPosition();
-//        private double xtndPos; // = skyBot.armExtend.getCurrentPosition();
-//        private double arotPos; // = skyBot.armRotate.getCurrentPosition();
-//        private double elevDly = 0;
-//        private double xtndDly = 0;
-//        private double arotDly = 0;
-//        private boolean autoCross = false;
-//        private double autoX = 0.0;
-//
-//        void setElevPos(double pos) {this.elevPos = pos;}
-//        void setXtndPos(double pos) {this.xtndPos = pos;}
-//        void setArotPos(double pos) {this.arotPos = pos;}
-//        void setElevDly(double dly) {this.elevDly = dly;}
-//        void setXtndDly(double dly) {this.xtndDly = dly;}
-//        void setArotDly(double dly) {this.arotDly = dly;}
-//        void setAutoCross(boolean autoCross) {this.autoCross = autoCross;}
-//        void setAutoX  (double x)   {this.autoX = x;}
-//        volatile boolean getOut = false;
-//
-        public void run()
-        {
-//            double startX = drvTrn.getEstPos().getX();
-//            double curX = startX;
-//
-//            RobotLog.dd(TAG, "MoveArmTask autoCross=" + autoCross + " startx=" + startX);
-//
-//            if(autoCross)
-//            {
-//                RobotLog.dd(TAG, "Delaying threaded arm move. startx=" + startX);
-//                while(opModeIsActive() && !isStopRequested() &&
-//                      !getOut &&
-//                      (startX < 0.0 && curX < autoX) || (startX > 0.0 && curX > autoX))
-//                {
-//                    RobotLog.dd(TAG, "Delaying threaded arm move. curx=" + curX);
-//                    try
-//                    {
-//                        Thread.sleep(20);
-//                    }
-//                    catch (InterruptedException ie)
-//                    {
-//                        getOut = true;
-//                    }
-//                    curX = drvTrn.getEstPos().getX();
-//                }
-//            }
-//
-//            if(!getOut)
-//            {
-//                RobotLog.dd(TAG, "Starting Threaded Arm Move");
-//                //if(grabNum == 2) skyBot.threadedParkLong();
-//                //skyBot.moveArmToLoc(elevPos, arotPos, xtndPos, elevDly, arotDly, xtndDly);
-//                RobotLog.dd(TAG, "Completed Threaded Arm Move");
-//            }
-        }
-    }
-
     private void doAlign(int segIdx)
     {
-        RobotLog.dd(TAG, "doGrab lift to MOVE, rot to FWD, extend to STAGE at " +
-                startTimer.seconds());
-
-        Segment nxtSeg = pathSegs.get(segIdx + 1);
-        Segment.Action nxtAct = nxtSeg.getAction();
-//        if (nxtAct == Segment.Action.DROP) {
-//            MoveArmTask crossTsk = new MoveArmTask();
-//            crossTsk.setElevPos(skyBot.LIFT_STOW_CNTS);
-//            crossTsk.setXtndPos(skyBot.ARM_EXT_STAGE_POS);
-//            crossTsk.setArotPos(getArmDropRot());
-//            crossTsk.setAutoCross(true);
-//            crossTsk.setAutoX(6.0);
-//            RobotLog.dd(TAG, "doGrab submitting position delay task");
-//            es.submit(crossTsk);
-//        }
+        RobotLog.dd(TAG, "doAlign seg %d at %f", segIdx, startTimer.seconds());
     }
 
     private void doDrop(int segIdx)
     {
-        RobotLog.dd(TAG, "Dropping wobblyBOI %d on seg %d at %f", grabNum, segIdx, startTimer.seconds());
-        //rotate arm, lower?, release gripper, return arm
+        RobotLog.dd(TAG, "Dropping wobblyBOI on seg %d at %f", segIdx, startTimer.seconds());
     }
 
     private void doPlatch()
     {
-        sleep(1000);
         RobotLog.dd(TAG, "Platching platform");
-
-        sleep(1000);
     }
 
     private void doUnPlatch()
@@ -671,14 +576,13 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
         RobotLog.dd(TAG, "Parking bot");
     }
 
+    //TODO: Add doShoot
+
     private void doMove(Segment seg)
     {
         if(!opModeIsActive() || isStopRequested()) return;
 
         drvTrn.setInitValues();
-        RobotLog.ii(TAG, "Setting drive tuner to %4.2f", seg.getDrvTuner());
-        drvTrn.logData(true, seg.getName() + " move");
-        drvTrn.setDrvTuner(seg.getDrvTuner());
 
         drvTrn.setBusyAnd(true);
         String  snm = seg.getName();
@@ -697,6 +601,8 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
                 "DRIVE", snm, spt, ept, fhd, speed, dir);
 
         Drivetrain.Direction ddir = Drivetrain.Direction.FORWARD;
+        drvTrn.logData(true, seg.getName() + " move");
+        drvTrn.setDrvTuner(fudge);
 
         timer.reset();
 
