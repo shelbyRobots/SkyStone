@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.field.UgField;
 import org.firstinspires.ftc.teamcode.field.UgRoute;
 import org.firstinspires.ftc.teamcode.image.Detector;
 import org.firstinspires.ftc.teamcode.image.ImageTracker;
-import org.firstinspires.ftc.teamcode.image.StoneDetector;
+import org.firstinspires.ftc.teamcode.image.RingDetector;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.ShelbyBot;
 import org.firstinspires.ftc.teamcode.robot.TilerunnerGtoBot;
@@ -244,7 +244,7 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
 
         dashboard.displayPrintf(1, "DrvTrn Inited");
 
-        det = new StoneDetector(robotName);
+        det = new RingDetector(robotName);
         RobotLog.dd(TAG, "Setting up vuforia");
         tracker = new ImageTracker(new UgField());
 
@@ -533,16 +533,15 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
         if(useLight)
             CameraDevice.getInstance().setFlashTorchMode(true) ;
 
-        //TODO: Ring scan
-        //stonePos =  getStonePos();
-        //RobotLog.dd(TAG, "doScan stonePos = %s", stonePos);
+        ringPos =  getRingPos();
+        RobotLog.dd(TAG, "doScan RingPos = %s", ringPos);
 
         if(useLight)
             CameraDevice.getInstance().setFlashTorchMode(false);
 
-        //setStonePoint(segIdx);
+        //setringPoint(segIdx);
 
-        //TODO: set wobbly point based on scan result
+        //TODO: set ring point based on scan result
 
 //        MoveArmTask tsk = new MoveArmTask();
 //        tsk.setElevPos(skyBot.LIFT_STOW_CNTS);
@@ -561,10 +560,10 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
 
     }
 
-    private void setStonePoint(int segIdx)
+    private void setRingPoint(int segIdx)
     {
-        RobotLog.dd(TAG, "Getting stonePt for %s %s %s seg=%d",
-                alliance, startPos, stonePos, segIdx);
+        RobotLog.dd(TAG, "Getting ringPt for %s %s %s seg=%d",
+                alliance, startPos, ringPos, segIdx);
 //        Segment sMin = pathSegs.get(segIdx+1);
 //        Segment sRev = pathSegs.get(segIdx+2);
 //        sMin.setEndPt(tgtPt1);
@@ -650,7 +649,7 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
 
     private void doDrop(int segIdx)
     {
-        RobotLog.dd(TAG, "Dropping stone %d on seg %d at %f", grabNum, segIdx, startTimer.seconds());
+        RobotLog.dd(TAG, "Dropping wobblyBOI %d on seg %d at %f", grabNum, segIdx, startTimer.seconds());
         //rotate arm, lower?, release gripper, return arm
     }
 
@@ -784,27 +783,27 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
                 fHdg, timer.time(), cHdg);
     }
 
-    //TODO:  Make ring detector
-    private StoneDetector.Position getStonePos()
+
+    private RingDetector.Position getRingPos()
     {
-        if(!opModeIsActive() || stonePos != StoneDetector.Position.NONE)
-            return stonePos;
+        if(!opModeIsActive() || ringPos != RingDetector.Position.NONE)
+            return ringPos;
 
         tracker.setActive(true);
-        stonePos = StoneDetector.Position.NONE;
+        ringPos = RingDetector.Position.NONE;
         RobotLog.dd(TAG, "Set qsize to get frames");
         tracker.setFrameQueueSize(1);
         RobotLog.dd(TAG, "Start LD sensing");
         det.startSensing();
 
-        StoneDetector.Position stonePos = StoneDetector.Position.NONE;
+        RingDetector.Position ringPos = RingDetector.Position.NONE;
 
-        double stoneTimeout = 0.5;
+        double ringTimeout = 0.5;
 
         ElapsedTime mtimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         while(opModeIsActive()                                   &&
-              stonePos == StoneDetector.Position.NONE &&
-              mtimer.seconds() < stoneTimeout)
+              ringPos == RingDetector.Position.NONE &&
+              mtimer.seconds() < ringTimeout)
         {
             tracker.updateImages();
             Bitmap rgbImage = tracker.getLastImage();
@@ -812,17 +811,17 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
             boolean tempTest = false;
             if(rgbImage == null)
             {
-                RobotLog.dd(TAG, "getStonePos - image from tracker is null");
+                RobotLog.dd(TAG, "getringPos - image from tracker is null");
                 //noinspection ConstantConditions
                 if(!tempTest) continue;
             }
             det.setBitmap(rgbImage);
             det.logDebug();
             det.logTelemetry();
-            if(det instanceof StoneDetector)
-                stonePos = ((StoneDetector) det).getStonePos();
+            if(det instanceof RingDetector)
+                ringPos = ((RingDetector) det).getRingPos();
 
-            if(stonePos == StoneDetector.Position.NONE)
+            if(ringPos == RingDetector.Position.NONE)
                 sleep(10);
         }
 
@@ -830,14 +829,14 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
         tracker.setFrameQueueSize(0);
         tracker.setActive(false);
 
-        dashboard.displayPrintf(1, "POS: " + stonePos);
+        dashboard.displayPrintf(1, "POS: " + ringPos);
 
-        if (stonePos == StoneDetector.Position.NONE)
+        if (ringPos == RingDetector.Position.NONE)
         {
-            RobotLog.dd(TAG, "No skystone found - defaulting to center");
-            stonePos = StoneDetector.Position.CENTER;
+            RobotLog.dd(TAG, "No ring answer found - defaulting to A");
+            ringPos = RingDetector.Position.LEFT;
         }
-        return stonePos;
+        return ringPos;
     }
 
     @Override
@@ -954,7 +953,7 @@ public class UgAutoShelby extends InitLinearOpMode implements FtcMenu.MenuButton
 
     private Detector det;
     private static ImageTracker tracker;
-    private StoneDetector.Position stonePos = StoneDetector.Position.NONE;
+    private RingDetector.Position ringPos = RingDetector.Position.NONE;
 
     private static Point2d curPos;
     private double initHdg = 0.0;
